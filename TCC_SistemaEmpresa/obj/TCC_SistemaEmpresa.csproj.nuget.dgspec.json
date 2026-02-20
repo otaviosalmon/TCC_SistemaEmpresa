@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\TCC_Sistema_Empresa\\TCC_Sistema_Empresa\\TCC_Sistema_Empresa.csproj": {}
+    "C:\\TCC_SistemaEmpresa\\TCC_SistemaEmpresa\\TCC_SistemaEmpresa.csproj": {}
   },
   "projects": {
-    "C:\\TCC_Sistema_Empresa\\TCC_Sistema_Empresa\\TCC_Sistema_Empresa.csproj": {
+    "C:\\TCC_SistemaEmpresa\\TCC_SistemaEmpresa\\TCC_SistemaEmpresa.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\TCC_Sistema_Empresa\\TCC_Sistema_Empresa\\TCC_Sistema_Empresa.csproj",
-        "projectName": "TCC_Sistema_Empresa",
-        "projectPath": "C:\\TCC_Sistema_Empresa\\TCC_Sistema_Empresa\\TCC_Sistema_Empresa.csproj",
+        "projectUniqueName": "C:\\TCC_SistemaEmpresa\\TCC_SistemaEmpresa\\TCC_SistemaEmpresa.csproj",
+        "projectName": "TCC_SistemaEmpresa",
+        "projectPath": "C:\\TCC_SistemaEmpresa\\TCC_SistemaEmpresa\\TCC_SistemaEmpresa.csproj",
         "packagesPath": "C:\\Users\\Otavio\\.nuget\\packages\\",
-        "outputPath": "C:\\TCC_Sistema_Empresa\\TCC_Sistema_Empresa\\obj\\",
+        "outputPath": "C:\\TCC_SistemaEmpresa\\TCC_SistemaEmpresa\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
