@@ -13,8 +13,9 @@ namespace TCC_SistemaEmpresa.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public IActionResult Teste()
         {
+            ViewBag.Mensagem = "O Sistema Está Funcionando!";
             return View();
         }
 
