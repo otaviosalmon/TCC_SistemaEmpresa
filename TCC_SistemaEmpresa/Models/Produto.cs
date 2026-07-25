@@ -11,9 +11,10 @@
         public decimal PrecoVenda { get; set; }
         public int QuantidadeAtual { get; set; }
         public int? EstoqueMinimo { get; set; }
-        public DateTime DataCadastro { get; set; }
+        public DateTime DataCadastro { get; set; } = DateTime.Now;
         public bool Ativo { get; set; }
-
+        public Empresa Empresa { get; set; }
+        public CategoriaProduto CategoriaProduto { get; set; }
 
     }
 }

@@ -14,6 +14,9 @@
         public decimal? PerComissao { get; set; }
         public DateTime DataAdmissao { get; set; }
         public bool Ativo { get; set; }
+        public Empresa Empresa { get; set; }
+        public Cargo Cargo { get; set; }
+        public Usuario Usuario { get; set; }
 
     }
 }

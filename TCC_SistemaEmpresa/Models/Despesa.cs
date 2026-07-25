@@ -12,7 +12,8 @@ namespace TCC_SistemaEmpresa.Models
         public decimal Valor { get; set; }
         public DateTime DataDespesa { get; set; }
         public bool Fixa { get; set; }
-
+        public string? Observacao { get; set; }
+        public Empresa Empresa { get; set; }
 
     }
 }

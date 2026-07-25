@@ -18,15 +18,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{ba58fdf3-7af7-4b60-b69b-40ac68d83b75}"
             },
             {
               "$type": "Document",
@@ -36,7 +32,7 @@
               "RelativeDocumentMoniker": "TCC_SistemaEmpresa\\Views\\Home\\Teste.cshtml",
               "ToolTip": "C:\\TCC_SistemaEmpresa\\TCC_SistemaEmpresa\\Views\\Home\\Teste.cshtml",
               "RelativeToolTip": "TCC_SistemaEmpresa\\Views\\Home\\Teste.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAABIAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAzAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2026-02-20T22:41:24.154Z",
               "EditorCaption": ""
@@ -51,8 +47,7 @@
               "RelativeToolTip": "TCC_SistemaEmpresa\\Controllers\\HomeController.cs",
               "ViewState": "AgIAAAMAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-20T22:35:50.07Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-20T22:35:50.07Z"
             }
           ]
         }

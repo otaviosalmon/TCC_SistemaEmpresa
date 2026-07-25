@@ -11,8 +11,10 @@ namespace TCC_SistemaEmpresa.Models
         public string? Email { get; set; }
         public string? Telefone { get; set; }
         public string? Endereco { get; set; }
-        public DateTime DataCadastrp { get; set; }
+        public DateTime DataCadastro { get; set; } = DateTime.Now;
         public bool Ativo { get; set; }
+        public Empresa Empresa { get; set; }
+
 
     }
 }
