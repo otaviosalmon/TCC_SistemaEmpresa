@@ -163,6 +163,28 @@ body {
     padding: 10px 32px;
 }
 
+/* Resumo de erros vindo de asp-validation-summary */
+.login-erro {
+    margin-bottom: 16px;
+    padding: 10px 14px;
+    border: 1px solid #e53e3e;
+    border-radius: 8px;
+    background-color: rgba(229, 62, 62, 0.12);
+    color: #ffb4b4;
+    font-size: 0.88rem;
+}
+
+/* Sem erros o helper ainda emite o container (vazio) — esconder para não abrir um vão. */
+.login-erro.validation-summary-valid {
+    display: none;
+}
+
+.login-erro ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
 .login-button {
     width: 100%;
     padding: 12px;

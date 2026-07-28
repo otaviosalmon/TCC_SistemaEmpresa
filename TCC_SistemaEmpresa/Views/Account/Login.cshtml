@@ -1,3 +1,4 @@
+@model TCC_SistemaEmpresa.Models.ViewModels.LoginViewModel
 @{
     Layout = null;
     ViewData["Title"] = "Login";
@@ -16,11 +17,16 @@
             <h1>Bem vindo!</h1>
             <p class="subtitle">Faça o login para começar</p>
 
-            <form class="login-form">
-                <input type="text" name="usuario" placeholder="Usuário" autocomplete="username" />
+            <form class="login-form" method="post" asp-controller="Account" asp-action="Login"
+                  asp-route-returnUrl="@ViewData["ReturnUrl"]">
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="All" class="login-erro"></div>
+
+                <input asp-for="Usuario" type="text" placeholder="Usuário" autocomplete="username" />
 
                 <div class="password-field">
-                    <input type="password" name="senha" id="senha" placeholder="Senha" autocomplete="current-password" />
+                    <input asp-for="Senha" type="password" id="senha" placeholder="Senha" autocomplete="current-password" />
                     <button type="button" class="toggle-password" id="toggleSenha" aria-label="Mostrar senha" aria-pressed="false">
                         <svg class="icon-eye" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z" />
