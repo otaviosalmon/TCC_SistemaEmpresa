@@ -1,0 +1,203 @@
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    background-color: #141414;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-page {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 380px;
+    background-color: #242424;
+    border-radius: 20px;
+    padding: 40px 32px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.login-card h1 {
+    margin: 0 0 4px;
+    color: #ffffff;
+    font-size: 1.65rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.login-card .subtitle {
+    margin: 0 0 32px;
+    color: #cfcfcf;
+    font-size: 1rem;
+    font-weight: 400;
+    text-align: center;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.login-form input {
+    width: 100%;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    border: none;
+    border-radius: 8px;
+    background-color: #adadad;
+    color: #2b2b2b;
+    font-size: 0.95rem;
+}
+
+.login-form input::placeholder {
+    color: #555555;
+}
+
+.login-form input:focus {
+    outline: 2px solid #22c3f0;
+    outline-offset: 1px;
+}
+
+.password-field {
+    position: relative;
+    margin-bottom: 16px;
+}
+
+.password-field input {
+    margin-bottom: 0;
+    padding-right: 42px;
+}
+
+.toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #555555;
+    cursor: pointer;
+}
+
+.toggle-password:hover {
+    color: #2b2b2b;
+}
+
+.toggle-password:focus-visible {
+    outline: 2px solid #22c3f0;
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+.toggle-password .icon-eye-off {
+    display: none;
+}
+
+.toggle-password[aria-pressed="true"] .icon-eye {
+    display: none;
+}
+
+.toggle-password[aria-pressed="true"] .icon-eye-off {
+    display: block;
+}
+
+.forgot-link {
+    display: block;
+    text-align: center;
+    color: #4a63f0;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    margin: 16px 0 28px;
+}
+
+.forgot-link:hover {
+    text-decoration: underline;
+}
+
+.view-forgot {
+    display: none;
+}
+
+.login-page[data-view="forgot"] .view-login {
+    display: none;
+}
+
+.login-page[data-view="forgot"] .view-forgot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.forgot-message {
+    margin: 24px 0 40px;
+    color: #ffffff;
+    font-size: 1.1rem;
+    line-height: 1.4;
+    text-align: center;
+}
+
+.forgot-button {
+    width: auto;
+    padding: 10px 32px;
+}
+
+/* Resumo de erros vindo de asp-validation-summary */
+.login-erro {
+    margin-bottom: 16px;
+    padding: 10px 14px;
+    border: 1px solid #e53e3e;
+    border-radius: 8px;
+    background-color: rgba(229, 62, 62, 0.12);
+    color: #ffb4b4;
+    font-size: 0.88rem;
+}
+
+/* Sem erros o helper ainda emite o container (vazio) — esconder para não abrir um vão. */
+.login-erro.validation-summary-valid {
+    display: none;
+}
+
+.login-erro ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.login-button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background-color: #22c3f0;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.login-button:hover {
+    background-color: #17aede;
+}

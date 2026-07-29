@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using System;
 using TCC_SistemaEmpresa.Data;
@@ -5,7 +8,33 @@ using TCC_SistemaEmpresa.Data;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+// RNF37: autenticação obrigatória. O filtro global exige usuário logado em TODA
+// action; o que for público precisa de [AllowAnonymous] explícito (ex.: a tela de login).
+builder.Services.AddControllersWithViews(options =>
+{
+    var politica = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+
+    options.Filters.Add(new AuthorizeFilter(politica));
+});
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.LogoutPath = "/Account/Logout";
+        options.AccessDeniedPath = "/Account/AcessoNegado";
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+        options.SlidingExpiration = true;
+
+        options.Cookie.Name = "LOSolutions.Auth";
+        options.Cookie.HttpOnly = true;          // bloqueia leitura do cookie via JavaScript
+        options.Cookie.SameSite = SameSiteMode.Lax;
+        // SameAsRequest permite rodar no perfil "http" do launchSettings durante o
+        // desenvolvimento. Em produção (só HTTPS), trocar para CookieSecurePolicy.Always.
+        options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration
@@ -25,6 +54,9 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+// UseAuthentication SEMPRE antes de UseAuthorization: sem isso o cookie não é lido
+// e o usuário aparece como anônimo mesmo logado.
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

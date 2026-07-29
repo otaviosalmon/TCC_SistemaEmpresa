@@ -45,6 +45,18 @@ namespace TCC_SistemaEmpresa.Data
             modelBuilder.Entity<ItemVenda>()
                 .Property(i => i.Subtotal)
                 .ValueGeneratedOnAddOrUpdate();
+
+            // As colunas do banco são snake_case (empresa_id, password_hash...) e as
+            // propriedades são PascalCase. Onde os nomes só diferem em caixa o SQL Server
+            // resolve sozinho (collation CI); onde há underscore, o mapeamento é obrigatório.
+            // Mapeado aqui apenas o que o login consome — as demais entidades ainda precisam
+            // do mesmo tratamento quando forem usadas.
+            modelBuilder.Entity<Usuario>(usuario =>
+            {
+                usuario.Property(u => u.EmpresaId).HasColumnName("empresa_id");
+                usuario.Property(u => u.PasswordHash).HasColumnName("password_hash");
+                usuario.Property(u => u.DataCadastro).HasColumnName("data_cadastro");
+            });
         }
         
     }
