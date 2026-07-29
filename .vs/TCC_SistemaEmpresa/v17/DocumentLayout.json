@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\TCC_SistemaEmpresa\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{0D339401-E355-47F4-8968-EA7730E75CC6}|TCC_SistemaEmpresa\\TCC_SistemaEmpresa.csproj|c:\\tcc_sistemaempresa\\tcc_sistemaempresa\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{0D339401-E355-47F4-8968-EA7730E75CC6}|TCC_SistemaEmpresa\\TCC_SistemaEmpresa.csproj|solutionrelative:tcc_sistemaempresa\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{0D339401-E355-47F4-8968-EA7730E75CC6}|TCC_SistemaEmpresa\\TCC_SistemaEmpresa.csproj|c:\\tcc_sistemaempresa\\tcc_sistemaempresa\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{0D339401-E355-47F4-8968-EA7730E75CC6}|TCC_SistemaEmpresa\\TCC_SistemaEmpresa.csproj|solutionrelative:tcc_sistemaempresa\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -27,19 +31,32 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "_Layout.cshtml",
+              "DocumentMoniker": "C:\\TCC_SistemaEmpresa\\TCC_SistemaEmpresa\\Views\\Shared\\_Layout.cshtml",
+              "RelativeDocumentMoniker": "TCC_SistemaEmpresa\\Views\\Shared\\_Layout.cshtml",
+              "ToolTip": "C:\\TCC_SistemaEmpresa\\TCC_SistemaEmpresa\\Views\\Shared\\_Layout.cshtml",
+              "RelativeToolTip": "TCC_SistemaEmpresa\\Views\\Shared\\_Layout.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-07-27T18:47:53.678Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "AppDbContext.cs",
               "DocumentMoniker": "C:\\TCC_SistemaEmpresa\\TCC_SistemaEmpresa\\Data\\AppDbContext.cs",
               "RelativeDocumentMoniker": "TCC_SistemaEmpresa\\Data\\AppDbContext.cs",
               "ToolTip": "C:\\TCC_SistemaEmpresa\\TCC_SistemaEmpresa\\Data\\AppDbContext.cs",
               "RelativeToolTip": "TCC_SistemaEmpresa\\Data\\AppDbContext.cs",
-              "ViewState": "AgIAABkAAAAAAAAAAAAUwCQAAAA3AAAAAAAAAA==",
+              "ViewState": "AgIAABQAAAAAAAAAAAA5wCQAAAA3AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-07-27T17:58:58.234Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\TCC_SistemaEmpresa\\TCC_SistemaEmpresa\\Program.cs",
               "RelativeDocumentMoniker": "TCC_SistemaEmpresa\\Program.cs",
@@ -47,8 +64,7 @@
               "RelativeToolTip": "TCC_SistemaEmpresa\\Program.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-27T17:53:28.964Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-07-27T17:53:28.964Z"
             }
           ]
         },
