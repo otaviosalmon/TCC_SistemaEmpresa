@@ -1,0 +1,493 @@
+/* ==========================================================================
+   Tema e área de conteúdo da aplicação.
+   Paleta alinhada à tela de login (wwwroot/css/login.css).
+
+   A barra lateral NÃO está aqui — ela é um componente à parte, em
+   wwwroot/css/sidebar.css. Este arquivo define as variáveis de cor que ela
+   consome (e das quais ela tem valor de reserva, para não depender daqui).
+   ========================================================================== */
+
+:root {
+    --cor-fundo: #141414;
+    --cor-sidebar: #1e1e1e;
+    --cor-painel: #2b2b2b;
+    --cor-campo: #3d3d3d;
+    --cor-borda: #4a4a4a;
+    --cor-texto: #f2f2f2;
+    --cor-texto-suave: #b9b9b9;
+    --cor-destaque: #22c3f0;
+    --cor-acao: #d9d9d9;
+    --cor-perigo: #e05a5a;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto);
+    font-size: 15px;
+}
+
+a {
+    color: var(--cor-destaque);
+}
+
+/* ============================ Estrutura ================================= */
+
+.app-shell {
+    display: flex;
+    min-height: 100vh;
+    padding: 16px;
+    gap: 16px;
+}
+
+.app-conteudo {
+    flex: 1;
+    min-width: 0;
+    background-color: var(--cor-painel);
+    border-radius: 14px;
+    padding: 28px 32px;
+}
+
+/* ======================== Cabeçalho da página =========================== */
+
+.pagina-titulo {
+    display: inline-block;
+    margin: 0 auto 26px;
+    padding: 12px 30px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 10px;
+    background-color: #333333;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.pagina-titulo-centro {
+    text-align: center;
+}
+
+.form-titulo {
+    margin: 0 0 28px;
+    font-size: 1.35rem;
+    font-style: italic;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+/* ============================ Formulários =============================== */
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 18px 20px;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.campo-nome        { grid-column: span 5; }
+.campo-id          { grid-column: span 2; }
+.campo-cpf         { grid-column: span 5; }
+.campo-ativo       { grid-column: span 2; }
+.campo-salario     { grid-column: span 3; }
+.campo-comissao    { grid-column: span 2; }
+.campo-data        { grid-column: span 5; }
+.campo-cargo       { grid-column: span 5; }
+.campo-largo       { grid-column: span 12; }
+
+.campo label,
+.campo .campo-rotulo {
+    font-size: 0.92rem;
+    color: var(--cor-texto);
+}
+
+/* Valor só de leitura renderizado como texto (ex.: a chave primária). Repete a
+   caixa do input para alinhar com os campos vizinhos, sem ser um campo. */
+.campo-valor {
+    padding: 9px 12px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    background-color: #343434;
+    color: #a5a5a5;
+    font-size: 0.92rem;
+    line-height: 1.35;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Valor que ainda não é definitivo (ex.: o id previsto antes de gravar). */
+.campo-valor-previsto {
+    font-style: italic;
+    color: #8a8a8a;
+}
+
+.campo input,
+.campo select,
+.campo textarea {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    background-color: var(--cor-campo);
+    color: var(--cor-texto);
+    font-family: inherit;
+    font-size: 0.92rem;
+}
+
+.campo input::placeholder,
+.campo textarea::placeholder {
+    color: #9a9a9a;
+}
+
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus {
+    outline: 2px solid var(--cor-destaque);
+    outline-offset: 1px;
+}
+
+.campo input:disabled,
+.campo input[readonly],
+.campo select:disabled,
+.campo textarea:disabled {
+    background-color: #343434;
+    color: #a5a5a5;
+    cursor: default;
+}
+
+.campo select option {
+    background-color: var(--cor-campo);
+    color: var(--cor-texto);
+}
+
+.campo-erro {
+    min-height: 1em;
+    font-size: 0.78rem;
+    color: #ff9b9b;
+}
+
+.form-acoes {
+    display: flex;
+    justify-content: flex-end;
+    gap: 14px;
+    margin-top: 40px;
+}
+
+.form-acoes-centro {
+    justify-content: center;
+}
+
+.mensagem-centro {
+    margin: 0;
+    color: var(--cor-texto-suave);
+    text-align: center;
+}
+
+/* ============================== Botões ================================== */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 116px;
+    padding: 10px 22px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn-claro {
+    background-color: var(--cor-acao);
+    color: #1c1c1c;
+}
+
+.btn-claro:hover {
+    background-color: #ffffff;
+}
+
+.btn-escuro {
+    background-color: #141414;
+    color: #ffffff;
+    border-color: #141414;
+}
+
+.btn-escuro:hover {
+    background-color: #000000;
+}
+
+.btn-perigo {
+    background-color: var(--cor-perigo);
+    color: #ffffff;
+}
+
+.btn-perigo:hover {
+    background-color: #c94747;
+}
+
+/* ============================== Listagem ================================ */
+
+.listagem-barra {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.busca {
+    position: relative;
+    width: 260px;
+}
+
+.busca input {
+    width: 100%;
+    padding: 8px 34px 8px 14px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 20px;
+    background-color: var(--cor-campo);
+    color: var(--cor-texto);
+    font-family: inherit;
+    font-size: 0.85rem;
+}
+
+.busca input:focus {
+    outline: 2px solid var(--cor-destaque);
+    outline-offset: 1px;
+}
+
+.busca button {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%);
+    display: flex;
+    padding: 2px;
+    border: none;
+    background: transparent;
+    color: var(--cor-texto-suave);
+    cursor: pointer;
+}
+
+.filtro select {
+    padding: 8px 12px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 7px;
+    background-color: var(--cor-campo);
+    color: var(--cor-texto);
+    font-family: inherit;
+    font-size: 0.85rem;
+}
+
+.tabela-wrapper {
+    border: 1px solid var(--cor-borda);
+    border-radius: 10px;
+    overflow-x: auto;
+}
+
+.tabela {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.tabela th {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--cor-borda);
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ffffff;
+    text-align: center;
+}
+
+.tabela td {
+    padding: 10px 16px;
+    border-bottom: 1px solid #3a3a3a;
+    color: var(--cor-texto);
+    text-align: center;
+}
+
+.tabela tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.tabela tbody tr:hover {
+    background-color: #333333;
+}
+
+.tabela .col-numerica {
+    text-align: right;
+}
+
+.tabela .col-acoes {
+    width: 138px;
+    white-space: nowrap;
+}
+
+.tabela-vazia td {
+    padding: 32px 16px;
+    color: var(--cor-texto-suave);
+}
+
+/* Indicador de ativo/inativo — quadradinho marcado do mockup. */
+.marcador-ativo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 4px;
+    background-color: #6f6f6f;
+    color: #ffffff;
+}
+
+.marcador-ativo.sim {
+    background-color: #8f8f8f;
+}
+
+.acoes-linha {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.acao-icone {
+    display: inline-flex;
+    padding: 4px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--cor-texto-suave);
+    cursor: pointer;
+}
+
+.acao-icone:hover {
+    color: #ffffff;
+    background-color: #444444;
+}
+
+.acao-icone.perigo:hover {
+    color: #ffffff;
+    background-color: var(--cor-perigo);
+}
+
+/* Funcionário ativo: o X segue no lugar para não desalinhar a coluna, mas sem
+   ação — e sem o realce de hover, que sugeriria que é clicável. */
+.acao-icone:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.acao-icone:disabled:hover {
+    color: var(--cor-texto-suave);
+    background-color: transparent;
+}
+
+/* Formulário que existe só para carregar o token antifalsificação — quem
+   dispara o submit é o popup. Não deve ocupar espaço na linha. */
+.acao-form {
+    display: none;
+}
+
+.listagem-rodape {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 18px;
+}
+
+/* =========================== Mensagens ================================== */
+
+.alerta {
+    margin-bottom: 18px;
+    padding: 11px 16px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+}
+
+.alerta-sucesso {
+    border: 1px solid #3f9d5a;
+    background-color: rgba(63, 157, 90, 0.14);
+    color: #a9e8bd;
+}
+
+.alerta-erro {
+    border: 1px solid var(--cor-perigo);
+    background-color: rgba(224, 90, 90, 0.14);
+    color: #ffb4b4;
+}
+
+/* Resumo de erros do asp-validation-summary: escondido quando não há erro. */
+.alerta-erro.validation-summary-valid {
+    display: none;
+}
+
+.alerta ul {
+    margin: 0;
+    padding-left: 18px;
+}
+
+/* ============================== Popup =================================== */
+
+.modal {
+    width: min(440px, calc(100vw - 32px));
+    padding: 26px 28px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 12px;
+    background-color: var(--cor-painel);
+    color: var(--cor-texto);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
+}
+
+.modal::backdrop {
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.modal-titulo {
+    margin: 0 0 12px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.modal-texto {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--cor-texto-suave);
+}
+
+.modal-acoes {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 26px;
+}
+
+/* =========================== Responsivo ================================= */
+
+@media (max-width: 900px) {
+    .app-shell {
+        flex-direction: column;
+    }
+
+    .form-grid > .campo {
+        grid-column: span 12;
+    }
+}

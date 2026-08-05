@@ -46,6 +46,7 @@ namespace TCC_SistemaEmpresa.Controllers
             // RN: usuário inativo não autentica (exclusão lógica — §5 do CLAUDE.md).
             var usuario = await _context.Usuario
                 .AsNoTracking()
+                .Include(u => u.Empresa)
                 .FirstOrDefaultAsync(u => u.Username == username && u.Ativo);
 
             // Verifica com o username gravado no banco, não com o que foi digitado:
@@ -67,9 +68,12 @@ namespace TCC_SistemaEmpresa.Controllers
                 new(ClaimTypes.NameIdentifier, usuario!.Id.ToString()),
                 new(ClaimTypes.Name, usuario.Username),
                 new(ClaimTypes.Role, usuario.Role),
+                new(ClaimTypes.Email, usuario.Email ?? string.Empty),
                 // EmpresaId no cookie é a base do isolamento multiempresa (RNF39):
                 // toda consulta a entidade de negócio deve ser filtrada por esta claim.
-                new(ClaimsEmpresa.EmpresaId, usuario.EmpresaId.ToString())
+                new(ClaimsEmpresa.EmpresaId, usuario.EmpresaId.ToString()),
+                // Só para exibição no cabeçalho da barra lateral.
+                new(ClaimsEmpresa.EmpresaNome, usuario.Empresa?.Nome ?? string.Empty)
             };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

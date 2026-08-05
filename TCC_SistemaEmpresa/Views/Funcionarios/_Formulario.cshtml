@@ -1,0 +1,113 @@
+@model TCC_SistemaEmpresa.Models.ViewModels.FuncionarioFormViewModel
+@{
+    // Uma única marcação serve às três telas: criar, editar e visualizar.
+    var titulo = Model.SomenteLeitura
+        ? "Funcionário"
+        : Model.EhEdicao ? "Editar Funcionário" : "Criar Funcionário";
+
+    var acao = Model.EhEdicao ? "Edit" : "Create";
+    var desabilitado = Model.SomenteLeitura ? "disabled" : null;
+}
+
+<h1 class="form-titulo">@titulo</h1>
+
+<form method="post" asp-action="@acao" asp-route-id="@(Model.EhEdicao ? Model.Id.ToString() : null)">
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="ModelOnly" class="alerta alerta-erro"></div>
+
+    <div class="form-grid">
+        <div class="campo campo-nome">
+            <label asp-for="Nome">Nome Funcionário:</label>
+            <input asp-for="Nome" placeholder="Nome..." maxlength="150" autocomplete="off" disabled="@desabilitado" />
+            <span asp-validation-for="Nome" class="campo-erro"></span>
+        </div>
+
+        <div class="campo campo-id">
+            @* Chave primária IDENTITY: quem gera o valor é o banco. Renderizado como
+               texto, e não como <input>, de propósito — assim não há campo para editar
+               nem para o navegador enviar, e não é possível reintroduzir isso por
+               engano tirando um "readonly". O model também recusa o valor: veja o
+               [BindNever] em FuncionarioFormViewModel.Id. *@
+            <span class="campo-rotulo">Id:</span>
+            @if (Model.EhEdicao)
+            {
+                <span class="campo-valor">@Model.Id</span>
+            }
+            else if (Model.ProximoId.HasValue)
+            {
+                @* Previsão, não reserva: o número definitivo sai do banco no INSERT.
+                   O itálico e o title existem para a tela não afirmar o que não sabe. *@
+                <span class="campo-valor campo-valor-previsto"
+                      title="Número previsto. O id definitivo é atribuído pelo banco ao salvar e pode ser maior se outro cadastro for gravado antes.">
+                    @Model.ProximoId
+                </span>
+            }
+            else
+            {
+                <span class="campo-valor campo-valor-previsto">Gerado automaticamente</span>
+            }
+        </div>
+
+        <div class="campo campo-cpf">
+            <label asp-for="Cpf">CPF</label>
+            <input asp-for="Cpf" placeholder="Insira o CPF..." maxlength="14"
+                   inputmode="numeric" autocomplete="off" disabled="@desabilitado" />
+            <span asp-validation-for="Cpf" class="campo-erro"></span>
+        </div>
+
+        <div class="campo campo-ativo">
+            <label asp-for="Ativo">Ativo:</label>
+            @* Os valores batem com bool.ToString() ("True"/"False") para o
+               tag helper conseguir pré-selecionar a opção corrente. *@
+            <select asp-for="Ativo" disabled="@desabilitado">
+                <option value="True">Ativo</option>
+                <option value="False">Inativo</option>
+            </select>
+            <span asp-validation-for="Ativo" class="campo-erro"></span>
+        </div>
+
+        <div class="campo campo-salario">
+            <label asp-for="Salario">Salário:</label>
+            @* data-val-number escrito à mão: o texto gerado pelo framework vem em
+               inglês ("must be a number") e não é traduzível por atributo. *@
+            <input asp-for="Salario" placeholder="R$00,00" inputmode="decimal"
+                   data-val-number="Informe um valor numérico." disabled="@desabilitado" />
+            <span asp-validation-for="Salario" class="campo-erro"></span>
+        </div>
+
+        <div class="campo campo-comissao">
+            <label asp-for="PerComissao">Comissão:</label>
+            <input asp-for="PerComissao" placeholder="0%" inputmode="decimal"
+                   data-val-number="Informe um valor numérico." disabled="@desabilitado" />
+            <span asp-validation-for="PerComissao" class="campo-erro"></span>
+        </div>
+
+        <div class="campo campo-data">
+            @* O mockup rotula "Data Cadastro", mas Tb_Funcionario só tem data_admissao. *@
+            <label asp-for="DataAdmissao">Data de Admissão:</label>
+            <input asp-for="DataAdmissao" type="date" disabled="@desabilitado" />
+            <span asp-validation-for="DataAdmissao" class="campo-erro"></span>
+        </div>
+
+        <div class="campo campo-cargo">
+            <label asp-for="CargoId">Selecione Cargo:</label>
+            <select asp-for="CargoId" asp-items="Model.Cargos" disabled="@desabilitado">
+                <option value="0">Selecione o Cargo...</option>
+            </select>
+            <span asp-validation-for="CargoId" class="campo-erro"></span>
+        </div>
+    </div>
+
+    <div class="form-acoes">
+        @if (Model.SomenteLeitura)
+        {
+            <a class="btn btn-escuro" asp-action="Index">Voltar</a>
+        }
+        else
+        {
+            <button type="submit" class="btn btn-claro">Salvar</button>
+            <a class="btn btn-escuro" asp-action="Index">Cancelar</a>
+        }
+    </div>
+</form>

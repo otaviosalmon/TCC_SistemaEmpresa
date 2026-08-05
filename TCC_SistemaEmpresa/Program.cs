@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Globalization;
 using TCC_SistemaEmpresa.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -48,6 +50,16 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+
+// Cultura fixa em pt-BR: sem isso o parse de dinheiro ("1.234,56") e a formatação
+// de datas dependeriam da configuração regional da máquina que hospeda a aplicação.
+var culturaPtBr = new[] { new CultureInfo("pt-BR") };
+app.UseRequestLocalization(new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture("pt-BR"),
+    SupportedCultures = culturaPtBr,
+    SupportedUICultures = culturaPtBr
+});
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

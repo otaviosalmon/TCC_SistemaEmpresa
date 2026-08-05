@@ -1,0 +1,13 @@
+@model TCC_SistemaEmpresa.Models.ViewModels.FuncionarioFormViewModel
+@{
+    ViewData["Title"] = "Criar Funcionário";
+}
+
+@await Html.PartialAsync("_Formulario", Model)
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    @* Depois do partial: sobrescreve as regras de número do jQuery Validation
+       para o formato pt-BR (ver wwwroot/js/validacao-ptbr.js). *@
+    <script src="~/js/validacao-ptbr.js" asp-append-version="true"></script>
+}
