@@ -1,0 +1,7 @@
+@model TCC_SistemaEmpresa.Models.ViewModels.FuncionarioFormViewModel
+@{
+    ViewData["Title"] = "Funcionário";
+}
+
+@* Mesma marcação do formulário, com os campos desabilitados (SomenteLeitura). *@
+@await Html.PartialAsync("_Formulario", Model)

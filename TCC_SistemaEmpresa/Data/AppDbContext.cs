@@ -57,6 +57,45 @@ namespace TCC_SistemaEmpresa.Data
                 usuario.Property(u => u.PasswordHash).HasColumnName("password_hash");
                 usuario.Property(u => u.DataCadastro).HasColumnName("data_cadastro");
             });
+
+            modelBuilder.Entity<Cargo>(cargo =>
+            {
+                cargo.Property(c => c.EmpresaId).HasColumnName("empresa_id");
+                cargo.Property(c => c.SalarioBase).HasColumnName("salario_base").HasPrecision(10, 2);
+                cargo.Property(c => c.PerComissaoBase).HasColumnName("per_comissao_base").HasPrecision(5, 2);
+            });
+
+            modelBuilder.Entity<Funcionario>(funcionario =>
+            {
+                funcionario.Property(f => f.EmpresaId).HasColumnName("empresa_id");
+                funcionario.Property(f => f.UsuarioId).HasColumnName("usuario_id");
+                funcionario.Property(f => f.CargoId).HasColumnName("cargo_id");
+                funcionario.Property(f => f.Salario).HasPrecision(10, 2);
+                funcionario.Property(f => f.PerComissao).HasColumnName("per_comissao").HasPrecision(5, 2);
+                // data_admissao é DATE no banco, não DATETIME.
+                funcionario.Property(f => f.DataAdmissao).HasColumnName("data_admissao").HasColumnType("date");
+            });
+
+            modelBuilder.Entity<Venda>(venda =>
+            {
+                venda.Property(v => v.EmpresaId).HasColumnName("empresa_id");
+                venda.Property(v => v.FuncionarioId).HasColumnName("funcionario_id");
+                venda.Property(v => v.ClienteId).HasColumnName("cliente_id");
+                venda.Property(v => v.FormaPagamentoId).HasColumnName("forma_pagamento_id");
+                venda.Property(v => v.DataVenda).HasColumnName("data_venda");
+                venda.Property(v => v.ValorTotal).HasColumnName("valor_total").HasPrecision(10, 2);
+                venda.Property(v => v.ValorFinal).HasColumnName("valor_final").HasPrecision(10, 2);
+                venda.Property(v => v.Desconto).HasPrecision(10, 2);
+            });
+
+            modelBuilder.Entity<LogSistema>(log =>
+            {
+                log.Property(l => l.EmpresaId).HasColumnName("empresa_id");
+                log.Property(l => l.UsuarioId).HasColumnName("usuario_id");
+                log.Property(l => l.EntidadeAfetada).HasColumnName("entidade_afetada");
+                log.Property(l => l.RegistroId).HasColumnName("registro_id");
+                log.Property(l => l.DataHora).HasColumnName("data_hora");
+            });
         }
         
     }

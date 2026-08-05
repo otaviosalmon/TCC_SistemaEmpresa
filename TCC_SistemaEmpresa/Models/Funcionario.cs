@@ -16,7 +16,8 @@
         public bool Ativo { get; set; }
         public Empresa Empresa { get; set; }
         public Cargo Cargo { get; set; }
-        public Usuario Usuario { get; set; }
+        // usuario_id é nullable: funcionário pode não ter acesso ao sistema.
+        public Usuario? Usuario { get; set; }
 
     }
 }

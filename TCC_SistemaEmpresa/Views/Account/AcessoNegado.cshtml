@@ -1,26 +1,15 @@
 @{
-    Layout = null;
+    // Usa o layout padrão (sidebar): quem chega aqui está autenticado, apenas
+    // sem permissão para a tela pedida — precisa conseguir navegar para outra.
     ViewData["Title"] = "Acesso negado";
 }
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - TCC_SistemaEmpresa</title>
-    <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
-</head>
-<body>
-    <div class="login-page">
-        <div class="login-card">
-            <h1>Acesso negado</h1>
-            <p class="subtitle">Seu perfil não tem permissão para acessar esta página.</p>
 
-            <form method="post" asp-controller="Account" asp-action="Logout">
-                @Html.AntiForgeryToken()
-                <button type="submit" class="login-button">Sair</button>
-            </form>
-        </div>
-    </div>
-</body>
-</html>
+<div class="pagina-titulo-centro">
+    <h1 class="pagina-titulo">Acesso negado</h1>
+</div>
+
+<p class="mensagem-centro">Seu perfil não tem permissão para acessar esta página.</p>
+
+<div class="form-acoes form-acoes-centro">
+    <a class="btn btn-claro" asp-controller="Home" asp-action="Index">Voltar ao início</a>
+</div>
