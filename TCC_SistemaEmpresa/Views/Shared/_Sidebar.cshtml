@@ -3,15 +3,13 @@
 @{
     var controllerAtual = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty;
 
-    // Claims gravadas no login (AccountController). O fallback cobre cookies emitidos
-    // antes destas claims existirem — o usuário só precisa refazer o login.
+
     var nomeEmpresa = User.FindFirst(ClaimsEmpresa.EmpresaNome)?.Value ?? "Nome Empresa";
     var nomeUsuario = User.Identity?.Name ?? string.Empty;
     var emailUsuario = User.FindFirst(ClaimTypes.Email)?.Value ?? string.Empty;
     var iniciais = string.IsNullOrEmpty(nomeUsuario) ? "?" : nomeUsuario[..1].ToUpperInvariant();
 
-    // Qual grupo já vem aberto: o que contém a tela atual. Ao adicionar um módulo
-    // novo, basta registrar o nome do controller no grupo correspondente.
+
     var controllersPorGrupo = new Dictionary<string, string[]>
     {
         ["gerenciamento"] = new[] { "Produtos", "Categorias", "Clientes", "Funcionarios", "Usuarios" },
@@ -23,9 +21,7 @@
         .FirstOrDefault(grupo => grupo.Value.Contains(controllerAtual, StringComparer.OrdinalIgnoreCase))
         .Key;
 
-    // Todos os <details> compartilham o mesmo name: abrir um fecha os outros
-    // (accordion nativo, sem JavaScript). Em navegador que não suporte o atributo,
-    // o menu continua funcionando — apenas permite mais de um grupo aberto.
+
     const string grupoExclusivo = "sidebar-grupo";
 }
 
@@ -42,7 +38,6 @@
             DashBoard
         </a>
 
-        @* ------------------------------- Gerenciamento ------------------------------- *@
         <details class="sidebar-grupo" name="@grupoExclusivo" open="@(grupoAberto == "gerenciamento" ? "open" : null)">
             <summary class="sidebar-grupo-titulo">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -90,7 +85,6 @@
             </div>
         </details>
 
-        @* --------------------------------- Financeiro -------------------------------- *@
         <details class="sidebar-grupo" name="@grupoExclusivo" open="@(grupoAberto == "financeiro" ? "open" : null)">
             <summary class="sidebar-grupo-titulo">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -123,7 +117,6 @@
             </div>
         </details>
 
-        @* --------------------------------- Relatórios -------------------------------- *@
         <details class="sidebar-grupo" name="@grupoExclusivo" open="@(grupoAberto == "relatorios" ? "open" : null)">
             <summary class="sidebar-grupo-titulo">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

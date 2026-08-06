@@ -1,12 +1,4 @@
-// Popup de confirmação e de aviso, sobre o <dialog> nativo do HTML.
-//
-// A tela declara UM <dialog> e qualquer botão com data-modal-texto vira gatilho.
-// O texto, o título e o rótulo do botão vêm dos data-attributes do gatilho, então
-// não há mensagem escrita aqui dentro — este arquivo não conhece nenhuma tela.
-//
-// Dois modos, decididos pela presença de data-modal-form:
-//   com    -> confirmação: o botão de confirmar submete aquele formulário;
-//   sem    -> aviso: só o botão de fechar (usado quando a ação está bloqueada).
+
 (function () {
     var dialogo = document.querySelector('[data-modal]');
     if (!dialogo || typeof dialogo.showModal !== 'function') {
@@ -32,7 +24,6 @@
                     botaoConfirmar.textContent = gatilho.dataset.modalConfirmar || 'Confirmar';
                     botaoConfirmar.hidden = false;
                 } else {
-                    // Aviso puro: não há o que confirmar.
                     botaoConfirmar.hidden = true;
                 }
 
@@ -56,8 +47,6 @@
         }
     );
 
-    // Clique no fundo escuro fecha. O <dialog> recebe o clique do ::backdrop como
-    // se fosse nele mesmo, então basta conferir se caiu fora da área do conteúdo.
     dialogo.addEventListener('click', function (evento) {
         if (evento.target !== dialogo) {
             return;
