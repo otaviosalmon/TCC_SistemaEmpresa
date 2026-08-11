@@ -52,6 +52,23 @@ END;
 GO
 
 -- ================================================================
+-- Categorias (tipos) de produto
+-- Tb_Produto.categoria_produto_id é NOT NULL: sem ao menos uma linha
+-- aqui, nenhum produto pode ser cadastrado.
+-- ================================================================
+IF NOT EXISTS (SELECT 1 FROM Tb_Categoria_Produto WHERE empresa_id = 1)
+BEGIN
+    INSERT INTO Tb_Categoria_Produto (empresa_id, nome, descricao)
+    VALUES
+        (1, 'Alimentos', 'Produtos alimentícios em geral'),
+        (1, 'Bebidas',   'Bebidas em geral'),
+        (1, 'Limpeza',   'Produtos de limpeza'),
+        (1, 'Higiene',   'Higiene pessoal'),
+        (1, 'Outros',    'Itens sem categoria específica');
+END;
+GO
+
+-- ================================================================
 -- Cargo e usuário admin para primeiro acesso
 -- ================================================================
 IF NOT EXISTS (SELECT 1 FROM Tb_Cargo WHERE empresa_id = 1 AND nome = 'Administrador')

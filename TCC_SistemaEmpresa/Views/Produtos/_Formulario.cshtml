@@ -1,0 +1,142 @@
+@model TCC_SistemaEmpresa.Models.ViewModels.ProdutoFormViewModel
+@{
+    var titulo = Model.SomenteLeitura
+        ? "Produto"
+        : Model.EhEdicao ? "Editar Produto" : "Criar Produto";
+
+    var acao = Model.EhEdicao ? "Edit" : "Create";
+    var desabilitado = Model.SomenteLeitura ? "disabled" : null;
+    var estoqueEditavel = !Model.SomenteLeitura && !Model.EhEdicao;
+}
+
+<h1 class="form-titulo">@titulo</h1>
+
+@if (!Model.SomenteLeitura && !Model.TemCategorias)
+{
+    <div class="alerta alerta-erro">
+        Nenhum tipo de produto cadastrado nesta empresa. Como
+        <code>categoria_produto_id</code> é obrigatório, não é possível salvar um produto
+        antes de existir ao menos um tipo.
+    </div>
+}
+
+<form method="post" asp-action="@acao" asp-route-id="@(Model.EhEdicao ? Model.Id.ToString() : null)">
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="ModelOnly" class="alerta alerta-erro"></div>
+
+    <div class="form-grid">
+        <div class="campo campo-produto-nome">
+            <label asp-for="Nome">Nome Produto:</label>
+            <input asp-for="Nome" placeholder="Nome..." maxlength="150" autocomplete="off" disabled="@desabilitado" />
+            <span asp-validation-for="Nome" class="campo-erro"></span>
+        </div>
+
+        <div class="campo campo-id">
+            <span class="campo-rotulo">Id:</span>
+            @if (Model.EhEdicao)
+            {
+                <span class="campo-valor">@Model.Id</span>
+            }
+            else if (Model.ProximoId.HasValue)
+            {
+                <span class="campo-valor campo-valor-previsto"
+                      title="Número previsto. O id definitivo é atribuído pelo banco ao salvar e pode ser maior se outro cadastro for gravado antes.">
+                    @Model.ProximoId
+                </span>
+            }
+            else
+            {
+                <span class="campo-valor campo-valor-previsto">Gerado automaticamente</span>
+            }
+        </div>
+
+        <div class="campo campo-produto-data">
+            <span class="campo-rotulo">Data Cadastro:</span>
+            @if (Model.DataCadastro.HasValue)
+            {
+                <span class="campo-valor">@Model.DataCadastro.Value.ToString("dd/MM/yyyy")</span>
+            }
+            else
+            {
+                <span class="campo-valor campo-valor-previsto">Registrada ao salvar</span>
+            }
+        </div>
+
+        <div class="campo campo-ativo">
+            <label asp-for="Ativo">Ativo:</label>
+            <select asp-for="Ativo" disabled="@desabilitado">
+                <option value="True">Ativo</option>
+                <option value="False">Inativo</option>
+            </select>
+            <span asp-validation-for="Ativo" class="campo-erro"></span>
+        </div>
+
+        <div class="campo campo-produto-custo">
+            <label asp-for="PrecoCusto">Preço Custo:</label>
+            <input asp-for="PrecoCusto" placeholder="R$00,00" inputmode="decimal"
+                   data-val-number="Informe um valor numérico." disabled="@desabilitado" />
+            <span asp-validation-for="PrecoCusto" class="campo-erro"></span>
+        </div>
+
+        <div class="campo campo-produto-venda">
+            <label asp-for="PrecoVenda">Preço Venda:</label>
+            <input asp-for="PrecoVenda" placeholder="R$00,00" inputmode="decimal"
+                   data-val-number="Informe um valor numérico." disabled="@desabilitado" />
+            <span asp-validation-for="PrecoVenda" class="campo-erro"></span>
+        </div>
+
+        <div class="campo campo-produto-estoque">
+            @if (estoqueEditavel)
+            {
+                <label asp-for="QuantidadeAtual">Estoque inicial:</label>
+                <input asp-for="QuantidadeAtual" type="number" min="0" step="1"
+                       placeholder="Quantidade Atual..." />
+                <span asp-validation-for="QuantidadeAtual" class="campo-erro"></span>
+                <span class="campo-ajuda">
+                    Acima de zero, gera uma movimentação de entrada junto com o cadastro.
+                </span>
+            }
+            else
+            {
+                <span class="campo-rotulo">Estoque:</span>
+                <span class="campo-valor">@(Model.QuantidadeAtual ?? 0)</span>
+                <span class="campo-ajuda">Alterado pelo módulo de movimentação de estoque.</span>
+            }
+        </div>
+
+        <div class="campo campo-produto-estoque-min">
+            <label asp-for="EstoqueMinimo">Estoque Min:</label>
+            <input asp-for="EstoqueMinimo" type="number" min="0" step="1"
+                   placeholder="Quantidade Minima..." disabled="@desabilitado" />
+            <span asp-validation-for="EstoqueMinimo" class="campo-erro"></span>
+        </div>
+
+        <div class="campo campo-produto-descricao">
+            <label asp-for="Descricao">Descrição:</label>
+            <textarea asp-for="Descricao" placeholder="Descrição..." maxlength="255"
+                      rows="7" disabled="@desabilitado"></textarea>
+            <span asp-validation-for="Descricao" class="campo-erro"></span>
+        </div>
+
+        <div class="campo campo-produto-categoria">
+            <label asp-for="CategoriaProdutoId">Tipo Produto:</label>
+            <select asp-for="CategoriaProdutoId" asp-items="Model.Categorias" disabled="@desabilitado">
+                <option value="0">Selecione Tipo...</option>
+            </select>
+            <span asp-validation-for="CategoriaProdutoId" class="campo-erro"></span>
+        </div>
+    </div>
+
+    <div class="form-acoes">
+        @if (Model.SomenteLeitura)
+        {
+            <a class="btn btn-escuro" asp-action="Index">Voltar</a>
+        }
+        else
+        {
+            <button type="submit" class="btn btn-claro" disabled="@(Model.TemCategorias ? null : "disabled")">Salvar</button>
+            <a class="btn btn-escuro" asp-action="Index">Cancelar</a>
+        }
+    </div>
+</form>

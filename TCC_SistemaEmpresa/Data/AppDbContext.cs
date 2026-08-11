@@ -42,9 +42,46 @@ namespace TCC_SistemaEmpresa.Data
             modelBuilder.Entity<LogSistema>().ToTable("Tb_Log_Sistema");
 
 
-            modelBuilder.Entity<ItemVenda>()
-                .Property(i => i.Subtotal)
-                .ValueGeneratedOnAddOrUpdate();
+            modelBuilder.Entity<ItemVenda>(item =>
+            {
+                item.Property(i => i.VendaId).HasColumnName("venda_id");
+                item.Property(i => i.ProdutoId).HasColumnName("produto_id");
+                item.Property(i => i.PrecoUnitario).HasColumnName("preco_unitario").HasPrecision(10, 2);
+                item.Property(i => i.Subtotal).HasPrecision(10, 2).ValueGeneratedOnAddOrUpdate();
+            });
+
+            modelBuilder.Entity<CategoriaProduto>(categoria =>
+            {
+                categoria.Property(c => c.EmpresaId).HasColumnName("empresa_id");
+            });
+
+            modelBuilder.Entity<Produto>(produto =>
+            {
+                produto.Property(p => p.EmpresaId).HasColumnName("empresa_id");
+                produto.Property(p => p.CategoriaProdutoId).HasColumnName("categoria_produto_id");
+                produto.Property(p => p.PrecoCusto).HasColumnName("preco_custo").HasPrecision(10, 2);
+                produto.Property(p => p.PrecoVenda).HasColumnName("preco_venda").HasPrecision(10, 2);
+                produto.Property(p => p.QuantidadeAtual).HasColumnName("quantidade_atual");
+                produto.Property(p => p.EstoqueMinimo).HasColumnName("estoque_minimo");
+                produto.Property(p => p.DataCadastro).HasColumnName("data_cadastro");
+            });
+
+            modelBuilder.Entity<TipoMovimentacao>(tipo =>
+            {
+                tipo.Property(t => t.EmpresaId).HasColumnName("empresa_id");
+            });
+
+            modelBuilder.Entity<MovimentacaoEstoque>(movimentacao =>
+            {
+                movimentacao.Property(m => m.EmpresaId).HasColumnName("empresa_id");
+                movimentacao.Property(m => m.ProdutoId).HasColumnName("produto_id");
+                movimentacao.Property(m => m.UsuarioId).HasColumnName("usuario_id");
+                movimentacao.Property(m => m.VendaId).HasColumnName("venda_id");
+                movimentacao.Property(m => m.TipoMovimentacaoEstoqueId).HasColumnName("tipo_movimentacao_id");
+                movimentacao.Property(m => m.QuantidadeAntes).HasColumnName("quantidade_antes");
+                movimentacao.Property(m => m.QuantidadeDepois).HasColumnName("quantidade_depois");
+                movimentacao.Property(m => m.DataMovimentacao).HasColumnName("data_movimentacao");
+            });
 
             // As colunas do banco são snake_case (empresa_id, password_hash...) e as
             // propriedades são PascalCase. Onde os nomes só diferem em caixa o SQL Server

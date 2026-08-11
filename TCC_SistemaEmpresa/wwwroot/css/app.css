@@ -107,6 +107,15 @@ a {
 .campo-cargo       { grid-column: span 5; }
 .campo-largo       { grid-column: span 12; }
 
+.campo-produto-nome        { grid-column: span 6; }
+.campo-produto-data        { grid-column: span 4; }
+.campo-produto-custo       { grid-column: span 2; }
+.campo-produto-venda       { grid-column: span 2; }
+.campo-produto-estoque     { grid-column: span 3; }
+.campo-produto-estoque-min { grid-column: span 3; }
+.campo-produto-descricao   { grid-column: span 7; }
+.campo-produto-categoria   { grid-column: span 5; }
+
 .campo label,
 .campo .campo-rotulo {
     font-size: 0.92rem;
@@ -173,10 +182,22 @@ a {
     color: var(--cor-texto);
 }
 
+.campo textarea {
+    min-height: 150px;
+    line-height: 1.45;
+    resize: vertical;
+}
+
 .campo-erro {
     min-height: 1em;
     font-size: 0.78rem;
     color: #ff9b9b;
+}
+
+.campo-ajuda {
+    font-size: 0.75rem;
+    line-height: 1.35;
+    color: var(--cor-texto-suave);
 }
 
 .form-acoes {
@@ -240,6 +261,17 @@ a {
 
 .btn-perigo:hover {
     background-color: #c94747;
+}
+
+.btn:disabled,
+.btn[disabled] {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.btn:disabled:hover,
+.btn[disabled]:hover {
+    background-color: var(--cor-acao);
 }
 
 /* ============================== Listagem ================================ */
@@ -360,6 +392,13 @@ a {
 
 .marcador-ativo.sim {
     background-color: #8f8f8f;
+}
+
+.marcador-estoque-baixo {
+    display: inline-flex;
+    vertical-align: middle;
+    margin-left: 6px;
+    color: #f0b429;
 }
 
 .acoes-linha {
