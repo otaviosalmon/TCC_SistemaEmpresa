@@ -7,13 +7,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - L.O. Solutions</title>
-    @* app.css primeiro: define as variáveis de cor que sidebar.css consome. *@
     <link rel="stylesheet" href="~/css/app.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/sidebar.css" asp-append-version="true" />
 </head>
 <body>
     <div class="app-shell">
-        @* Sem menu para quem não está logado — a barra mostra empresa e usuário. *@
         @if (autenticado)
         {
             <partial name="_Sidebar" />

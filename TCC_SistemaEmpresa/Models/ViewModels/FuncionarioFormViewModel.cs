@@ -5,9 +5,6 @@ using TCC_SistemaEmpresa.Validation;
 
 namespace TCC_SistemaEmpresa.Models.ViewModels
 {
-    /// <summary>
-    /// Formulário de criação, edição e visualização de funcionário.
-    /// </summary>
     public class FuncionarioFormViewModel
     {
         /// <summary>

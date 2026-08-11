@@ -83,11 +83,6 @@ namespace TCC_SistemaEmpresa.Data
                 movimentacao.Property(m => m.DataMovimentacao).HasColumnName("data_movimentacao");
             });
 
-            // As colunas do banco são snake_case (empresa_id, password_hash...) e as
-            // propriedades são PascalCase. Onde os nomes só diferem em caixa o SQL Server
-            // resolve sozinho (collation CI); onde há underscore, o mapeamento é obrigatório.
-            // Mapeado aqui apenas o que o login consome — as demais entidades ainda precisam
-            // do mesmo tratamento quando forem usadas.
             modelBuilder.Entity<Usuario>(usuario =>
             {
                 usuario.Property(u => u.EmpresaId).HasColumnName("empresa_id");
@@ -109,7 +104,6 @@ namespace TCC_SistemaEmpresa.Data
                 funcionario.Property(f => f.CargoId).HasColumnName("cargo_id");
                 funcionario.Property(f => f.Salario).HasPrecision(10, 2);
                 funcionario.Property(f => f.PerComissao).HasColumnName("per_comissao").HasPrecision(5, 2);
-                // data_admissao é DATE no banco, não DATETIME.
                 funcionario.Property(f => f.DataAdmissao).HasColumnName("data_admissao").HasColumnType("date");
             });
 

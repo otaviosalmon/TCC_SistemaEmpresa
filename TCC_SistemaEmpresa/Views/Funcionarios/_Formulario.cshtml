@@ -1,6 +1,5 @@
 @model TCC_SistemaEmpresa.Models.ViewModels.FuncionarioFormViewModel
 @{
-    // Uma única marcação serve às três telas: criar, editar e visualizar.
     var titulo = Model.SomenteLeitura
         ? "Funcionário"
         : Model.EhEdicao ? "Editar Funcionário" : "Criar Funcionário";
@@ -24,11 +23,6 @@
         </div>
 
         <div class="campo campo-id">
-            @* Chave primária IDENTITY: quem gera o valor é o banco. Renderizado como
-               texto, e não como <input>, de propósito — assim não há campo para editar
-               nem para o navegador enviar, e não é possível reintroduzir isso por
-               engano tirando um "readonly". O model também recusa o valor: veja o
-               [BindNever] em FuncionarioFormViewModel.Id. *@
             <span class="campo-rotulo">Id:</span>
             @if (Model.EhEdicao)
             {
@@ -36,8 +30,6 @@
             }
             else if (Model.ProximoId.HasValue)
             {
-                @* Previsão, não reserva: o número definitivo sai do banco no INSERT.
-                   O itálico e o title existem para a tela não afirmar o que não sabe. *@
                 <span class="campo-valor campo-valor-previsto"
                       title="Número previsto. O id definitivo é atribuído pelo banco ao salvar e pode ser maior se outro cadastro for gravado antes.">
                     @Model.ProximoId
@@ -58,8 +50,6 @@
 
         <div class="campo campo-ativo">
             <label asp-for="Ativo">Ativo:</label>
-            @* Os valores batem com bool.ToString() ("True"/"False") para o
-               tag helper conseguir pré-selecionar a opção corrente. *@
             <select asp-for="Ativo" disabled="@desabilitado">
                 <option value="True">Ativo</option>
                 <option value="False">Inativo</option>
@@ -69,8 +59,6 @@
 
         <div class="campo campo-salario">
             <label asp-for="Salario">Salário:</label>
-            @* data-val-number escrito à mão: o texto gerado pelo framework vem em
-               inglês ("must be a number") e não é traduzível por atributo. *@
             <input asp-for="Salario" placeholder="R$00,00" inputmode="decimal"
                    data-val-number="Informe um valor numérico." disabled="@desabilitado" />
             <span asp-validation-for="Salario" class="campo-erro"></span>
@@ -84,7 +72,6 @@
         </div>
 
         <div class="campo campo-data">
-            @* O mockup rotula "Data Cadastro", mas Tb_Funcionario só tem data_admissao. *@
             <label asp-for="DataAdmissao">Data de Admissão:</label>
             <input asp-for="DataAdmissao" type="date" disabled="@desabilitado" />
             <span asp-validation-for="DataAdmissao" class="campo-erro"></span>

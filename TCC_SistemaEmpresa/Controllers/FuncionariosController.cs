@@ -10,16 +10,6 @@ using TCC_SistemaEmpresa.Validation;
 
 namespace TCC_SistemaEmpresa.Controllers
 {
-    /// <summary>
-    /// CRUD de funcionários (RF04).
-    /// </summary>
-    /// <remarks>
-    /// Duas regras atravessam todas as actions:
-    /// <list type="bullet">
-    ///   <item>RNF39 — toda consulta é filtrada pelo <c>empresa_id</c> do usuário logado.</item>
-    ///   <item>§5 — a exclusão é lógica (<c>ativo = 0</c>); não existe DELETE físico aqui.</item>
-    /// </list>
-    /// </remarks>
     [Authorize(Roles = "ADMIN,GERENTE")]
     public class FuncionariosController : Controller
     {
@@ -72,15 +62,11 @@ namespace TCC_SistemaEmpresa.Controllers
                     Id = f.Id,
                     Nome = f.Nome,
                     Cargo = f.Cargo.Nome,
-                    // Cargo define o padrão, funcionário sobrescreve (§4.2).
                     Salario = f.Salario ?? f.Cargo.SalarioBase,
                     Ativo = f.Ativo
                 })
                 .ToListAsync();
 
-            // Quantas vendas cada um tem — é o que decide se o X da linha exclui ou
-            // apenas explica por que não dá. Uma consulta agregada para a lista toda,
-            // em vez de uma por linha.
             var ids = funcionarios.Select(f => f.Id).ToList();
 
             var vendasPorFuncionario = await _context.Vendas
@@ -107,11 +93,6 @@ namespace TCC_SistemaEmpresa.Controllers
         // ================================================================
         // Visualização
         // ================================================================
-
-        // Todo parâmetro `id` abaixo é [FromRoute] de propósito. Sem isso o model
-        // binder o resolveria pela ordem "corpo do formulário > rota > query string",
-        // e um POST com um campo "Id" no corpo passaria a mandar em qual registro a
-        // action opera — não a URL. Identidade de registro vem da rota, e só dela.
         [HttpGet]
         public async Task<IActionResult> Details([FromRoute] int id)
         {
@@ -155,8 +136,6 @@ namespace TCC_SistemaEmpresa.Controllers
 
             if (!ModelState.IsValid)
             {
-                // Reconsultado a cada tentativa: outro usuário pode ter gravado
-                // enquanto este formulário estava aberto.
                 model.ProximoId = await ProximoIdAsync();
                 model.Cargos = await CarregarCargosAsync(model.CargoId);
                 return View(model);
@@ -174,8 +153,6 @@ namespace TCC_SistemaEmpresa.Controllers
                 Ativo = model.Ativo
             };
 
-            // O id do funcionário só existe depois do INSERT, e o log precisa dele.
-            // A transação mantém cadastro e log como uma operação só (RN52).
             await using var transacao = await _context.Database.BeginTransactionAsync();
 
             _context.Funcionarios.Add(funcionario);
@@ -231,10 +208,6 @@ namespace TCC_SistemaEmpresa.Controllers
                 model.Cargos = await CarregarCargosAsync(model.CargoId);
                 return View(model);
             }
-
-            // Guardado antes da atribuição: é o que distingue uma edição comum de
-            // uma exclusão lógica. Esta tela é o único lugar que liga e desliga o
-            // funcionário — a listagem não inativa mais.
             var estavaAtivo = funcionario.Ativo;
 
             funcionario.CargoId = model.CargoId;
@@ -245,8 +218,7 @@ namespace TCC_SistemaEmpresa.Controllers
             funcionario.DataAdmissao = model.DataAdmissao.Date;
             funcionario.Ativo = model.Ativo;
 
-            // RN52 lista "exclusão lógica" como operação que gera log próprio, então
-            // a virada de ativo não pode se esconder atrás de um "ALTERACAO" genérico.
+
             var (acao, detalhe) = (estavaAtivo, model.Ativo) switch
             {
                 (true, false) => ("INATIVACAO", "inativado"),
@@ -254,8 +226,7 @@ namespace TCC_SistemaEmpresa.Controllers
                 _ => ("ALTERACAO", "alterado")
             };
 
-            // O id já existe, então entidade e log saem no mesmo SaveChanges —
-            // que já é atômico.
+
             RegistrarLog(acao, funcionario.Id, $"Funcionário '{funcionario.Nome}' {detalhe}.");
             await _context.SaveChangesAsync();
 
@@ -270,22 +241,7 @@ namespace TCC_SistemaEmpresa.Controllers
         // ================================================================
         // Exclusão definitiva
         // ================================================================
-        //
-        // Não existe action de inativar aqui: a exclusão lógica é feita pelo campo
-        // "Ativo" da tela de edição (Edit), que já registra o log correspondente.
 
-        /// <summary>
-        /// Remove o registro do banco. Só é permitido para funcionário já inativo
-        /// e sem nenhum vínculo — hoje, sem vendas.
-        /// </summary>
-        /// <remarks>
-        /// É a única exceção à regra de exclusão lógica da §5, e é deliberada:
-        /// serve para desfazer cadastro errado, não para desligar funcionário.
-        /// Quem já operou no sistema fica com <c>ativo = 0</c> para sempre.
-        ///
-        /// As duas checagens abaixo também existem no popup da listagem. Aqui elas
-        /// são obrigatórias mesmo assim: a tela pode ser burlada, o servidor não.
-        /// </remarks>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Excluir([FromRoute] int id)
@@ -312,9 +268,6 @@ namespace TCC_SistemaEmpresa.Controllers
                     $"O funcionário {nome} possui {quantidadeVendas} venda(s) vinculada(s) e não pode ser excluído.";
                 return RedirectToAction(nameof(Index));
             }
-
-            // Log antes do Remove: registro_id não tem FK, então a linha de auditoria
-            // sobrevive à exclusão (§4.2) — é o único rastro que resta do cadastro.
             RegistrarLog("EXCLUSAO", funcionario.Id,
                 $"Funcionário '{nome}' (CPF {funcionario.Cpf}) excluído definitivamente.");
 
@@ -328,16 +281,6 @@ namespace TCC_SistemaEmpresa.Controllers
             TempData["Sucesso"] = $"Funcionário {nome} foi excluído definitivamente.";
             return RedirectToAction(nameof(Index));
         }
-
-        // ================================================================
-        // Apoio
-        // ================================================================
-
-        /// <summary>
-        /// Busca um funcionário garantindo que ele pertence à empresa do usuário logado.
-        /// Nunca consultar por id sozinho: isso permitiria ler dados de outra empresa
-        /// só trocando o número na URL (RNF39).
-        /// </summary>
         private Task<Funcionario?> BuscarDaEmpresaAsync(int id, bool rastrear)
         {
             var empresaId = EmpresaIdAtual();
@@ -348,16 +291,9 @@ namespace TCC_SistemaEmpresa.Controllers
 
             return consulta.FirstOrDefaultAsync(f => f.Id == id && f.EmpresaId == empresaId);
         }
-
-        /// <summary>
-        /// Regras que o banco não resolve sozinho, ou que resolveria com uma exceção
-        /// de constraint em vez de uma mensagem legível.
-        /// </summary>
         private async Task ValidarRegrasAsync(
             FuncionarioFormViewModel model, string cpf, int empresaId, int? funcionarioId)
         {
-            // O cargo precisa ser da mesma empresa: sem esta checagem, um POST forjado
-            // com o id de um cargo alheio passaria pela FK e vazaria o vínculo.
             if (model.CargoId > 0)
             {
                 var cargoValido = await _context.Cargo
@@ -368,8 +304,7 @@ namespace TCC_SistemaEmpresa.Controllers
                     ModelState.AddModelError(nameof(model.CargoId), "Cargo inválido.");
             }
 
-            // UQ_Funcionario_CPF é (empresa_id, cpf). Conferir antes evita que a
-            // violação da constraint suba como erro de banco na cara do usuário.
+
             if (cpf.Length == 11)
             {
                 var cpfEmUso = await _context.Funcionarios
@@ -384,19 +319,6 @@ namespace TCC_SistemaEmpresa.Controllers
             }
         }
 
-        /// <summary>
-        /// Lê do catálogo do SQL Server qual número a coluna IDENTITY usaria no
-        /// próximo INSERT, só para exibir na tela de criação.
-        /// </summary>
-        /// <remarks>
-        /// Não é <c>MAX(id) + 1</c>: IDENTITY não reaproveita número de registro
-        /// excluído nem de INSERT que falhou, então o máximo atual mentiria sempre
-        /// que houvesse buraco na sequência. <c>last_value</c> é o último número
-        /// efetivamente entregue pelo banco, e é NULL enquanto a tabela nunca
-        /// recebeu INSERT — daí o CASE cair no <c>seed_value</c>.
-        ///
-        /// Continua sendo previsão: nada reserva esse número até o INSERT ocorrer.
-        /// </remarks>
         private async Task<int?> ProximoIdAsync()
         {
             const string sql = @"
@@ -413,8 +335,6 @@ namespace TCC_SistemaEmpresa.Controllers
             }
             catch (Exception excecao)
             {
-                // Exibir o número é conveniência: se a consulta falhar, a tela mostra
-                // o texto padrão e o cadastro segue normalmente.
                 _logger.LogWarning(excecao,
                     "Não foi possível prever o próximo id de Tb_Funcionario.");
                 return null;
@@ -451,11 +371,6 @@ namespace TCC_SistemaEmpresa.Controllers
             DataAdmissao = funcionario.DataAdmissao,
             CargoId = funcionario.CargoId
         };
-
-        /// <summary>
-        /// Enfileira o registro de auditoria (RN52 / RF36). Quem grava é o
-        /// SaveChangesAsync de quem chamou — para o log participar da mesma transação.
-        /// </summary>
         private void RegistrarLog(string acao, int registroId, string detalhes)
         {
             _context.LogsSistema.Add(new LogSistema
@@ -477,10 +392,6 @@ namespace TCC_SistemaEmpresa.Controllers
             _ => SituacaoFiltro.Todos
         };
 
-        /// <summary>
-        /// Empresa do usuário logado. Zero se a claim estiver ausente ou corrompida —
-        /// o que faz toda consulta voltar vazia, em vez de expor dados de outra empresa.
-        /// </summary>
         private int EmpresaIdAtual()
         {
             var claim = User.FindFirstValue(Security.ClaimsEmpresa.EmpresaId);
