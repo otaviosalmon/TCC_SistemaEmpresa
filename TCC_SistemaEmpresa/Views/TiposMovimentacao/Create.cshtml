@@ -1,0 +1,11 @@
+@model TCC_SistemaEmpresa.Models.ViewModels.TipoMovimentacaoFormViewModel
+@{
+    ViewData["Title"] = "Criar Tipo Movimentação";
+}
+
+@await Html.PartialAsync("_Formulario", Model)
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/validacao-ptbr.js" asp-append-version="true"></script>
+}

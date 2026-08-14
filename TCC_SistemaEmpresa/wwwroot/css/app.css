@@ -116,6 +116,10 @@ a {
 .campo-produto-descricao   { grid-column: span 7; }
 .campo-produto-categoria   { grid-column: span 5; }
 
+.campo-tipomov-nome     { grid-column: span 8; }
+.campo-tipomov-id       { grid-column: 11 / span 2; }
+.campo-tipomov-natureza { grid-column: span 3; }
+
 .campo label,
 .campo .campo-rotulo {
     font-size: 0.92rem;

@@ -87,9 +87,14 @@
     padding: 5px 0 5px 22px;
 }
 
-.sidebar-subitens .sidebar-item {
+.sidebar-subitens .sidebar-item,
+.sidebar-subitens .sidebar-grupo-titulo {
     font-size: 1.02rem;
     padding: 8px 14px;
+}
+
+.sidebar-subitens .sidebar-subitens {
+    padding-left: 18px;
 }
 
 .sidebar-item.indisponivel {
