@@ -1,0 +1,97 @@
+@model TCC_SistemaEmpresa.Models.ViewModels.DespesaFormViewModel
+@{
+    var titulo = Model.SomenteLeitura
+        ? "Despesa"
+        : Model.EhEdicao ? "Editar Despesa" : "Criar Despesa";
+
+    var acao = Model.EhEdicao ? "Edit" : "Create";
+    var desabilitado = Model.SomenteLeitura ? "disabled" : null;
+}
+
+<h1 class="form-titulo">@titulo</h1>
+
+@if (!Model.SomenteLeitura && !Model.TemCategorias)
+{
+    <div class="alerta alerta-erro">
+        Nenhuma categoria de despesa cadastrada nesta empresa. Como
+        <code>categoria_despesa_id</code> é obrigatório, não é possível lançar uma despesa
+        antes de existir ao menos uma categoria.
+    </div>
+}
+
+<form method="post" asp-action="@acao" asp-route-id="@(Model.EhEdicao ? Model.Id.ToString() : null)">
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="ModelOnly" class="alerta alerta-erro"></div>
+
+    <div class="form-grid">
+        <div class="campo campo-despesa-categoria">
+            <label asp-for="CategoriaDespesaId">Categoria Despesa:</label>
+            <select asp-for="CategoriaDespesaId" asp-items="Model.Categorias" disabled="@desabilitado">
+                <option value="0">Selecione a Categoria...</option>
+            </select>
+            <span asp-validation-for="CategoriaDespesaId" class="campo-erro"></span>
+        </div>
+
+        <div class="campo campo-despesa-id">
+            <span class="campo-rotulo">Id:</span>
+            @if (Model.EhEdicao)
+            {
+                <span class="campo-valor">@Model.Id</span>
+            }
+            else if (Model.ProximoId.HasValue)
+            {
+                <span class="campo-valor campo-valor-previsto"
+                      title="Número previsto. O id definitivo é atribuído pelo banco ao salvar e pode ser maior se outro lançamento for gravado antes.">
+                    @Model.ProximoId
+                </span>
+            }
+            else
+            {
+                <span class="campo-valor campo-valor-previsto">Gerado automaticamente</span>
+            }
+        </div>
+
+        <div class="campo campo-despesa-data">
+            <label asp-for="DataDespesa">Data Despesa:</label>
+            <input asp-for="DataDespesa" type="date" disabled="@desabilitado" />
+            <span asp-validation-for="DataDespesa" class="campo-erro"></span>
+        </div>
+
+        <div class="campo campo-despesa-fixa">
+            <label asp-for="Fixa">Fixa:</label>
+            <select asp-for="Fixa" disabled="@desabilitado">
+                <option value="">Selecione...</option>
+                <option value="True">Sim</option>
+                <option value="False">Não</option>
+            </select>
+            <span asp-validation-for="Fixa" class="campo-erro"></span>
+        </div>
+
+        <div class="campo campo-despesa-valor">
+            <label asp-for="Valor">Valor Despesa:</label>
+            <input asp-for="Valor" placeholder="R$00,00" inputmode="decimal"
+                   data-val-number="Informe um valor numérico." disabled="@desabilitado" />
+            <span asp-validation-for="Valor" class="campo-erro"></span>
+        </div>
+
+        <div class="campo campo-largo">
+            <label asp-for="Descricao">Descrição:</label>
+            <textarea asp-for="Descricao" placeholder="Descrição..." maxlength="255"
+                      rows="7" disabled="@desabilitado"></textarea>
+            <span asp-validation-for="Descricao" class="campo-erro"></span>
+        </div>
+    </div>
+
+    <div class="form-acoes">
+        @if (Model.SomenteLeitura)
+        {
+            <a class="btn btn-escuro" asp-action="Index">Voltar</a>
+        }
+        else
+        {
+            <button type="submit" class="btn btn-claro" disabled="@(Model.TemCategorias ? null : "disabled")">Salvar</button>
+            <a class="btn btn-escuro" asp-action="Index">Cancelar</a>
+        }
+    </div>
+</form>

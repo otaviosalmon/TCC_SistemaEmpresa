@@ -83,6 +83,20 @@ namespace TCC_SistemaEmpresa.Data
                 movimentacao.Property(m => m.DataMovimentacao).HasColumnName("data_movimentacao");
             });
 
+            modelBuilder.Entity<CategoriaDespesa>(categoria =>
+            {
+                categoria.Property(c => c.EmpresaId).HasColumnName("empresa_id");
+            });
+
+            modelBuilder.Entity<Despesa>(despesa =>
+            {
+                despesa.Property(d => d.EmpresaId).HasColumnName("empresa_id");
+                despesa.Property(d => d.CategoriaDespesaId).HasColumnName("categoria_despesa_id");
+                despesa.Property(d => d.UsuarioId).HasColumnName("usuario_id");
+                despesa.Property(d => d.DataDespesa).HasColumnName("data_despesa").HasColumnType("date");
+                despesa.Property(d => d.Valor).HasPrecision(10, 2);
+            });
+
             modelBuilder.Entity<Usuario>(usuario =>
             {
                 usuario.Property(u => u.EmpresaId).HasColumnName("empresa_id");

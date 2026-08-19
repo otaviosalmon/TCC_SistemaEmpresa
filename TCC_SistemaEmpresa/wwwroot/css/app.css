@@ -120,6 +120,16 @@ a {
 .campo-tipomov-id       { grid-column: 11 / span 2; }
 .campo-tipomov-natureza { grid-column: span 3; }
 
+.campo-catdespesa-nome     { grid-column: span 8; }
+.campo-catdespesa-id       { grid-column: 11 / span 2; }
+.campo-catdespesa-vinculos { grid-column: span 5; }
+
+.campo-despesa-categoria { grid-column: span 5; }
+.campo-despesa-id        { grid-column: span 2; }
+.campo-despesa-data      { grid-column: span 5; }
+.campo-despesa-fixa      { grid-column: 4 / span 2; }
+.campo-despesa-valor     { grid-column: 8 / span 2; }
+
 .campo label,
 .campo .campo-rotulo {
     font-size: 0.92rem;
@@ -452,7 +462,15 @@ a {
 .listagem-rodape {
     display: flex;
     justify-content: flex-end;
+    align-items: center;
+    gap: 16px;
     margin-top: 18px;
+}
+
+.listagem-total {
+    margin-right: auto;
+    font-size: 0.95rem;
+    color: var(--cor-texto);
 }
 
 /* =========================== Mensagens ================================== */

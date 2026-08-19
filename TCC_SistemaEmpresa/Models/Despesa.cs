@@ -14,6 +14,7 @@ namespace TCC_SistemaEmpresa.Models
         public bool Fixa { get; set; }
         public string? Observacao { get; set; }
         public Empresa Empresa { get; set; }
+        public CategoriaDespesa CategoriaDespesa { get; set; }
 
     }
 }

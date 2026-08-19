@@ -1,0 +1,83 @@
+@model TCC_SistemaEmpresa.Models.ViewModels.CategoriaDespesaFormViewModel
+@{
+    var titulo = Model.SomenteLeitura
+        ? "Categoria Despesa"
+        : Model.EhEdicao ? "Editar Categoria Despesa" : "Criar Categoria Despesa";
+
+    var acao = Model.EhEdicao ? "Edit" : "Create";
+    var desabilitado = Model.SomenteLeitura ? "disabled" : null;
+}
+
+<h1 class="form-titulo">@titulo</h1>
+
+<form method="post" asp-action="@acao" asp-route-id="@(Model.EhEdicao ? Model.Id.ToString() : null)">
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="ModelOnly" class="alerta alerta-erro"></div>
+
+    <div class="form-grid">
+        <div class="campo campo-catdespesa-nome">
+            <label asp-for="Nome">Nome:</label>
+            <input asp-for="Nome" placeholder="Nome..." maxlength="100" autocomplete="off" disabled="@desabilitado" />
+            <span asp-validation-for="Nome" class="campo-erro"></span>
+        </div>
+
+        <div class="campo campo-catdespesa-id">
+            <span class="campo-rotulo">Id:</span>
+            @if (Model.EhEdicao)
+            {
+                <span class="campo-valor">@Model.Id</span>
+            }
+            else if (Model.ProximoId.HasValue)
+            {
+                <span class="campo-valor campo-valor-previsto"
+                      title="Número previsto. O id definitivo é atribuído pelo banco ao salvar e pode ser maior se outro cadastro for gravado antes.">
+                    @Model.ProximoId
+                </span>
+            }
+            else
+            {
+                <span class="campo-valor campo-valor-previsto">Gerado automaticamente</span>
+            }
+        </div>
+
+        <div class="campo campo-ativo">
+            <label asp-for="Ativo">Ativo:</label>
+            <select asp-for="Ativo" disabled="@desabilitado">
+                <option value="True">Ativo</option>
+                <option value="False">Inativo</option>
+            </select>
+            <span asp-validation-for="Ativo" class="campo-erro"></span>
+        </div>
+
+        @if (Model.EhEdicao && Model.QuantidadeDespesas > 0)
+        {
+            <div class="campo campo-catdespesa-vinculos">
+                <span class="campo-rotulo">Despesas:</span>
+                <span class="campo-valor">@Model.QuantidadeDespesas lançamento(s)</span>
+                <span class="campo-ajuda">
+                    Categoria em uso — só pode ser excluída depois que nenhum lançamento apontar para ela.
+                </span>
+            </div>
+        }
+
+        <div class="campo campo-largo">
+            <label asp-for="Descricao">Descrição:</label>
+            <textarea asp-for="Descricao" placeholder="Descrição..." maxlength="255"
+                      rows="7" disabled="@desabilitado"></textarea>
+            <span asp-validation-for="Descricao" class="campo-erro"></span>
+        </div>
+    </div>
+
+    <div class="form-acoes">
+        @if (Model.SomenteLeitura)
+        {
+            <a class="btn btn-escuro" asp-action="Index">Voltar</a>
+        }
+        else
+        {
+            <button type="submit" class="btn btn-claro">Salvar</button>
+            <a class="btn btn-escuro" asp-action="Index">Cancelar</a>
+        }
+    </div>
+</form>

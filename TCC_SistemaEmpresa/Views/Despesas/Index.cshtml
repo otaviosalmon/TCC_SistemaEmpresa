@@ -1,0 +1,143 @@
+@model TCC_SistemaEmpresa.Models.ViewModels.DespesaListaViewModel
+@{
+    ViewData["Title"] = "Despesas";
+}
+
+<div class="pagina-titulo-centro">
+    <h1 class="pagina-titulo">Despesas</h1>
+</div>
+
+@if (TempData["Sucesso"] is string mensagemSucesso)
+{
+    <div class="alerta alerta-sucesso">@mensagemSucesso</div>
+}
+
+@if (TempData["Erro"] is string mensagemErro)
+{
+    <div class="alerta alerta-erro">@mensagemErro</div>
+}
+
+<form method="get" asp-action="Index" class="listagem-barra">
+    <div class="busca">
+        <input type="text" name="busca" value="@Model.Busca" placeholder="Pesquisar..."
+               aria-label="Pesquisar por categoria ou descrição da despesa" />
+        <button type="submit" aria-label="Pesquisar">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="7" /><path d="M21 21l-4.35-4.35" />
+            </svg>
+        </button>
+    </div>
+
+    <div class="filtro">
+        <select name="recorrencia" onchange="this.form.submit()" aria-label="Filtrar por recorrência">
+            <option value="todas" selected="@(Model.Recorrencia == "todas")">Filtros...</option>
+            <option value="fixas" selected="@(Model.Recorrencia == "fixas")">Somente fixas</option>
+            <option value="eventuais" selected="@(Model.Recorrencia == "eventuais")">Somente eventuais</option>
+        </select>
+    </div>
+</form>
+
+<div class="tabela-wrapper">
+    <table class="tabela">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Categoria</th>
+                <th scope="col">Valor</th>
+                <th scope="col">Data</th>
+                <th scope="col">Fixa</th>
+                <th scope="col" aria-label="Ações"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Despesas.Count == 0)
+            {
+                <tr class="tabela-vazia">
+                    <td colspan="6">Nenhuma despesa encontrada.</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var despesa in Model.Despesas)
+                {
+                    var valorFormatado = despesa.Valor.ToString("C");
+                    var dataFormatada = despesa.DataDespesa.ToString("dd/MM/yyyy");
+
+                    <tr>
+                        <td>@despesa.Id</td>
+                        <td>@despesa.Categoria</td>
+                        <td>@valorFormatado</td>
+                        <td>@dataFormatada</td>
+                        <td>
+                            @if (despesa.Fixa)
+                            {
+                                <span class="marcador-ativo sim" title="Despesa fixa" role="img" aria-label="Despesa fixa">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M20 6L9 17l-5-5" />
+                                    </svg>
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="marcador-ativo" title="Despesa eventual" role="img" aria-label="Despesa eventual"></span>
+                            }
+                        </td>
+                        <td class="col-acoes">
+                            <div class="acoes-linha">
+                                <a class="acao-icone" asp-action="Details" asp-route-id="@despesa.Id"
+                                   title="Visualizar" aria-label="Visualizar despesa @despesa.Id">
+                                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z" /><circle cx="12" cy="12" r="3" />
+                                    </svg>
+                                </a>
+
+                                <a class="acao-icone" asp-action="Edit" asp-route-id="@despesa.Id"
+                                   title="Editar" aria-label="Editar despesa @despesa.Id">
+                                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 20h9" /><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+                                    </svg>
+                                </a>
+
+                                <form method="post" asp-action="Excluir" asp-route-id="@despesa.Id"
+                                      id="acao-@despesa.Id" class="acao-form">
+                                    @Html.AntiForgeryToken()
+                                </form>
+                                <button type="button" class="acao-icone perigo"
+                                        title="Excluir" aria-label="Excluir despesa @despesa.Id"
+                                        data-modal-titulo="Excluir despesa"
+                                        data-modal-texto="Excluir definitivamente a despesa de @valorFormatado em @despesa.Categoria, lançada em @dataFormatada? O registro sai do banco e esta ação não pode ser desfeita."
+                                        data-modal-confirmar="Excluir"
+                                        data-modal-form="acao-@despesa.Id">
+                                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M18 6L6 18M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="listagem-rodape">
+    @if (Model.Despesas.Count > 0)
+    {
+        <span class="listagem-total">Total: @Model.Total.ToString("C")</span>
+    }
+    <a class="btn btn-claro" asp-action="Create">+ Novo</a>
+</div>
+
+<dialog class="modal" data-modal aria-labelledby="modalTitulo">
+    <h2 class="modal-titulo" id="modalTitulo" data-modal-titulo-alvo></h2>
+    <p class="modal-texto" data-modal-texto-alvo></p>
+    <div class="modal-acoes">
+        <button type="button" class="btn btn-escuro" data-modal-fechar>Fechar</button>
+        <button type="button" class="btn btn-perigo" data-modal-confirmar-alvo hidden></button>
+    </div>
+</dialog>
+
+@section Scripts {
+    <script src="~/js/modal.js" asp-append-version="true"></script>
+}
