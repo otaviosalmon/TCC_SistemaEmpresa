@@ -16,7 +16,8 @@
         public Empresa Empresa { get; set; }
         public Produto Produto { get; set; }
         public Usuario Usuario { get; set; }
-        public Venda Venda { get; set; }
+        public TipoMovimentacao TipoMovimentacao { get; set; }
+        public Venda? Venda { get; set; }
 
     }
 }
