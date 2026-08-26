@@ -42,3 +42,6 @@ x86/
 [Dd]esktop.ini
 /CLAUDE.md
 /TCC_SistemaEmpresa/appsettings.json
+
+## Configuracao local do Claude Code (por maquina)
+/.claude/launch.json
