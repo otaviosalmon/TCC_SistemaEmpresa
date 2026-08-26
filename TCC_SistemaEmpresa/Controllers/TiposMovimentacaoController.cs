@@ -9,16 +9,16 @@ using TCC_SistemaEmpresa.Models.ViewModels;
 namespace TCC_SistemaEmpresa.Controllers
 {
     [Authorize(Roles = "ADMIN,GERENTE")]
-    public class TiposMovimentacaoController : Controller
+    public class TiposMovimentacaoController : ControllerValidacao
     {
-        private readonly AppDbContext _context;
         private readonly ILogger<TiposMovimentacaoController> _logger;
 
-        public TiposMovimentacaoController(AppDbContext context, ILogger<TiposMovimentacaoController> logger)
+        public TiposMovimentacaoController(AppDbContext context, ILogger<TiposMovimentacaoController> logger) : base(context)
         {
-            _context = context;
             _logger = logger;
         }
+
+        protected override string EntidadeLog => nameof(TipoMovimentacao);
 
         [HttpGet]
         public async Task<IActionResult> Index(string? busca, string? situacao)
@@ -309,19 +309,6 @@ namespace TCC_SistemaEmpresa.Controllers
             Ativo = tipo.Ativo
         };
 
-        private void RegistrarLog(string acao, int registroId, string detalhes)
-        {
-            _context.LogsSistema.Add(new LogSistema
-            {
-                EmpresaId = EmpresaIdAtual(),
-                UsuarioId = UsuarioIdAtual(),
-                Acao = acao,
-                EntidadeAfetada = nameof(TipoMovimentacao),
-                RegistroId = registroId,
-                DataHora = DateTime.Now,
-                Detalhes = detalhes
-            });
-        }
 
         private static string NormalizarSituacao(string? situacao) => situacao switch
         {
@@ -329,17 +316,5 @@ namespace TCC_SistemaEmpresa.Controllers
             SituacaoFiltro.Inativos => SituacaoFiltro.Inativos,
             _ => SituacaoFiltro.Todos
         };
-
-        private int EmpresaIdAtual()
-        {
-            var claim = User.FindFirstValue(Security.ClaimsEmpresa.EmpresaId);
-            return int.TryParse(claim, out var empresaId) ? empresaId : 0;
-        }
-
-        private int? UsuarioIdAtual()
-        {
-            var claim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            return int.TryParse(claim, out var usuarioId) ? usuarioId : null;
-        }
     }
 }

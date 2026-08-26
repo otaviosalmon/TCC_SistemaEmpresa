@@ -17,14 +17,14 @@ namespace TCC_SistemaEmpresa.Controllers
         private const string NaturezaSaida = "SAIDA";
         private const string NaturezaEntrada = "ENTRADA";
 
-        private readonly AppDbContext _context;
         private readonly ILogger<VendasController> _logger;
 
-        public VendasController(AppDbContext context, ILogger<VendasController> logger)
+        public VendasController(AppDbContext context, ILogger<VendasController> logger) : base(context)
         {
-            _context = context;
             _logger = logger;
         }
+
+        protected override string EntidadeLog => nameof(Venda);
 
         [HttpGet]
         public async Task<IActionResult> Index(
@@ -568,20 +568,6 @@ namespace TCC_SistemaEmpresa.Controllers
                     QuantidadeAtual = p.QuantidadeAtual,
                 })
                 .ToListAsync();
-        }
-
-        private void RegistrarLog(string acao, int registroId, string detalhes)
-        {
-            _context.LogsSistema.Add(new LogSistema
-            {
-                EmpresaId = EmpresaIdAtual(),
-                UsuarioId = UsuarioIdAtual(),
-                Acao = acao,
-                EntidadeAfetada = nameof(Venda),
-                RegistroId = registroId,
-                DataHora = DateTime.Now,
-                Detalhes = detalhes
-            });
         }
 
         private static string NormalizarFiltro(string? filtro) => filtro switch

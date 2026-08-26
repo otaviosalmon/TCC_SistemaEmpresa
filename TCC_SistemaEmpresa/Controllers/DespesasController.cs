@@ -10,16 +10,16 @@ using TCC_SistemaEmpresa.Models.ViewModels;
 namespace TCC_SistemaEmpresa.Controllers
 {
     [Authorize(Roles = "ADMIN,GERENTE")]
-    public class DespesasController : Controller
+    public class DespesasController : ControllerValidacao
     {
-        private readonly AppDbContext _context;
         private readonly ILogger<DespesasController> _logger;
 
-        public DespesasController(AppDbContext context, ILogger<DespesasController> logger)
+        public DespesasController(AppDbContext context, ILogger<DespesasController> logger) :base(context)
         {
-            _context = context;
             _logger = logger;
         }
+
+        protected override string EntidadeLog => nameof(Despesa);
 
         [HttpGet]
         public async Task<IActionResult> Index(string? busca, string? recorrencia)
@@ -298,20 +298,6 @@ namespace TCC_SistemaEmpresa.Controllers
             Descricao = despesa.Descricao
         };
 
-        private void RegistrarLog(string acao, int registroId, string detalhes)
-        {
-            _context.LogsSistema.Add(new LogSistema
-            {
-                EmpresaId = EmpresaIdAtual(),
-                UsuarioId = UsuarioIdAtual(),
-                Acao = acao,
-                EntidadeAfetada = nameof(Despesa),
-                RegistroId = registroId,
-                DataHora = DateTime.Now,
-                Detalhes = detalhes
-            });
-        }
-
         private static string NormalizarRecorrencia(string? recorrencia) => recorrencia switch
         {
             RecorrenciaFiltro.Fixas => RecorrenciaFiltro.Fixas,
@@ -319,16 +305,5 @@ namespace TCC_SistemaEmpresa.Controllers
             _ => RecorrenciaFiltro.Todas
         };
 
-        private int EmpresaIdAtual()
-        {
-            var claim = User.FindFirstValue(Security.ClaimsEmpresa.EmpresaId);
-            return int.TryParse(claim, out var empresaId) ? empresaId : 0;
-        }
-
-        private int? UsuarioIdAtual()
-        {
-            var claim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            return int.TryParse(claim, out var usuarioId) ? usuarioId : null;
-        }
     }
 }

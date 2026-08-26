@@ -11,17 +11,16 @@ using TCC_SistemaEmpresa.Validation;
 namespace TCC_SistemaEmpresa.Controllers
 {
     [Authorize(Roles = "ADMIN,GERENTE")]
-    public class FuncionariosController : Controller
+    public class FuncionariosController : ControllerValidacao
     {
-        private readonly AppDbContext _context;
         private readonly ILogger<FuncionariosController> _logger;
 
-        public FuncionariosController(AppDbContext context, ILogger<FuncionariosController> logger)
+        public FuncionariosController(AppDbContext context, ILogger<FuncionariosController> logger) :base(context)
         {
-            _context = context;
             _logger = logger;
         }
 
+        protected override string EntidadeLog => nameof(Funcionario);
 
         [HttpGet]
         public async Task<IActionResult> Index(string? busca, string? situacao)
@@ -373,17 +372,5 @@ namespace TCC_SistemaEmpresa.Controllers
             SituacaoFiltro.Inativos => SituacaoFiltro.Inativos,
             _ => SituacaoFiltro.Todos
         };
-
-        private int EmpresaIdAtual()
-        {
-            var claim = User.FindFirstValue(Security.ClaimsEmpresa.EmpresaId);
-            return int.TryParse(claim, out var empresaId) ? empresaId : 0;
-        }
-
-        private int? UsuarioIdAtual()
-        {
-            var claim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            return int.TryParse(claim, out var usuarioId) ? usuarioId : null;
-        }
     }
 }

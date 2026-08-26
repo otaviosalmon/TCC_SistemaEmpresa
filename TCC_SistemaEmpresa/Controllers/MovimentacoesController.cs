@@ -10,16 +10,16 @@ using TCC_SistemaEmpresa.Models.ViewModels;
 namespace TCC_SistemaEmpresa.Controllers
 {
     [Authorize(Roles = "ADMIN,GERENTE,ESTOQUISTA")]
-    public class MovimentacoesController : Controller
+    public class MovimentacoesController : ControllerValidacao
     {
-        private readonly AppDbContext _context;
         private readonly ILogger<MovimentacoesController> _logger;
 
-        public MovimentacoesController(AppDbContext context, ILogger<MovimentacoesController> logger)
+        public MovimentacoesController(AppDbContext context, ILogger<MovimentacoesController> logger) :base(context)
         {
-            _context = context;
             _logger = logger;
         }
+
+        protected override string EntidadeLog => nameof(MovimentacaoEstoque);
 
         [HttpGet]
         public async Task<IActionResult> Index(string? busca, string? natureza, int produtoId = 0)
@@ -425,19 +425,6 @@ namespace TCC_SistemaEmpresa.Controllers
         private static int Efeito(string? natureza, int quantidade) =>
             natureza == NaturezaMovimentacao.Entrada ? quantidade : -quantidade;
 
-        private void RegistrarLog(string acao, int registroId, string detalhes)
-        {
-            _context.LogsSistema.Add(new LogSistema
-            {
-                EmpresaId = EmpresaIdAtual(),
-                UsuarioId = UsuarioIdAtual(),
-                Acao = acao,
-                EntidadeAfetada = nameof(MovimentacaoEstoque),
-                RegistroId = registroId,
-                DataHora = DateTime.Now,
-                Detalhes = detalhes
-            });
-        }
 
         private static string NormalizarNatureza(string? natureza) => natureza switch
         {
@@ -445,17 +432,5 @@ namespace TCC_SistemaEmpresa.Controllers
             NaturezaFiltro.Saidas => NaturezaFiltro.Saidas,
             _ => NaturezaFiltro.Todas
         };
-
-        private int EmpresaIdAtual()
-        {
-            var claim = User.FindFirstValue(Security.ClaimsEmpresa.EmpresaId);
-            return int.TryParse(claim, out var empresaId) ? empresaId : 0;
-        }
-
-        private int? UsuarioIdAtual()
-        {
-            var claim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            return int.TryParse(claim, out var usuarioId) ? usuarioId : null;
-        }
     }
 }
