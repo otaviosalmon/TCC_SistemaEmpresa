@@ -1,0 +1,160 @@
+@using TCC_SistemaEmpresa.Models.ViewModels
+@model TCC_SistemaEmpresa.Models.ViewModels.MovimentacaoEstoqueListaViewModel
+@{
+    ViewData["Title"] = "Movimentação Estoque";
+}
+
+<div class="pagina-titulo-centro">
+    <h1 class="pagina-titulo">Movimentação Estoque</h1>
+</div>
+
+@if (TempData["Sucesso"] is string mensagemSucesso)
+{
+    <div class="alerta alerta-sucesso">@mensagemSucesso</div>
+}
+
+@if (TempData["Erro"] is string mensagemErro)
+{
+    <div class="alerta alerta-erro">@mensagemErro</div>
+}
+
+<form method="get" asp-action="Index" class="listagem-barra">
+    <div class="busca">
+        <input type="text" name="busca" value="@Model.Busca" placeholder="Pesquisar..."
+               aria-label="Pesquisar por produto, tipo ou observação" />
+        <button type="submit" aria-label="Pesquisar">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="7" /><path d="M21 21l-4.35-4.35" />
+            </svg>
+        </button>
+    </div>
+
+    <div class="filtro">
+        <select name="produtoId" onchange="this.form.submit()" aria-label="Filtrar por produto">
+            <option value="0">Produtos...</option>
+            @foreach (var opcao in Model.Produtos)
+            {
+                <option value="@opcao.Value" selected="@opcao.Selected">@opcao.Text</option>
+            }
+        </select>
+    </div>
+
+    <div class="filtro">
+        <select name="natureza" onchange="this.form.submit()" aria-label="Filtrar por natureza">
+            <option value="todas" selected="@(Model.Natureza == "todas")">Filtros...</option>
+            <option value="entradas" selected="@(Model.Natureza == "entradas")">Somente entradas</option>
+            <option value="saidas" selected="@(Model.Natureza == "saidas")">Somente saídas</option>
+        </select>
+    </div>
+</form>
+
+<div class="tabela-wrapper">
+    <table class="tabela">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Produto</th>
+                <th scope="col">Tipo</th>
+                <th scope="col">Qtd</th>
+                <th scope="col">Qtd Antes</th>
+                <th scope="col">Qtd Depois</th>
+                <th scope="col">Data</th>
+                <th scope="col" aria-label="Ações"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Movimentacoes.Count == 0)
+            {
+                <tr class="tabela-vazia">
+                    <td colspan="8">Nenhuma movimentação encontrada.</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var movimentacao in Model.Movimentacoes)
+                {
+                    var dataFormatada = movimentacao.DataMovimentacao.ToString("dd/MM/yyyy HH:mm");
+                    var sinal = movimentacao.Natureza == NaturezaMovimentacao.Entrada ? "+" : "-";
+
+                    <tr>
+                        <td>@movimentacao.Id</td>
+                        <td>@movimentacao.Produto</td>
+                        <td>
+                            @movimentacao.Tipo
+                            <span class="celula-detalhe">@movimentacao.NaturezaRotulo</span>
+                            @if (movimentacao.OriginadaDeVenda)
+                            {
+                                <span class="celula-detalhe" title="Baixa gerada pela venda @movimentacao.VendaId">
+                                    venda @movimentacao.VendaId
+                                </span>
+                            }
+                        </td>
+                        <td>@sinal@movimentacao.Quantidade</td>
+                        <td>@(movimentacao.QuantidadeAntes?.ToString() ?? "—")</td>
+                        <td>@(movimentacao.QuantidadeDepois?.ToString() ?? "—")</td>
+                        <td>@dataFormatada</td>
+                        <td class="col-acoes">
+                            <div class="acoes-linha">
+                                <a class="acao-icone" asp-action="Details" asp-route-id="@movimentacao.Id"
+                                   title="Visualizar" aria-label="Visualizar movimentação @movimentacao.Id">
+                                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z" /><circle cx="12" cy="12" r="3" />
+                                    </svg>
+                                </a>
+
+                                @if (movimentacao.PodeExcluir)
+                                {
+                                    <form method="post" asp-action="Excluir" asp-route-id="@movimentacao.Id"
+                                          id="acao-@movimentacao.Id" class="acao-form">
+                                        @Html.AntiForgeryToken()
+                                    </form>
+                                    <button type="button" class="acao-icone perigo"
+                                            title="Excluir" aria-label="Excluir movimentação @movimentacao.Id"
+                                            data-modal-titulo="Excluir movimentação"
+                                            data-modal-texto="Excluir a movimentação @movimentacao.Id (@movimentacao.Tipo de @movimentacao.Quantidade un. de @movimentacao.Produto)? O saldo do produto volta ao valor anterior e o registro sai do banco. Esta ação não pode ser desfeita."
+                                            data-modal-confirmar="Excluir"
+                                            data-modal-form="acao-@movimentacao.Id">
+                                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M18 6L6 18M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="acao-icone" disabled
+                                            aria-label="Excluir movimentação @movimentacao.Id"
+                                            title="Baixa gerada pela venda @movimentacao.VendaId. Só muda pelo cancelamento da venda.">
+                                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M18 6L6 18M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="listagem-rodape">
+    @if (Model.ProdutoId > 0 && Model.Movimentacoes.Count > 0)
+    {
+        <span class="listagem-total">Entradas: @Model.TotalEntradas un. · Saídas: @Model.TotalSaidas un.</span>
+    }
+    <a class="btn btn-claro" asp-action="Create">+ Novo</a>
+</div>
+
+<dialog class="modal" data-modal aria-labelledby="modalTitulo">
+    <h2 class="modal-titulo" id="modalTitulo" data-modal-titulo-alvo></h2>
+    <p class="modal-texto" data-modal-texto-alvo></p>
+    <div class="modal-acoes">
+        <button type="button" class="btn btn-escuro" data-modal-fechar>Fechar</button>
+        <button type="button" class="btn btn-perigo" data-modal-confirmar-alvo hidden></button>
+    </div>
+</dialog>
+
+@section Scripts {
+    <script src="~/js/modal.js" asp-append-version="true"></script>
+}

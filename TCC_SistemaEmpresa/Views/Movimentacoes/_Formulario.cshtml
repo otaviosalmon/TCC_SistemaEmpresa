@@ -1,0 +1,145 @@
+@model TCC_SistemaEmpresa.Models.ViewModels.MovimentacaoEstoqueFormViewModel
+@{
+    var desabilitado = Model.SomenteLeitura ? "disabled" : null;
+}
+
+<h1 class="form-titulo">Movimentação</h1>
+
+@if (Model.SomenteLeitura && Model.OriginadaDeVenda)
+{
+    <div class="alerta alerta-aviso">
+        Movimentação gerada pela venda @Model.VendaId. Só pode ser desfeita pelo cancelamento da venda.
+    </div>
+}
+
+@if (!Model.SomenteLeitura && !Model.TemProdutos)
+{
+    <div class="alerta alerta-erro">
+        Nenhum produto ativo cadastrado nesta empresa. Como <code>produto_id</code> é obrigatório,
+        não é possível registrar uma movimentação antes de existir ao menos um produto.
+    </div>
+}
+
+@if (!Model.SomenteLeitura && !Model.TemTipos)
+{
+    <div class="alerta alerta-erro">
+        Nenhum tipo de movimentação ativo cadastrado nesta empresa. Como
+        <code>tipo_movimentacao_id</code> é obrigatório e é ele que define a direção do estoque,
+        cadastre ao menos um tipo antes de movimentar.
+    </div>
+}
+
+<form method="post" asp-action="Create" data-movimentacao-form>
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="ModelOnly" class="alerta alerta-erro"></div>
+
+    <div class="form-grid">
+        <div class="campo campo-movestoque-tipo">
+            <label asp-for="TipoMovimentacaoEstoqueId">Tipo Movimentação:</label>
+            <select asp-for="TipoMovimentacaoEstoqueId" disabled="@desabilitado" data-movimentacao-tipo>
+                <option value="0" data-natureza="">Selecione o Tipo...</option>
+                @foreach (var tipo in Model.Tipos)
+                {
+                    <option value="@tipo.Id" data-natureza="@tipo.Natureza"
+                            selected="@(Model.TipoMovimentacaoEstoqueId == tipo.Id)">@tipo.Rotulo</option>
+                }
+            </select>
+            <span asp-validation-for="TipoMovimentacaoEstoqueId" class="campo-erro"></span>
+        </div>
+
+        <div class="campo campo-movestoque-id">
+            <span class="campo-rotulo">Id:</span>
+            @if (Model.EhRegistroGravado)
+            {
+                <span class="campo-valor">@Model.Id</span>
+            }
+            else if (Model.ProximoId.HasValue)
+            {
+                <span class="campo-valor campo-valor-previsto"
+                      title="Número previsto. O id definitivo é atribuído pelo banco ao salvar e pode ser maior se outra movimentação for gravada antes.">
+                    @Model.ProximoId
+                </span>
+            }
+            else
+            {
+                <span class="campo-valor campo-valor-previsto">Gerado automaticamente</span>
+            }
+        </div>
+
+        <div class="campo campo-movestoque-data">
+            <span class="campo-rotulo">Data Movimentação:</span>
+            @if (Model.DataMovimentacao.HasValue)
+            {
+                <span class="campo-valor">@Model.DataMovimentacao.Value.ToString("dd/MM/yyyy HH:mm")</span>
+            }
+            else
+            {
+                <span class="campo-valor campo-valor-previsto">Registrada ao salvar</span>
+            }
+        </div>
+
+        <div class="campo campo-movestoque-produto">
+            <label asp-for="ProdutoId">Produto:</label>
+            <select asp-for="ProdutoId" disabled="@desabilitado" data-movimentacao-produto>
+                <option value="0" data-saldo="">Selecione o Produto...</option>
+                @foreach (var produto in Model.Produtos)
+                {
+                    <option value="@produto.Id" data-saldo="@produto.Saldo"
+                            selected="@(Model.ProdutoId == produto.Id)">@produto.Rotulo</option>
+                }
+            </select>
+            <span asp-validation-for="ProdutoId" class="campo-erro"></span>
+        </div>
+
+        <div class="campo campo-movestoque-antes">
+            <span class="campo-rotulo">Quantidade Antes:</span>
+            <span class="campo-valor" data-movimentacao-antes>
+                @(Model.QuantidadeAntes?.ToString() ?? "—")
+            </span>
+            <span class="campo-ajuda">Saldo do produto lido no momento de salvar.</span>
+        </div>
+
+        <div class="campo campo-movestoque-natureza">
+            <span class="campo-rotulo">Saída/Entrada:</span>
+            <span class="campo-valor" data-movimentacao-natureza>
+                @(string.IsNullOrEmpty(Model.NaturezaRotulo) ? "—" : Model.NaturezaRotulo)
+            </span>
+            <span class="campo-ajuda">Definida pelo tipo selecionado.</span>
+        </div>
+
+        <div class="campo campo-movestoque-qtd">
+            <label asp-for="Quantidade">Quantidade:</label>
+            <input asp-for="Quantidade" type="number" min="1" step="1" placeholder="Quantidade..."
+                   disabled="@desabilitado" data-movimentacao-quantidade />
+            <span asp-validation-for="Quantidade" class="campo-erro"></span>
+        </div>
+
+        <div class="campo campo-movestoque-depois">
+            <span class="campo-rotulo">Quantidade Depois:</span>
+            <span class="campo-valor" data-movimentacao-depois>
+                @(Model.QuantidadeDepois?.ToString() ?? "—")
+            </span>
+            <span class="campo-ajuda" data-movimentacao-aviso></span>
+        </div>
+
+        <div class="campo campo-largo">
+            <label asp-for="Observacao">Observação:</label>
+            <textarea asp-for="Observacao" placeholder="Observação..." maxlength="255"
+                      rows="7" disabled="@desabilitado"></textarea>
+            <span asp-validation-for="Observacao" class="campo-erro"></span>
+        </div>
+    </div>
+
+    <div class="form-acoes">
+        @if (Model.SomenteLeitura)
+        {
+            <a class="btn btn-escuro" asp-action="Index">Voltar</a>
+        }
+        else
+        {
+            <button type="submit" class="btn btn-claro" disabled="@(Model.PodeSalvar ? null : "disabled")">Salvar</button>
+            <a class="btn btn-escuro" asp-action="Index">Cancelar</a>
+        }
+    </div>
+</form>

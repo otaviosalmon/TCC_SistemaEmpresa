@@ -1,0 +1,12 @@
+@model TCC_SistemaEmpresa.Models.ViewModels.MovimentacaoEstoqueFormViewModel
+@{
+    ViewData["Title"] = "Criar Movimentação";
+}
+
+@await Html.PartialAsync("_Formulario", Model)
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/validacao-ptbr.js" asp-append-version="true"></script>
+    <script src="~/js/movimentacao-estoque.js" asp-append-version="true"></script>
+}

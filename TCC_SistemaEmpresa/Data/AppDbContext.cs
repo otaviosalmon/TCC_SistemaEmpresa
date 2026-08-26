@@ -81,6 +81,13 @@ namespace TCC_SistemaEmpresa.Data
                 movimentacao.Property(m => m.QuantidadeAntes).HasColumnName("quantidade_antes");
                 movimentacao.Property(m => m.QuantidadeDepois).HasColumnName("quantidade_depois");
                 movimentacao.Property(m => m.DataMovimentacao).HasColumnName("data_movimentacao");
+
+                movimentacao.HasOne(m => m.Empresa).WithMany().HasForeignKey(m => m.EmpresaId);
+                movimentacao.HasOne(m => m.Produto).WithMany().HasForeignKey(m => m.ProdutoId);
+                movimentacao.HasOne(m => m.Usuario).WithMany().HasForeignKey(m => m.UsuarioId);
+                movimentacao.HasOne(m => m.TipoMovimentacao).WithMany()
+                    .HasForeignKey(m => m.TipoMovimentacaoEstoqueId);
+                movimentacao.HasOne(m => m.Venda).WithMany().HasForeignKey(m => m.VendaId).IsRequired(false);
             });
 
             modelBuilder.Entity<CategoriaDespesa>(categoria =>

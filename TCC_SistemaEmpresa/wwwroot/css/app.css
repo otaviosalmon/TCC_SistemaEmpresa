@@ -130,6 +130,15 @@ a {
 .campo-despesa-fixa      { grid-column: 4 / span 2; }
 .campo-despesa-valor     { grid-column: 8 / span 2; }
 
+.campo-movestoque-tipo     { grid-column: span 5; }
+.campo-movestoque-id       { grid-column: span 2; }
+.campo-movestoque-data     { grid-column: span 5; }
+.campo-movestoque-produto  { grid-column: span 12; }
+.campo-movestoque-antes    { grid-column: span 3; }
+.campo-movestoque-natureza { grid-column: span 3; }
+.campo-movestoque-qtd      { grid-column: span 3; }
+.campo-movestoque-depois   { grid-column: span 3; }
+
 .campo label,
 .campo .campo-rotulo {
     font-size: 0.92rem;
@@ -155,6 +164,16 @@ a {
 .campo-valor-previsto {
     font-style: italic;
     color: #8a8a8a;
+}
+
+/* Saldo projetado que o banco rejeitaria (CHK_Produto_QtdAtual >= 0). */
+.campo-valor-invalido {
+    border-color: var(--cor-perigo);
+    color: #ffb4b4;
+}
+
+.campo-ajuda-alerta {
+    color: #ffb4b4;
 }
 
 .campo input,
@@ -408,6 +427,13 @@ a {
     background-color: #8f8f8f;
 }
 
+/* Informação secundária dentro de uma célula (ex.: a natureza abaixo do tipo). */
+.celula-detalhe {
+    display: block;
+    font-size: 0.74rem;
+    color: var(--cor-texto-suave);
+}
+
 .marcador-estoque-baixo {
     display: inline-flex;
     vertical-align: middle;
@@ -492,6 +518,12 @@ a {
     border: 1px solid var(--cor-perigo);
     background-color: rgba(224, 90, 90, 0.14);
     color: #ffb4b4;
+}
+
+.alerta-aviso {
+    border: 1px solid #b98a1f;
+    background-color: rgba(240, 180, 41, 0.14);
+    color: #f4d58d;
 }
 
 /* Resumo de erros do asp-validation-summary: escondido quando não há erro. */
