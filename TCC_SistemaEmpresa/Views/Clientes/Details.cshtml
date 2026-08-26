@@ -1,0 +1,10 @@
+@model TCC_SistemaEmpresa.Models.ViewModels.ClienteFormViewModel
+@{
+    ViewData["Title"] = "Cliente";
+}
+
+@await Html.PartialAsync("_Formulario", Model)
+
+@section Scripts {
+    <script src="~/js/mascara-cpf.js" asp-append-version="true"></script>
+}

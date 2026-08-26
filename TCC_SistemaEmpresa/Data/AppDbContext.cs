@@ -95,6 +95,12 @@ namespace TCC_SistemaEmpresa.Data
                 categoria.Property(c => c.EmpresaId).HasColumnName("empresa_id");
             });
 
+            modelBuilder.Entity<Cliente>(cliente =>
+            {
+                cliente.Property(c => c.EmpresaId).HasColumnName("empresa_id");
+                cliente.Property(c => c.DataCadastro).HasColumnName("data_cadastro");
+            });
+
             modelBuilder.Entity<Despesa>(despesa =>
             {
                 despesa.Property(d => d.EmpresaId).HasColumnName("empresa_id");

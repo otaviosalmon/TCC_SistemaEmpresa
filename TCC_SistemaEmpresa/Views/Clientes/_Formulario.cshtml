@@ -1,0 +1,116 @@
+@model TCC_SistemaEmpresa.Models.ViewModels.ClienteFormViewModel
+@{
+    var titulo = Model.SomenteLeitura
+        ? "Cliente"
+        : Model.EhEdicao ? "Editar Cliente" : "Criar Cliente";
+
+    var acao = Model.EhEdicao ? "Edit" : "Create";
+    var desabilitado = Model.SomenteLeitura ? "disabled" : null;
+}
+
+<h1 class="form-titulo">@titulo</h1>
+
+<form method="post" asp-action="@acao" asp-route-id="@(Model.EhEdicao ? Model.Id.ToString() : null)">
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="ModelOnly" class="alerta alerta-erro"></div>
+
+    <div class="form-grid">
+        <div class="campo campo-nome">
+            <label asp-for="Nome">Nome Cliente:</label>
+            <input asp-for="Nome" placeholder="Nome..." maxlength="150" autocomplete="off" disabled="@desabilitado" />
+            <span asp-validation-for="Nome" class="campo-erro"></span>
+        </div>
+
+        <div class="campo campo-id">
+            <span class="campo-rotulo">Id:</span>
+            @if (Model.EhEdicao)
+            {
+                <span class="campo-valor">@Model.Id</span>
+            }
+            else if (Model.ProximoId.HasValue)
+            {
+                <span class="campo-valor campo-valor-previsto"
+                      title="Número previsto. O id definitivo é atribuído pelo banco ao salvar e pode ser maior se outro cadastro for gravado antes.">
+                    @Model.ProximoId
+                </span>
+            }
+            else
+            {
+                <span class="campo-valor campo-valor-previsto">Gerado automaticamente</span>
+            }
+        </div>
+
+        <div class="campo campo-cpf">
+            <label asp-for="Cpf">CPF</label>
+            <input asp-for="Cpf" placeholder="999.999.999-99" maxlength="14"
+                   inputmode="numeric" autocomplete="off" data-mascara="cpf" disabled="@desabilitado" />
+            <span asp-validation-for="Cpf" class="campo-erro"></span>
+        </div>
+
+        <div class="campo campo-ativo">
+            <label asp-for="Ativo">Ativo:</label>
+            <select asp-for="Ativo" disabled="@desabilitado">
+                <option value="True">Ativo</option>
+                <option value="False">Inativo</option>
+            </select>
+            <span asp-validation-for="Ativo" class="campo-erro"></span>
+        </div>
+
+        <div class="campo campo-cliente-email">
+            <label asp-for="Email">Email:</label>
+            <input asp-for="Email" type="email" placeholder="email@example" maxlength="150"
+                   autocomplete="off" disabled="@desabilitado" />
+            <span asp-validation-for="Email" class="campo-erro"></span>
+        </div>
+
+        <div class="campo campo-cliente-telefone">
+            <label asp-for="Telefone">Telefone:</label>
+            <input asp-for="Telefone" placeholder="xxx-xxx" maxlength="20"
+                   inputmode="tel" autocomplete="off" disabled="@desabilitado" />
+            <span asp-validation-for="Telefone" class="campo-erro"></span>
+        </div>
+
+        <div class="campo campo-cliente-endereco">
+            <label asp-for="Endereco">Endereço:</label>
+            <input asp-for="Endereco" placeholder="Insira o endereço..." maxlength="255"
+                   autocomplete="off" disabled="@desabilitado" />
+            <span asp-validation-for="Endereco" class="campo-erro"></span>
+        </div>
+
+        <div class="campo campo-cliente-cadastro">
+            <span class="campo-rotulo">Data Cadastro:</span>
+            @if (Model.DataCadastro.HasValue)
+            {
+                <span class="campo-valor">@Model.DataCadastro.Value.ToString("dd/MM/yyyy")</span>
+            }
+            else
+            {
+                <span class="campo-valor campo-valor-previsto">Registrada ao salvar</span>
+            }
+        </div>
+
+        @if (Model.EhEdicao && Model.QuantidadeVendas > 0)
+        {
+            <div class="campo campo-cliente-vinculos">
+                <span class="campo-rotulo">Vendas:</span>
+                <span class="campo-valor">@Model.QuantidadeVendas compra(s)</span>
+                <span class="campo-ajuda">
+                    Cliente com histórico — só pode ser excluído depois que nenhuma venda apontar para ele.
+                </span>
+            </div>
+        }
+    </div>
+
+    <div class="form-acoes">
+        @if (Model.SomenteLeitura)
+        {
+            <a class="btn btn-escuro" asp-action="Index">Voltar</a>
+        }
+        else
+        {
+            <button type="submit" class="btn btn-claro">Salvar</button>
+            <a class="btn btn-escuro" asp-action="Index">Cancelar</a>
+        }
+    </div>
+</form>
