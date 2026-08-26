@@ -56,8 +56,8 @@ namespace TCC_SistemaEmpresa.Models.ViewModels
         public IEnumerable<SelectListItem> Clientes { get; set; } = Enumerable.Empty<SelectListItem>();
         public IEnumerable<SelectListItem> FormaPagamento { get; set; } = Enumerable.Empty<SelectListItem>();
 
-        public IReadOnlyList<ProdutoOpcaoViewModel> ProdutosDisponiveis { get; set; }
-            = Array.Empty<ProdutoOpcaoViewModel>();
+        public IReadOnlyList<ProdutoVendaOpcaoViewModel> ProdutosDisponiveis { get; set; }
+            = Array.Empty<ProdutoVendaOpcaoViewModel>();
 
 
         public bool SomenteLeitura { get; set; }
@@ -86,7 +86,7 @@ namespace TCC_SistemaEmpresa.Models.ViewModels
             public decimal Subtotal { get; set; }
 
         }
-        public class ProdutoOpcaoViewModel
+        public class ProdutoVendaOpcaoViewModel
         {
             public int Id { get; set; }
             public string Nome { get; set; } = string.Empty;

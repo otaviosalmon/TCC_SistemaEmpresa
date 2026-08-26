@@ -552,7 +552,7 @@ namespace TCC_SistemaEmpresa.Controllers
             });
         }
 
-        private async Task<IReadOnlyList<ProdutoOpcaoViewModel>> CarregarProdutosDisponiveisAsync()
+        private async Task<IReadOnlyList<ProdutoVendaOpcaoViewModel>> CarregarProdutosDisponiveisAsync()
         {
             var empresaId = EmpresaIdAtual();
 
@@ -560,7 +560,7 @@ namespace TCC_SistemaEmpresa.Controllers
                 AsNoTracking()
                 .Where(p => p.EmpresaId == empresaId && p.Ativo)
                 .OrderBy(p => p.Nome)
-                .Select(p => new ProdutoOpcaoViewModel
+                .Select(p => new ProdutoVendaOpcaoViewModel
                 {
                     Id = p.Id,
                     Nome = p.Nome,
