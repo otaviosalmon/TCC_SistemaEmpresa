@@ -43,8 +43,8 @@
 
         <div class="campo campo-cpf">
             <label asp-for="Cpf">CPF</label>
-            <input asp-for="Cpf" placeholder="Insira o CPF..." maxlength="14"
-                   inputmode="numeric" autocomplete="off" disabled="@desabilitado" />
+            <input asp-for="Cpf" placeholder="999.999.999-99" maxlength="14"
+                   inputmode="numeric" autocomplete="off" data-mascara="cpf" disabled="@desabilitado" />
             <span asp-validation-for="Cpf" class="campo-erro"></span>
         </div>
 
