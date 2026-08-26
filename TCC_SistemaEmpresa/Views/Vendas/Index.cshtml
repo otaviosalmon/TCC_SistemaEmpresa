@@ -1,0 +1,124 @@
+﻿@model TCC_SistemaEmpresa.Models.ViewModels.VendaListaViewModel;
+@{
+    ViewData["Title"] = "Vendas";
+}
+
+<div class ="pagina-titulo-centro">
+    <h1 class= "pagina-titulo">Vendas</h1>
+</div>
+
+@if (TempData["Sucesso"] is string mensagemSucesso)
+{
+    <div class = "alerta alerta-sucesso">@mensagemSucesso</div>
+}
+
+@if (TempData["Erro"] is string mensagemErro)
+{
+    <div class = "alerta alerta-erro">@mensagemErro</div>
+}
+
+<form method = "get" asp action = "index" class = "listagem-barra">
+    <div class="busca">
+        <input type ="text" name = "busca" value = "@Model.Busca" placeholder = "Pesquisar por funcionário ou cliente..."
+        aria-label="Pesquisar por funcionário ou cliente" />
+        <button type="submit" aria-label="Pesquisar">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="roun" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="7" /><path d="M21 21l-4.35-4.35" />
+>            </svg>
+        </button>
+    </div>
+
+    <div class="filtro filtro-periodo">
+        <label class="campo-rotuloinline" for="dataInicial">De:</label>
+        <input type="date" id="dataInicial" name="dataInicial"
+            value="@(Model.DataInicial?.ToString("yyyy-MM-dd"))"
+            onchange="this,form.submit()" aria-label="Data Inicial" />
+           <label class="campo-rotulo-inline" for="dataFinal">Até:</label>
+           <input type="date" id="dataFinal" name="dataFinal"
+               value="@(Model.DataFinal?.ToString("yyy-MM-dd"))"
+               onchange="this.form.submit() "aria-label="DataFinal" />
+    </div>
+
+    <div class="filtro" >
+        <select name="filtro" onchange="this.form.submit()" aria-label="Filtrar por situação">
+            <option value="todas" selcted="@(Model.Filtro == "todas")">Filtros...</option>
+            <option value="concluidas" selected="@(Model.Filtro =="concluidas")">Somente concluidas</option>
+            <option value="canceladas" selected="@(Model.Filtro="canceladas")">Somente Canceladas</option>
+            </select>
+        </div>
+</form> 
+
+<div class="tabela-wrapper">
+    <table class="tabela">
+        <thead >
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Data</th>
+                <th scope="col">Funcionário</th>
+                <th scope="col">Cliente</th>
+                <th scope="col">Pagamento</th>
+                <th scope="col">Itens</th>
+                <th scope="col">Valor Final</th>
+                <th scope="col">Situação</th>
+                <th scope="col" aria-label="Ações"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Vendas.Count == 0)
+            {
+                <tr class="tabela-vazia">
+                    <td colspan="9">Nenhuma venda encontrada</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var venda in Model.Vendas)
+                {
+                    <tr>
+                        <td>@venda.Id</td>
+                        <td>@venda.DataVenda.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@venda.Funcionario</td>
+                        <td>@venda.Cliente</td>
+                        <td>@venda.FormaPagamento</td>
+                        <td>@venda.QuantidadeItens</td>
+                        <td>@venda.ValorFinal.ToString("C")</td>
+                        <td>
+                            @if (venda.SituacaoVenda == "CONCLUIDA")
+                            {
+                                <span class="marcador-ativo sim" title="Concluida">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M20 6L9 171-5-5"/>
+                                    </svg>
+                                </span>
+                                <text>Concluida</text>
+                            }
+                            else
+                            {
+                                <span class="marcador-ativo cancelada" title="Cancelada">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M18 6L6 18M6 6l12 12"/>
+                                    </svg>
+                                </span>
+                                <text>Cancelada</text>
+                            }
+                        </td>
+                        <td class="col-acoes">
+                            <div class="acoes-linha">
+                                <a class="acao-icone" asp-action="Details" asp-route-id="@venda.Id"
+                                    title="Visualizar" aria-label="Visualizar venda @venda.Id">
+                                <svg widht="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11 7-11-72"/><circle cx="12" cy="12" r="3"/>
+                                </svg>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="listagem-rodape">
+    <a class="btn btn-claro" asp-action="Create">+ Nova Venda</a>
+</div>

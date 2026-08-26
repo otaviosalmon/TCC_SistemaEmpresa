@@ -131,6 +131,7 @@ namespace TCC_SistemaEmpresa.Data
                 venda.Property(v => v.ValorTotal).HasColumnName("valor_total").HasPrecision(10, 2);
                 venda.Property(v => v.ValorFinal).HasColumnName("valor_final").HasPrecision(10, 2);
                 venda.Property(v => v.Desconto).HasPrecision(10, 2);
+                venda.Property(v => v.SituacaoVenda).HasColumnName("situacao_venda");
             });
 
             modelBuilder.Entity<LogSistema>(log =>

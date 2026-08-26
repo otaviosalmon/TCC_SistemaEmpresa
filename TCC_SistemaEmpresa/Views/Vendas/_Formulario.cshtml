@@ -1,0 +1,211 @@
+﻿@model TCC_SistemaEmpresa.Models.ViewModels.VendaFormViewModel
+@using System.Globalization
+@{
+    var titulo = Model.SomenteLeitura ? "Venda" : "Registrar Venda";
+}
+
+<h1 class="form-titulo">@titulo</h1>
+
+@if (!Model.SomenteLeitura)
+{
+    if (!Model.TemFuncionarios)
+    {
+        <div class="alerta alerta-erro">
+            Nenhum funcionário cadastrado. Como <code>funcionario_id</code>
+            é obrigatório, não é possivel registrar uma venda antes de existir um funcionário ativo.
+        </div>
+    }
+    if (!Model.TemFormasPagamento)
+    {
+        <div class="alerta alerta-erro">
+            Nenhuma forma pagamento cadastrada. Como <code>forma_pagamento_id</code>
+            é obrigatório, não é possivel registrar uma venda antes de existir uma ativa.
+        </div>
+    }
+    if (!Model.TemProdutos)
+    {
+        <div class="alerta alerta-erro">
+            Nenhum produto cadastrado. Como <code>produto_id</code>
+            é obrigatório, não é possivel registrar uma venda antesd e existir um ativo.
+        </div>
+    }
+}
+
+@if (Model.SomenteLeitura)
+{
+    <div class="form-grid">
+        <div class="campo">
+            <span class="campo-rotulo">Id:</span>
+            <span class="campo-valor">@Model.Id</span>
+        </div>
+        <div class="campo">
+            <span class="campo-rotulo">Data:</span>
+            <span class="campo-valor">@Model.DataVenda?.ToString("dd/MM/yyyy HH:mm")</span>
+        </div>
+        <div class="campo">
+            <span class="campo-rotulo">Stuação:</span>
+            <span class="campo-valor">
+                @if (Model.SituacaoVenda == "CONCLUIDA")
+                {
+                    <span class="marcador-ativo sim" title="Concluida">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 6L9 171-5-5"/>
+                        </svg>
+                    </span>
+                    <text>Concluida</text>
+                }
+                else
+                {
+                    <span class="marcador-ativo cancelada" title="Cancelada">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 6L6 18M6 6l12 12"/>
+                        </svg>
+                    </span>
+                    <text>Cancelada</text>
+                }
+            </span>
+        </div>
+        <div class="campo">
+            <span class="campo-rotulo">Funcionário</span>
+            <span class="campo-valor">@Model.FuncionarioNome</span>
+        </div>
+        <div class="campo">
+            <span class="campor-rotulo">Cliente:</span>
+            <span class="campo-valor">@Model.ClienteNome</span>
+        </div>
+        <div class="campo">
+        <span class="campo-rotulo">Pagamento:</span>
+        <span class="campo-valor">@Model.FormaPagamentoNome</span>
+        </div>
+        <div class="campo">
+            <span class="campo-rotulo">Valor Total:</span>
+            <span class="campo-valor">@Model.ValorTotal?.ToString("C")</span>
+        </div>
+        <div class="campo">
+            <span class="campo-rotulo">Desconto:</span>
+            <span class="campo-valor">@Model.Desconto.ToString("C")</span>
+        </div>
+        <div class="campo">
+            <span class="campo-rotulo">Valor Final:</span>
+            <span class="campo-valor campo-valor-destaque">@Model.ValorFinal?.ToString("C")</span>
+        </div>
+        @if (!string.IsNullOrWhiteSpace(Model.Observacao))
+        {
+            <div class="campo campo-largura-total">
+                <span class="campo-rotulo">Observação:</span>
+                <span class="campo-valor">@Model.Observacao</span>
+            </div>
+        }
+    </div>
+
+    <h2 class="form-subtitulo">Itens da venda</h2>
+    <div class="tabela-wrapper">
+        <table class="tabela">
+            <thead>
+                <tr>
+                    <th scope="col">Produto</th>
+                    <th scope="col">Quantidade</th>
+                    <th scope="col">Preço</th>
+                    <th scope="col">Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.ItensDetalhe)
+                {
+                    <tr>
+                        <td>@item.Produto</td>
+                        <td>@item.Quantidade</td>
+                        <td>@item.PrecoUnitario.ToString("C")</td>
+                        <td>@item.Subtotal.ToString("C")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Model.PodeCancelar && User.IsInRole("ADMIN")) // sim tem no controller, mas isso e para não aparecer o botão pra quem nao pode usar
+    {
+        <form method="post" asp-action="Cancelar" asp-route-id="@Model.Id"
+        id="form-cancelar-venda" class="acao-form">
+        </form>
+        <button type="button" class="btn btn-perigo"
+            data-modal-titulo="Cancelar venda"
+            data-modal-texto="Cancelar a venda #@Model.Id? O estoque de todos itens serão estornados. Não pode ser desfeito."
+            data-modal-confirmar="Cancelar venda"
+            data-modal-form="form-cancelar-venda">
+        Cancelar Venda
+        </button>
+
+        <dialog class="modal" data-modal aria-labelledby="modalTitulo">
+            <h2 class="modal-titulo" id="modalTitulo" data-modal-titulo-alvo></h2>
+            <p class="modal-texto" data-modal-texto-alvo></p>
+            <div class="modal-acoes">
+                <button type="button" class="btn btn-escuro" data-modal-fechar>Fechar</button>
+                <button type="button" class="btn btn btn-perigo" data-modal-confirmar-alvo hidden"></button>
+            </div>
+        </dialog>
+    }
+
+    <div class="form-acoes">
+        <a class="btn btn-escuro" asp-action="Index">Voltar</a>
+    </div>
+}
+else
+{
+    <form method="post" asp-action="Create" id="form-venda">
+        @Html.AntiForgeryToken()
+        <div asp-validate-summary="ModelOnly" class="alerta alerta-erro"></div>
+
+        <div class="form-grid">
+            <div class="campo campo-id">
+                <span class="campo-rotulo">Id:</span>
+                @if (Model.ProximoId.HasValue)
+                {
+                    <span class="campo-valor campo-valor-previsto"
+                    title="Número previsto. O Id definitivo e atribuido pelo banco ao salvar.">
+                @Model.ProximoId
+                    </span>
+                }
+                else
+                {
+                    <span class="campo-valor campo-valor-previsto">Gerado automaticamente</span>
+                }
+            </div>
+            <div class="campo campo-venda-funcionario">
+                <label asp-for="FuncionarioId">Funcionário:</label>
+                <select asp-for="FuncionarioId" asp-itens="Model.Funcionarios">
+                    <option value="0">Selecione o Funcionário...</option>
+                </select>
+                <span asp-validation-for="FuncionarioId" class="campo-erro"></span>
+            </div>
+
+            <div class="campo campo-venda-cliente">
+                <label asp-for="ClienteId">Cliente:</label>
+                <select asp-for="ClienteId" asp-itens="Model.Clientes">
+                    <option value="">Cliente não identificado (balcão)</option>
+                </select>
+                <span asp-validation-for="ClienteId" class="campo-erro"></span>
+            </div>
+
+            <div class="campo campo-venda-pagamento">
+                <label asp-for="FormaPagamentoId">Pagamento:</label>
+                <select asp-for="FormaPagamentoId" asp-itens="Model.FormasPagamento">
+                    <option value="0">Seleciona a forma de Pagamento...</option>
+                </select>
+                <span asp-validation-for="FormaPagamentoId" class="campo-erro"></span>
+            </div>
+
+            <div class="campo campo-venda-desconto">
+                <label asp-for="Desconto">Desconto:</label>
+                <select asp-for="Desconto" placeholder="R$00,00" inputmode="decimal"
+                data-val-number="Informe um valor numérico."/> 
+                <span asp-validation-for="Desconto" class="campo-erro"></span>
+            </div>
+
+                <div class="campo campo-venda-observacao campo-largura-total">
+                    <label asp-for="Observacao">Observação:</label>
+                    <textarea asp-for="Observacao" placeholder="Observação..." maxlength="255" rows="3"></textarea>
+                </div>
+        </div>
+    </form>
+}

@@ -12,6 +12,7 @@
         public decimal Desconto { get; set; }
         public decimal ValorFinal { get; set; }
         public string? Observacao { get; set; }
+        public string SituacaoVenda { get; set; } = "CONCLUIDA";
         public Empresa Empresa { get; set; }
         public Funcionario Funcionario { get; set; }
         public Cliente Cliente { get; set; }

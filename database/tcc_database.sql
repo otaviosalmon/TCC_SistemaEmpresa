@@ -558,13 +558,15 @@ CREATE OR ALTER VIEW Vw_Resumo_Vendas_Funcionario AS
         c.per_comissao_base;
 GO
 
--- ================================================================
--- FIM DO SCRIPT
--- ================================================================
--- Próximos passos recomendados para um ambiente de produção:
---   1. Habilitar TDE (Transparent Data Encryption) se dados sensíveis.
---   2. Criar logins e roles específicos por módulo (princípio do menor privilégio).
---   3. Configurar JOB de backup diário (full) + log shipping.
---   4. Implementar Row-Level Security se a multi-tenancy exigir isolamento total.
---   5. Criar stored procedures para operações críticas (venda, movimentação de estoque).
--- ================================================================
+ALTER TABLE Tb_Venda
+    ADD situacao_venda VARCHAR(20) NOT NULL
+        CONSTRAINT DF_Venda_SituacaoVenda DEFAULT 'CONCLUIDA';
+GO
+
+-- 2) Trava os únicos 2 valores válidos — mesmo padrão que o banco já
+--    usa em CHK_Usuario_Role e CHK_TipoMovimentacao_Natureza (nome da
+--    constraint seguindo a convenção CHK_<Tabela>_<Coluna> do §4.0).
+ALTER TABLE Tb_Venda
+    ADD CONSTRAINT CHK_Venda_SituacaoVenda
+        CHECK (situacao_venda IN ('CONCLUIDA', 'CANCELADA'));
+GO

@@ -43,21 +43,17 @@ namespace TCC_SistemaEmpresa.Controllers
 
             var username = model.Usuario.Trim();
 
-            // RN: usuário inativo não autentica (exclusão lógica — §5 do CLAUDE.md).
             var usuario = await _context.Usuario
                 .AsNoTracking()
                 .Include(u => u.Empresa)
                 .FirstOrDefaultAsync(u => u.Username == username && u.Ativo);
 
-            // Verifica com o username gravado no banco, não com o que foi digitado:
-            // a collation é case-insensitive, então o texto digitado pode diferir na caixa.
+
             var senhaConfere = usuario is not null
                 && PasswordHasher.Verificar(usuario.Username, model.Senha, usuario.PasswordHash);
 
             if (!senhaConfere)
             {
-                // Mensagem única para "usuário não existe" e "senha errada": revelar qual
-                // dos dois falhou permite enumerar usuários válidos do sistema.
                 _logger.LogWarning("Falha de autenticação para o usuário {Username}.", username);
                 ModelState.AddModelError(string.Empty, "Usuário ou senha inválidos.");
                 return View(model);
@@ -69,10 +65,7 @@ namespace TCC_SistemaEmpresa.Controllers
                 new(ClaimTypes.Name, usuario.Username),
                 new(ClaimTypes.Role, usuario.Role),
                 new(ClaimTypes.Email, usuario.Email ?? string.Empty),
-                // EmpresaId no cookie é a base do isolamento multiempresa (RNF39):
-                // toda consulta a entidade de negócio deve ser filtrada por esta claim.
                 new(ClaimsEmpresa.EmpresaId, usuario.EmpresaId.ToString()),
-                // Só para exibição no cabeçalho da barra lateral.
                 new(ClaimsEmpresa.EmpresaNome, usuario.Empresa?.Nome ?? string.Empty)
             };
 
@@ -87,8 +80,6 @@ namespace TCC_SistemaEmpresa.Controllers
                 "Usuário {Username} (Id {UsuarioId}, empresa {EmpresaId}) autenticado.",
                 usuario.Username, usuario.Id, usuario.EmpresaId);
 
-            // Url.IsLocalUrl barra open redirect: sem isso, /Account/Login?returnUrl=https://site-falso
-            // levaria o usuário para fora do sistema logo após o login.
             if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                 return Redirect(returnUrl);
 

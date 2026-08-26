@@ -22,9 +22,6 @@ namespace TCC_SistemaEmpresa.Controllers
             _logger = logger;
         }
 
-        // ================================================================
-        // Listagem
-        // ================================================================
 
         [HttpGet]
         public async Task<IActionResult> Index(string? busca, string? situacao)
@@ -42,14 +39,13 @@ namespace TCC_SistemaEmpresa.Controllers
                 SituacaoFiltro.Inativos => consulta.Where(f => !f.Ativo),
                 _ => consulta
             };
-
+ 
             if (!string.IsNullOrWhiteSpace(busca))
             {
                 var termo = busca.Trim();
                 var digitos = CpfAttribute.ApenasDigitos(termo);
 
-                // Sem o desvio, um termo puramente textual viraria Cpf.Contains("")
-                // — que é verdadeiro para todo mundo e anularia o filtro.
+
                 consulta = digitos.Length > 0
                     ? consulta.Where(f => f.Nome.Contains(termo) || f.Cpf.Contains(digitos))
                     : consulta.Where(f => f.Nome.Contains(termo));
@@ -90,9 +86,6 @@ namespace TCC_SistemaEmpresa.Controllers
             });
         }
 
-        // ================================================================
-        // Visualização
-        // ================================================================
         [HttpGet]
         public async Task<IActionResult> Details([FromRoute] int id)
         {
@@ -106,10 +99,6 @@ namespace TCC_SistemaEmpresa.Controllers
 
             return View(model);
         }
-
-        // ================================================================
-        // Criação
-        // ================================================================
 
         [HttpGet]
         public async Task<IActionResult> Create()
@@ -171,10 +160,6 @@ namespace TCC_SistemaEmpresa.Controllers
             TempData["Sucesso"] = $"Funcionário {funcionario.Nome} cadastrado com sucesso.";
             return RedirectToAction(nameof(Index));
         }
-
-        // ================================================================
-        // Edição
-        // ================================================================
 
         [HttpGet]
         public async Task<IActionResult> Edit([FromRoute] int id)
@@ -238,9 +223,6 @@ namespace TCC_SistemaEmpresa.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // ================================================================
-        // Exclusão definitiva
-        // ================================================================
 
         [HttpPost]
         [ValidateAntiForgeryToken]
