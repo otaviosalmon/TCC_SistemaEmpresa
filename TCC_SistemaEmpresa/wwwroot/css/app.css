@@ -130,6 +130,10 @@ a {
 .campo-catdespesa-id       { grid-column: 11 / span 2; }
 .campo-catdespesa-vinculos { grid-column: span 5; }
 
+.campo-formapag-nome     { grid-column: span 8; }
+.campo-formapag-id       { grid-column: 11 / span 2; }
+.campo-formapag-vinculos { grid-column: span 5; }
+
 .campo-despesa-categoria { grid-column: span 5; }
 .campo-despesa-id        { grid-column: span 2; }
 .campo-despesa-data      { grid-column: span 5; }
