@@ -12,7 +12,7 @@
 
     var controllersPorGrupo = new Dictionary<string, string[]>
     {
-        ["gerenciamento"] = new[] { "Produtos", "Categorias", "CategoriasDespesa", "TiposMovimentacao", "Clientes", "Funcionarios", "Usuarios" },
+        ["gerenciamento"] = new[] { "Produtos", "Categorias", "CategoriasDespesa", "TiposMovimentacao", "FormasPagamento", "Clientes", "Funcionarios", "Usuarios" },
         ["financeiro"] = new[] { "Vendas", "Movimentacoes", "Despesas" },
         ["relatorios"] = new[] { "Relatorios", "Previsao" }
     };
@@ -24,7 +24,7 @@
 
     const string grupoExclusivo = "sidebar-grupo";
 
-    var categoriasAberto = new[] { "Categorias", "CategoriasDespesa", "TiposMovimentacao" }
+    var categoriasAberto = new[] { "Categorias", "CategoriasDespesa", "TiposMovimentacao", "FormasPagamento" }
         .Contains(controllerAtual, StringComparer.OrdinalIgnoreCase);
 }
 
@@ -98,16 +98,24 @@
                             </svg>
                             Tipo Movimentação
                         </a>
+                        <a class="sidebar-item @(controllerAtual == "FormasPagamento" ? "ativo" : null)"
+                           asp-controller="FormasPagamento" asp-action="Index">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20" />
+                            </svg>
+                            Forma Pagamento
+                        </a>
                     </div>
                 </details>
-                <span class="sidebar-item indisponivel" title="Módulo ainda não implementado">
+                <a class="sidebar-item @(controllerAtual == "Clientes" ? "ativo" : null)"
+                   asp-controller="Clientes" asp-action="Index">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="9" cy="8" r="3.5" />
                         <path d="M2 20v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1" />
                         <path d="M17 8h5M19.5 5.5v5" />
                     </svg>
                     Clientes
-                </span>
+                </a>
                 <a class="sidebar-item @(controllerAtual == "Funcionarios" ? "ativo" : null)"
                    asp-controller="Funcionarios" asp-action="Index">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

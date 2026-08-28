@@ -96,6 +96,12 @@ a {
 .campo-cargo       { grid-column: span 5; }
 .campo-largo       { grid-column: span 12; }
 
+.campo-cliente-email    { grid-column: span 5; }
+.campo-cliente-telefone { grid-column: span 5; }
+.campo-cliente-endereco { grid-column: 4 / span 6; }
+.campo-cliente-cadastro { grid-column: span 3; }
+.campo-cliente-vinculos { grid-column: span 5; }
+
 .campo-produto-nome        { grid-column: span 6; }
 .campo-produto-data        { grid-column: span 4; }
 .campo-produto-custo       { grid-column: span 2; }
@@ -112,6 +118,10 @@ a {
 .campo-catdespesa-nome     { grid-column: span 8; }
 .campo-catdespesa-id       { grid-column: 11 / span 2; }
 .campo-catdespesa-vinculos { grid-column: span 5; }
+
+.campo-formapag-nome     { grid-column: span 8; }
+.campo-formapag-id       { grid-column: 11 / span 2; }
+.campo-formapag-vinculos { grid-column: span 5; }
 
 .campo-despesa-categoria { grid-column: span 5; }
 .campo-despesa-id        { grid-column: span 2; }

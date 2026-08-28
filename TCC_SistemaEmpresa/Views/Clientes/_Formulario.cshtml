@@ -1,8 +1,8 @@
-@model TCC_SistemaEmpresa.Models.ViewModels.FuncionarioFormViewModel
+@model TCC_SistemaEmpresa.Models.ViewModels.ClienteFormViewModel
 @{
     var titulo = Model.SomenteLeitura
-        ? "Funcionário"
-        : Model.EhEdicao ? "Editar Funcionário" : "Criar Funcionário";
+        ? "Cliente"
+        : Model.EhEdicao ? "Editar Cliente" : "Criar Cliente";
 
     var acao = Model.EhEdicao ? "Edit" : "Create";
     var desabilitado = Model.SomenteLeitura ? "disabled" : null;
@@ -17,7 +17,7 @@
 
     <div class="form-grid">
         <div class="campo campo-nome">
-            <label asp-for="Nome">Nome Funcionário:</label>
+            <label asp-for="Nome">Nome Cliente:</label>
             <input asp-for="Nome" placeholder="Nome..." maxlength="150" autocomplete="off" disabled="@desabilitado" />
             <span asp-validation-for="Nome" class="campo-erro"></span>
         </div>
@@ -57,33 +57,49 @@
             <span asp-validation-for="Ativo" class="campo-erro"></span>
         </div>
 
-        <div class="campo campo-salario">
-            <label asp-for="Salario">Salário:</label>
-            <input asp-for="Salario" placeholder="R$00,00" inputmode="decimal"
-                   data-val-number="Informe um valor numérico." disabled="@desabilitado" />
-            <span asp-validation-for="Salario" class="campo-erro"></span>
+        <div class="campo campo-cliente-email">
+            <label asp-for="Email">Email:</label>
+            <input asp-for="Email" type="email" placeholder="email@example" maxlength="150"
+                   autocomplete="off" disabled="@desabilitado" />
+            <span asp-validation-for="Email" class="campo-erro"></span>
         </div>
 
-        <div class="campo campo-comissao">
-            <label asp-for="PerComissao">Comissão:</label>
-            <input asp-for="PerComissao" placeholder="0%" inputmode="decimal"
-                   data-val-number="Informe um valor numérico." disabled="@desabilitado" />
-            <span asp-validation-for="PerComissao" class="campo-erro"></span>
+        <div class="campo campo-cliente-telefone">
+            <label asp-for="Telefone">Telefone:</label>
+            <input asp-for="Telefone" placeholder="xxx-xxx" maxlength="20"
+                   inputmode="tel" autocomplete="off" disabled="@desabilitado" />
+            <span asp-validation-for="Telefone" class="campo-erro"></span>
         </div>
 
-        <div class="campo campo-data">
-            <label asp-for="DataAdmissao">Data de Admissão:</label>
-            <input asp-for="DataAdmissao" type="date" disabled="@desabilitado" />
-            <span asp-validation-for="DataAdmissao" class="campo-erro"></span>
+        <div class="campo campo-cliente-endereco">
+            <label asp-for="Endereco">Endereço:</label>
+            <input asp-for="Endereco" placeholder="Insira o endereço..." maxlength="255"
+                   autocomplete="off" disabled="@desabilitado" />
+            <span asp-validation-for="Endereco" class="campo-erro"></span>
         </div>
 
-        <div class="campo campo-cargo">
-            <label asp-for="CargoId">Selecione Cargo:</label>
-            <select asp-for="CargoId" asp-items="Model.Cargos" disabled="@desabilitado">
-                <option value="0">Selecione o Cargo...</option>
-            </select>
-            <span asp-validation-for="CargoId" class="campo-erro"></span>
+        <div class="campo campo-cliente-cadastro">
+            <span class="campo-rotulo">Data Cadastro:</span>
+            @if (Model.DataCadastro.HasValue)
+            {
+                <span class="campo-valor">@Model.DataCadastro.Value.ToString("dd/MM/yyyy")</span>
+            }
+            else
+            {
+                <span class="campo-valor campo-valor-previsto">Registrada ao salvar</span>
+            }
         </div>
+
+        @if (Model.EhEdicao && Model.QuantidadeVendas > 0)
+        {
+            <div class="campo campo-cliente-vinculos">
+                <span class="campo-rotulo">Vendas:</span>
+                <span class="campo-valor">@Model.QuantidadeVendas compra(s)</span>
+                <span class="campo-ajuda">
+                    Cliente com histórico — só pode ser excluído depois que nenhuma venda apontar para ele.
+                </span>
+            </div>
+        }
     </div>
 
     <div class="form-acoes">

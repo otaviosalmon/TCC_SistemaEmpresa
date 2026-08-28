@@ -1,12 +1,11 @@
-@model TCC_SistemaEmpresa.Models.ViewModels.FuncionarioFormViewModel
+@model TCC_SistemaEmpresa.Models.ViewModels.ClienteFormViewModel
 @{
-    ViewData["Title"] = "Editar Funcionário";
+    ViewData["Title"] = "Editar Cliente";
 }
 
 @await Html.PartialAsync("_Formulario", Model)
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script src="~/js/validacao-ptbr.js" asp-append-version="true"></script>
     <script src="~/js/mascara-cpf.js" asp-append-version="true"></script>
 }
