@@ -1,0 +1,11 @@
+﻿@model TCC_SistemaEmpresa.Models.ViewModels.VendaFormViewModel
+@using TCC_SistemaEmpresa.Models.ViewModels
+@{
+    ViewData["Title"] = "Venda";
+}
+
+@await Html.PartialAsync("_Formulario", Model)
+
+@section Scripts {
+    <script src="~/js/modal.js" asp-append-version="true"></script>
+}

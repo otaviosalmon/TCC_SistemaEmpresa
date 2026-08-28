@@ -56,15 +56,18 @@
                 <a class="sidebar-item @(controllerAtual == "Produtos" ? "ativo" : null)"
                    asp-controller="Produtos" asp-action="Index">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 2l9 5v10l-9 5-9-5V7z" /><path d="M3 7l9 5 9-5M12 12v10" />
+                        <path d="M12 2l9 5v10l-9 5-9-5V7z" />
+                        <path d="M3 7l9 5 9-5M12 12v10" />
                     </svg>
                     Produtos
                 </a>
                 <details class="sidebar-grupo" open="@(categoriasAberto ? "open" : null)">
                     <summary class="sidebar-grupo-titulo">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" />
-                            <rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" />
+                            <rect x="3" y="3" width="7" height="7" rx="1" />
+                            <rect x="14" y="3" width="7" height="7" rx="1" />
+                            <rect x="3" y="14" width="7" height="7" rx="1" />
+                            <rect x="14" y="14" width="7" height="7" rx="1" />
                         </svg>
                         Categorias
                         <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -74,21 +77,24 @@
                     <div class="sidebar-subitens">
                         <span class="sidebar-item indisponivel" title="Módulo ainda não implementado">
                             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 2l9 5v10l-9 5-9-5V7z" /><path d="M3 7l9 5 9-5" />
+                                <path d="M12 2l9 5v10l-9 5-9-5V7z" />
+                                <path d="M3 7l9 5 9-5" />
                             </svg>
                             Tipo Produto
                         </span>
                         <a class="sidebar-item @(controllerAtual == "CategoriasDespesa" ? "ativo" : null)"
                            asp-controller="CategoriasDespesa" asp-action="Index">
                             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M11 3v18" /><path d="M15.5 6.5H8.75a2.75 2.75 0 0 0 0 5.5h4.5a2.75 2.75 0 0 1 0 5.5H6" />
+                                <path d="M11 3v18" />
+                                <path d="M15.5 6.5H8.75a2.75 2.75 0 0 0 0 5.5h4.5a2.75 2.75 0 0 1 0 5.5H6" />
                             </svg>
                             Categoria Despesa
                         </a>
                         <a class="sidebar-item @(controllerAtual == "TiposMovimentacao" ? "ativo" : null)"
                            asp-controller="TiposMovimentacao" asp-action="Index">
                             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M7 4v13M7 4L4 7.5M7 4l3 3.5" /><path d="M17 20V7M17 20l3-3.5M17 20l-3-3.5" />
+                                <path d="M7 4v13M7 4L4 7.5M7 4l3 3.5" />
+                                <path d="M17 20V7M17 20l3-3.5M17 20l-3-3.5" />
                             </svg>
                             Tipo Movimentação
                         </a>
@@ -96,20 +102,25 @@
                 </details>
                 <span class="sidebar-item indisponivel" title="Módulo ainda não implementado">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="9" cy="8" r="3.5" /><path d="M2 20v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1" /><path d="M17 8h5M19.5 5.5v5" />
+                        <circle cx="9" cy="8" r="3.5" />
+                        <path d="M2 20v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1" />
+                        <path d="M17 8h5M19.5 5.5v5" />
                     </svg>
                     Clientes
                 </span>
                 <a class="sidebar-item @(controllerAtual == "Funcionarios" ? "ativo" : null)"
                    asp-controller="Funcionarios" asp-action="Index">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="9" cy="8" r="3.5" /><path d="M2 20v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1" /><path d="M17 20v-1a5 5 0 0 0-3-4.58M15.5 4.6a3.5 3.5 0 0 1 0 6.8" />
+                        <circle cx="9" cy="8" r="3.5" />
+                        <path d="M2 20v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1" />
+                        <path d="M17 20v-1a5 5 0 0 0-3-4.58M15.5 4.6a3.5 3.5 0 0 1 0 6.8" />
                     </svg>
                     Funcionários
                 </a>
                 <span class="sidebar-item indisponivel" title="Módulo ainda não implementado">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="8" r="3.5" /><path d="M5 20v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1" />
+                        <circle cx="12" cy="8" r="3.5" />
+                        <path d="M5 20v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1" />
                     </svg>
                     Usuários
                 </span>
@@ -127,23 +138,28 @@
                 </svg>
             </summary>
             <div class="sidebar-subitens">
-                <span class="sidebar-item indisponivel" title="Módulo ainda não implementado">
+                <a class="sidebar-item @(controllerAtual == "Vendas" ? "ativo" : null)"
+                   asp-controller="Vendas" asp-action="Index">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="3" width="18" height="18" rx="3" /><path d="M12 7v7M8.5 10.5L12 14l3.5-3.5" />
+                        <rect x="3" y="3" width="18" height="18" rx="3" />
+                        <path d="M12 7v7M8.5 10.5L12 14l3.5-3.5" />
                     </svg>
                     Vendas
-                </span>
+                </a>
                 <a class="sidebar-item @(controllerAtual == "Movimentacoes" ? "ativo" : null)"
                    asp-controller="Movimentacoes" asp-action="Index">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M7 4v13M7 4L4 7.5M7 4l3 3.5" /><path d="M17 20V7M17 20l3-3.5M17 20l-3-3.5" />
+                        <path d="M7 4v13M7 4L4 7.5M7 4l3 3.5" />
+                        <path d="M17 20V7M17 20l3-3.5M17 20l-3-3.5" />
                     </svg>
                     Movimentações
                 </a>
                 <a class="sidebar-item @(controllerAtual == "Despesas" ? "ativo" : null)"
                    asp-controller="Despesas" asp-action="Index">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M11 3v18" /><path d="M15.5 6.5H8.75a2.75 2.75 0 0 0 0 5.5h4.5a2.75 2.75 0 0 1 0 5.5H6" /><path d="M17 15h5" />
+                        <path d="M11 3v18" />
+                        <path d="M15.5 6.5H8.75a2.75 2.75 0 0 0 0 5.5h4.5a2.75 2.75 0 0 1 0 5.5H6" />
+                        <path d="M17 15h5" />
                     </svg>
                     Despesas
                 </a>
@@ -153,7 +169,8 @@
         <details class="sidebar-grupo" name="@grupoExclusivo" open="@(grupoAberto == "relatorios" ? "open" : null)">
             <summary class="sidebar-grupo-titulo">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6M8 13h8M8 17h8" />
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <path d="M14 2v6h6M8 13h8M8 17h8" />
                 </svg>
                 Relatórios
                 <svg class="chevron" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -163,14 +180,17 @@
             <div class="sidebar-subitens">
                 <span class="sidebar-item indisponivel" title="Módulo ainda não implementado">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h9" /><path d="M13 2v6h6" />
-                        <circle cx="16" cy="16" r="3.2" /><path d="M18.4 18.4L21 21" />
+                        <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h9" />
+                        <path d="M13 2v6h6" />
+                        <circle cx="16" cy="16" r="3.2" />
+                        <path d="M18.4 18.4L21 21" />
                     </svg>
                     Relatórios Detalhados
                 </span>
                 <span class="sidebar-item indisponivel" title="Módulo ainda não implementado">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6" />
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <path d="M14 2v6h6" />
                         <path d="M8 17l2.5-3 2 2L16 12" />
                     </svg>
                     Previsão/IA

@@ -1,0 +1,13 @@
+﻿@model TCC_SistemaEmpresa.Models.ViewModels.VendaFormViewModel
+@using TCC_SistemaEmpresa.Models.ViewModels
+@{
+    ViewData["Title"] = "Registrar Venda";
+}
+
+@await Html.PartialAsync("_Formulario", Model)
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial"/>
+    <script src="~/js/validacao-ptbr.js" asp-append-version="true"></script>
+    <script src="~~/js/venda-itens.js" asp-append-version="true"></script>
+}

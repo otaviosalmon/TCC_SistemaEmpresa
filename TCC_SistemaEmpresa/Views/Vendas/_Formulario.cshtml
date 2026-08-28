@@ -1,4 +1,5 @@
 ﻿@model TCC_SistemaEmpresa.Models.ViewModels.VendaFormViewModel
+@using TCC_SistemaEmpresa.Models.ViewModels
 @using System.Globalization
 @{
     var titulo = Model.SomenteLeitura ? "Venda" : "Registrar Venda";
@@ -43,7 +44,7 @@
             <span class="campo-valor">@Model.DataVenda?.ToString("dd/MM/yyyy HH:mm")</span>
         </div>
         <div class="campo">
-            <span class="campo-rotulo">Stuação:</span>
+            <span class="campo-rotulo">Situação:</span>
             <span class="campo-valor">
                 @if (Model.SituacaoVenda == "CONCLUIDA")
                 {
@@ -70,7 +71,7 @@
             <span class="campo-valor">@Model.FuncionarioNome</span>
         </div>
         <div class="campo">
-            <span class="campor-rotulo">Cliente:</span>
+            <span class="campo-rotulo">Cliente:</span>
             <span class="campo-valor">@Model.ClienteNome</span>
         </div>
         <div class="campo">
@@ -141,7 +142,7 @@
             <p class="modal-texto" data-modal-texto-alvo></p>
             <div class="modal-acoes">
                 <button type="button" class="btn btn-escuro" data-modal-fechar>Fechar</button>
-                <button type="button" class="btn btn btn-perigo" data-modal-confirmar-alvo hidden"></button>
+                <button type="button" class="btn btn btn-perigo" data-modal-confirmar-alvo hidden></button>
             </div>
         </dialog>
     }
@@ -154,7 +155,7 @@ else
 {
     <form method="post" asp-action="Create" id="form-venda">
         @Html.AntiForgeryToken()
-        <div asp-validate-summary="ModelOnly" class="alerta alerta-erro"></div>
+        <div asp-validation-summary="ModelOnly" class="alerta alerta-erro"></div>
 
         <div class="form-grid">
             <div class="campo campo-id">
@@ -173,7 +174,7 @@ else
             </div>
             <div class="campo campo-venda-funcionario">
                 <label asp-for="FuncionarioId">Funcionário:</label>
-                <select asp-for="FuncionarioId" asp-itens="Model.Funcionarios">
+                <select asp-for="FuncionarioId" asp-items="Model.Funcionarios">
                     <option value="0">Selecione o Funcionário...</option>
                 </select>
                 <span asp-validation-for="FuncionarioId" class="campo-erro"></span>
@@ -181,7 +182,7 @@ else
 
             <div class="campo campo-venda-cliente">
                 <label asp-for="ClienteId">Cliente:</label>
-                <select asp-for="ClienteId" asp-itens="Model.Clientes">
+                <select asp-for="ClienteId" asp-items="Model.Clientes">
                     <option value="">Cliente não identificado (balcão)</option>
                 </select>
                 <span asp-validation-for="ClienteId" class="campo-erro"></span>
@@ -189,7 +190,7 @@ else
 
             <div class="campo campo-venda-pagamento">
                 <label asp-for="FormaPagamentoId">Pagamento:</label>
-                <select asp-for="FormaPagamentoId" asp-itens="Model.FormasPagamento">
+                <select asp-for="FormaPagamentoId" asp-items="Model.FormaPagamento">
                     <option value="0">Seleciona a forma de Pagamento...</option>
                 </select>
                 <span asp-validation-for="FormaPagamentoId" class="campo-erro"></span>
@@ -197,7 +198,7 @@ else
 
             <div class="campo campo-venda-desconto">
                 <label asp-for="Desconto">Desconto:</label>
-                <select asp-for="Desconto" placeholder="R$00,00" inputmode="decimal"
+                <input asp-for="Desconto" type="text" placeholder="R$00,00" inputmode="decimal"
                 data-val-number="Informe um valor numérico."/> 
                 <span asp-validation-for="Desconto" class="campo-erro"></span>
             </div>
@@ -207,5 +208,70 @@ else
                     <textarea asp-for="Observacao" placeholder="Observação..." maxlength="255" rows="3"></textarea>
                 </div>
         </div>
+
+        <h2 class="form-subtitulo">Itens da venda</h2>
+
+        <div id="itens-da-venda-container" class="itens-venda-container">
+            @{
+                
+            }
+            @RenderLinhaItem(0, Model.Itens.Count > 0 ? Model.Itens[0] : null, Model.ProdutosDisponiveis)
+        </div>
+
+        <button type="button" id="btn-adicionar-itens" class="btn btn-escuro btn-adicionar-itens">
+            + Adicionar item
+        </button>
+
+        <div class="venda-resumo">
+            <span>Total estimado: <strong id="venda-total-estimado">R$0,00</strong></span>
+        </div>
+
+        <div class="form-acoes">
+            <button type="submit" class="btn btn-claro" disabled="@(Model.PodeVender ? null : "disabled")">
+                Registrar venda
+            </button>
+            <a class="btn btn-escuro" asp-action="Index">Cancelar</a>
+        </div>
     </form>
+
+    <template id="template-item-venda">
+        @RenderLinhaItem("__INDEX__", null, Model.ProdutosDisponiveis)
+    </template>
+
+    @functions {
+    private IHtmlContent RenderLinhaItem(
+        object indice, VendaFormViewModel.ItemVendaFormViewModel? item, IReadOnlyList<VendaFormViewModel.ProdutoVendaOpcaoViewModel> produtos)
+    {
+        var produtoSelecionado = item?.ProdutoId ?? 0;
+        var quantidade = item?.Quantidade ?? 1;
+
+        var html = new System.Text.StringBuilder();
+
+        html.Append($"<div class=\"item-venda-linha\" data-item-linha>");
+        html.Append($"<select name=\"Itens[{indice}].ProdutoId\" class=\"item-produto-select\" data-item-produto>");
+        html.Append($"<option value =\"0\">Selecione o produto...</option>");
+
+        foreach (var produto in produtos)
+        {
+            var selecionado = produto.Id == produtoSelecionado ? " selected" : "";
+            var preco = produto.PrecoVenda.ToString("F2", CultureInfo.InvariantCulture);
+
+            html.Append(
+                $"<option value=\"{produto.Id}\" data-preco=\"{preco}\" data-estoque=\"{produto.QuantidadeAtual}\"{selecionado}>{produto.Nome}</option>");
+        }
+        html.Append("</select>");
+        html.Append($"<div class=\"campo\"><label>Quantidade:</label>");
+        html.Append(
+            $"<input type=\"number\" name=\"Itens[{indice}].Quantidade\" min=\"1\" step=\"1\" value=\"{quantidade}\" class=\"item-quantidade-input\" data-item-quantidade /></div>");
+
+        html.Append("<div class=\"item-venda-preview\" data-item-preview>Selecione um produto</div>");
+        html.Append(
+             $"<button type=\"button\" class=\"btn-remover-item\" data-item-remover title=\"Remover item\" aria-label=\"Remover item\">&times;</button>");
+        html.Append("</div>");
+
+
+        return new HtmlString(html.ToString());
+    }
+    
+    }
 }

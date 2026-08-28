@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿    using Microsoft.EntityFrameworkCore;
 using TCC_SistemaEmpresa.Models;
 namespace TCC_SistemaEmpresa.Data
 {
@@ -148,6 +148,17 @@ namespace TCC_SistemaEmpresa.Data
                 log.Property(l => l.EntidadeAfetada).HasColumnName("entidade_afetada");
                 log.Property(l => l.RegistroId).HasColumnName("registro_id");
                 log.Property(l => l.DataHora).HasColumnName("data_hora");
+            });
+
+            modelBuilder.Entity<Cliente>(cliente =>
+            {
+                cliente.Property(c => c.EmpresaId).HasColumnName("empresa_id");
+                cliente.Property(c => c.DataCadastro).HasColumnName("data_cadastro");
+            });
+
+            modelBuilder.Entity<FormaPagamento>(forma =>
+            {
+                forma.Property(f => f.EmpresaId).HasColumnName("empresa_id");
             });
         }
         

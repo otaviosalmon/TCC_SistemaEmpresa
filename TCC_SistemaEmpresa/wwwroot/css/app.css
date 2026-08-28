@@ -1,11 +1,3 @@
-/* ==========================================================================
-   Tema e área de conteúdo da aplicação.
-   Paleta alinhada à tela de login (wwwroot/css/login.css).
-
-   A barra lateral NÃO está aqui — ela é um componente à parte, em
-   wwwroot/css/sidebar.css. Este arquivo define as variáveis de cor que ela
-   consome (e das quais ela tem valor de reserva, para não depender daqui).
-   ========================================================================== */
 
 :root {
     --cor-fundo: #141414;
@@ -40,8 +32,6 @@ a {
     color: var(--cor-destaque);
 }
 
-/* ============================ Estrutura ================================= */
-
 .app-shell {
     display: flex;
     min-height: 100vh;
@@ -56,8 +46,6 @@ a {
     border-radius: 14px;
     padding: 28px 32px;
 }
-
-/* ======================== Cabeçalho da página =========================== */
 
 .pagina-titulo {
     display: inline-block;
@@ -83,7 +71,7 @@ a {
     color: #ffffff;
 }
 
-/* ============================ Formulários =============================== */
+
 
 .form-grid {
     display: grid;
@@ -95,6 +83,7 @@ a {
     display: flex;
     flex-direction: column;
     gap: 6px;
+    grid-column: span 3; 
 }
 
 .campo-nome        { grid-column: span 5; }
@@ -145,8 +134,7 @@ a {
     color: var(--cor-texto);
 }
 
-/* Valor só de leitura renderizado como texto (ex.: a chave primária). Repete a
-   caixa do input para alinhar com os campos vizinhos, sem ser um campo. */
+
 .campo-valor {
     padding: 9px 12px;
     border: 1px solid transparent;
@@ -160,13 +148,11 @@ a {
     white-space: nowrap;
 }
 
-/* Valor que ainda não é definitivo (ex.: o id previsto antes de gravar). */
 .campo-valor-previsto {
     font-style: italic;
     color: #8a8a8a;
 }
 
-/* Saldo projetado que o banco rejeitaria (CHK_Produto_QtdAtual >= 0). */
 .campo-valor-invalido {
     border-color: var(--cor-perigo);
     color: #ffb4b4;
@@ -250,7 +236,6 @@ a {
     text-align: center;
 }
 
-/* ============================== Botões ================================== */
 
 .btn {
     display: inline-flex;
@@ -307,7 +292,6 @@ a {
     background-color: var(--cor-acao);
 }
 
-/* ============================== Listagem ================================ */
 
 .listagem-barra {
     display: flex;
@@ -410,7 +394,6 @@ a {
     color: var(--cor-texto-suave);
 }
 
-/* Indicador de ativo/inativo — quadradinho marcado do mockup. */
 .marcador-ativo {
     display: inline-flex;
     align-items: center;
@@ -427,7 +410,6 @@ a {
     background-color: #8f8f8f;
 }
 
-/* Informação secundária dentro de uma célula (ex.: a natureza abaixo do tipo). */
 .celula-detalhe {
     display: block;
     font-size: 0.74rem;
@@ -467,8 +449,7 @@ a {
     background-color: var(--cor-perigo);
 }
 
-/* Funcionário ativo: o X segue no lugar para não desalinhar a coluna, mas sem
-   ação — e sem o realce de hover, que sugeriria que é clicável. */
+
 .acao-icone:disabled {
     opacity: 0.3;
     cursor: not-allowed;
@@ -479,8 +460,7 @@ a {
     background-color: transparent;
 }
 
-/* Formulário que existe só para carregar o token antifalsificação — quem
-   dispara o submit é o popup. Não deve ocupar espaço na linha. */
+
 .acao-form {
     display: none;
 }
@@ -499,7 +479,6 @@ a {
     color: var(--cor-texto);
 }
 
-/* =========================== Mensagens ================================== */
 
 .alerta {
     margin-bottom: 18px;
@@ -526,7 +505,6 @@ a {
     color: #f4d58d;
 }
 
-/* Resumo de erros do asp-validation-summary: escondido quando não há erro. */
 .alerta-erro.validation-summary-valid {
     display: none;
 }
@@ -536,7 +514,6 @@ a {
     padding-left: 18px;
 }
 
-/* ============================== Popup =================================== */
 
 .modal {
     width: min(440px, calc(100vw - 32px));
@@ -573,7 +550,6 @@ a {
     margin-top: 26px;
 }
 
-/* =========================== Responsivo ================================= */
 
 @media (max-width: 900px) {
     .app-shell {
@@ -582,5 +558,138 @@ a {
 
     .form-grid > .campo {
         grid-column: span 12;
+    }
+}
+
+.form-subtitulo {
+    margin-top: 24px;
+    margin-bottom: 8px;
+    font-size: 1.1rem;
+}
+
+.filtro-periodo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.campo-rotulo-inline {
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+.itens-venda-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.item-venda-linha {
+    display: grid;
+    grid-template-columns: 2fr 1fr 2fr auto;
+    gap: 10px;
+    align-items: end;
+    padding: 10px;
+    border: 1px solid var(--cor-borda, #333);
+    border-radius: 6px;
+}
+
+.item-venda-preview {
+    font-size: 0.85rem;
+    opacity: 0.85;
+    align-self: center;
+}
+
+.item-venda-preview-erro {
+    color: #ff6b6b;
+}
+
+.btn-remover-item {
+    background: transparent;
+    border: 1px solid #ff6b6b;
+    color: #ff6b6b;
+    border-radius: 4px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+}
+
+.btn-adicionar-item {
+    margin-bottom: 16px;
+}
+
+.venda-resumo {
+    margin-bottom: 16px;
+    font-size: 1.05rem;
+}
+
+.campo-valor-destaque {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.marcador-ativo.cancelada {
+    border-color: #ff6b6b;
+    color: #ff6b6b;
+}
+
+.campo-venda-funcionario {
+    grid-column: span 5;
+}
+
+.campo-venda-cliente {
+    grid-column: span 5;
+}
+
+.campo-venda-pagamento {
+    grid-column: span 5;
+}
+
+.campo-venda-desconto {
+    grid-column: span 3;
+}
+
+.campo-venda-observacao {
+    grid-column: span 12;
+}
+
+.campo-largura-total {
+    grid-column: span 12;
+}
+
+.item-venda-linha .item-produto-select {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    background-color: var(--cor-campo);
+    color: var(--cor-texto);
+    font-family: inherit;
+    font-size: 0.92rem;
+}
+
+    .item-venda-linha .item-produto-select:focus {
+        outline: 2px solid var(--cor-destaque);
+        outline-offset: 1px;
+    }
+
+    .item-venda-linha .item-produto-select option {
+        background-color: var(--cor-campo);
+        color: var(--cor-texto);
+    }
+
+.btn-adicionar-itens {
+    margin-bottom: 16px;
+}
+
+@media (max-width: 900px) {
+    .item-venda-linha {
+        grid-template-columns: 1fr;
+        align-items: stretch;
+    }
+
+    .btn-remover-item {
+        justify-self: end;
     }
 }
