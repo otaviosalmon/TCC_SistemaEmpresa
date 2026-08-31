@@ -115,6 +115,10 @@ a {
 .campo-tipomov-id       { grid-column: 11 / span 2; }
 .campo-tipomov-natureza { grid-column: span 3; }
 
+.campo-catproduto-nome     { grid-column: span 8; }
+.campo-catproduto-id       { grid-column: 11 / span 2; }
+.campo-catproduto-vinculos { grid-column: span 5; }
+
 .campo-catdespesa-nome     { grid-column: span 8; }
 .campo-catdespesa-id       { grid-column: 11 / span 2; }
 .campo-catdespesa-vinculos { grid-column: span 5; }
