@@ -47,6 +47,7 @@ namespace TCC_SistemaEmpresa.Data
                 item.Property(i => i.VendaId).HasColumnName("venda_id");
                 item.Property(i => i.ProdutoId).HasColumnName("produto_id");
                 item.Property(i => i.PrecoUnitario).HasColumnName("preco_unitario").HasPrecision(10, 2);
+                item.Property(i => i.PrecoCusto).HasColumnName("preco_custo").HasPrecision(10, 2);
                 item.Property(i => i.Subtotal).HasPrecision(10, 2).ValueGeneratedOnAddOrUpdate();
             });
 

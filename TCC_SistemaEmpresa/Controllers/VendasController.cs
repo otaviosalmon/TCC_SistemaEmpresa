@@ -297,7 +297,8 @@ namespace TCC_SistemaEmpresa.Controllers
                     VendaId = venda.Id,
                     ProdutoId = produto.Id,
                     Quantidade = item.Quantidade,
-                    PrecoUnitario = produto.PrecoVenda
+                    PrecoUnitario = produto.PrecoVenda,
+                    PrecoCusto = produto.PrecoCusto
                 });
 
                 _context.MovimentacoesEstoque.Add(new MovimentacaoEstoque

@@ -12,6 +12,7 @@ namespace TCC_SistemaEmpresa.Models
         public int ProdutoId { get; set; }
         public int Quantidade { get; set; }
         public decimal PrecoUnitario { get; set; }
+        public decimal? PrecoCusto { get; set; }
         public decimal Subtotal { get; set; }
         public Venda Venda { get; set; }
         public Produto Produto { get; set; }

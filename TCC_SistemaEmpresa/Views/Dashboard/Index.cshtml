@@ -1,0 +1,126 @@
+﻿@model TCC_SistemaEmpresa.Models.ViewModels.DashboardViewModel
+@using System.Text.Json
+
+@{
+    ViewData["Title"] = "Dashboard";
+
+    var dadosGraficos = new
+    {
+        //Grafico Rosca
+        produtos = Model.ProdutosMaisVendidos.Select(prop => new
+        {
+            nome = prop.Produto,
+            quantidade = prop.Quantidade,
+            valor = prop.ValorVendido
+        }),
+        //Grafico barra
+        faturamento = Model.EvolucaoFaturamento.Select(f => new
+        {
+            rotulo = f.Rotulo,
+            rotuloCompleto = f.RotuloCompleto,
+            total = f.Total
+        })
+    };
+}
+
+<div class="pagina-titulo-centro">
+    <h1 class="pagina-titulo">Dashboard</h1>
+</div>
+
+<form method="get" asp-action="Index" class="dashboard-filtro">
+    <div class="campo campo-dashboard-data">
+        <label for="dataInicial">De:</label>
+        <input type="date" id="dataInicial" name="dataInicial"
+            value="@Model.PeriodoInicial.ToString("yyyy-MM-dd")"/>
+    </div>
+    <div class="campo campo-dashboard-data">
+        <label for="dataFinal">Até:</label>
+        <input type="date" id="dataFinal" name="dataFinal"
+            value="@Model.PeriodoFinal.ToString("yyyy-MM-dd")"/>
+    </div>
+
+    <button type="submit" class="btn btn-claro">Aplicar</button>
+
+    <a class="btn btn-escuro" asp-action="Index">Limpar</a>
+</form>
+
+<div class="kpi-grid">
+    <div class="kpi-card">
+        <span class="kpi-rotulo">Receita Bruta</span>
+        <span class="kpi-valor">@Model.ReceitaBruta.ToString("C")</span>
+        <span class="kpi-apoio">@Model.QuantidadeVendas venda(s) concluida(s)</span>
+    </div>
+
+    <div class="kpi-card">
+        <span class="kpi-rotulo">Receita Líquida</span>
+        <span class="kpi-valor">@Model.ReceitaLiquida.ToString("C")</span>
+        <span class="kpi-apoio">Custo dos Produtos: @Model.CustoProdutosVendidos.ToString("C")</span>
+    </div>
+
+    <div class="kpi-card">
+        <span class="kpi-rotulo">Lucro Total</span>
+        <span class="kpi-valor @(Model.LucroTotal < 0 ? "kpi-negativo" : null)">
+            @Model.LucroTotal.ToString("C")
+        </span>
+        <span class="kpi-apoio">Receita liquída menos despesas</span>
+    </div>
+
+    <div class="kpi-card">
+        <span class="kpi-rotulo">Despesas</span>
+        <span class="kpi-valor">@Model.TotalDespesas.ToString("C")</span>
+        <span class="kpi-apoio">Fixas e eventuais do período</span>
+    </div>
+</div>
+
+<div class="grafico-grid">
+    <section class="grafico-card grafico-rosca">
+        <h2 class="grafico-titulo">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12a9 9 0 1 1-9-9v9z" />
+            </svg>
+            Produtos mais vendidos
+        </h2>
+
+        @if (@Model.TemProdutosVendidos)
+        {
+            <div class="grafico-area">
+                <canvas id="grafico-produtos" role="img"
+                    aria-label="Gráfico de rosca dos cinco produtos mais vendidos no período"></canvas>
+            </div>
+        }
+        else
+        {
+            <p class="grafico-vazio">Nenhum produto vendido no período selecionado.</p>
+        }
+    </section>
+
+    <section class="grafico-card grafico-barra">
+        <h2 class="grafico-titulo">
+            <svg width="18" height="18" viewBox=" 0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 3v18h18" /><path d="M7 15v3M12 10v8M17 6v12" />
+            </svg>
+            Evolução do Faturamento
+        </h2>
+
+        @if (Model.TemVendas)
+        {
+            <div class="grafico-area">
+                <canvas id="grafico-faturamento" role="img"
+                    aria-label="Gráfico de barras do faturamento mês a mês no período"></canvas>
+            </div>
+        }
+        else
+        {
+            <p class="grafico-vazio">Nenhuma venda concluída no periodo selecionado.</p>
+        }
+    </section>
+</div>
+
+<script type="application/json" id="dashboard-dados">
+    @Html.Raw(JsonSerializer.Serialize(dadosGraficos))
+</script>
+
+@section Scripts {
+    <script src="~/lib/chartjs/chart.umd.min.js"></script>
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+}

@@ -352,19 +352,7 @@ namespace TCC_SistemaEmpresa.Controllers
             DataAdmissao = funcionario.DataAdmissao,
             CargoId = funcionario.CargoId
         };
-        private void RegistrarLog(string acao, int registroId, string detalhes)
-        {
-            _context.LogsSistema.Add(new LogSistema
-            {
-                EmpresaId = EmpresaIdAtual(),
-                UsuarioId = UsuarioIdAtual(),
-                Acao = acao,
-                EntidadeAfetada = nameof(Funcionario),
-                RegistroId = registroId,
-                DataHora = DateTime.Now,
-                Detalhes = detalhes
-            });
-        }
+
 
         private static string NormalizarSituacao(string? situacao) => situacao switch
         {

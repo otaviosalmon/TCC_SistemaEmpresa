@@ -32,15 +32,17 @@
     <div class="sidebar-marca" title="@nomeEmpresa">@nomeEmpresa</div>
 
     <nav class="sidebar-nav">
-        <a class="sidebar-item @(controllerAtual == "Home" ? "ativo" : null)"
-           asp-controller="Home" asp-action="Index">
+        @if (User.IsInRole("ADMIN") || User.IsInRole("GERENTE"))
+        {
+            <a class="sidebar-item @(controllerAtual == "Dashboard" ? "ativo" : null)"
+            asp-controller="Dashboard" asp-action="Index">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="3" y="3" width="18" height="18" rx="2" />
                 <path d="M3 9h18M9 21V9" />
             </svg>
             DashBoard
         </a>
-
+        }
         <details class="sidebar-grupo" name="@grupoExclusivo" open="@(grupoAberto == "gerenciamento" ? "open" : null)">
             <summary class="sidebar-grupo-titulo">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

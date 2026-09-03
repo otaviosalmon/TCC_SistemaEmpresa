@@ -14,10 +14,12 @@ namespace TCC_SistemaEmpresa.Controllers
             _logger = logger;
         }
 
-        // Destino padrão após o login (rota default: {controller=Home}/{action=Index}).
         public IActionResult Index()
         {
-            return View();
+            if (User.IsInRole("ADMIN") || User.IsInRole("GERENTE"))
+                return RedirectToAction("Index", "Dashboard");
+
+            return RedirectToAction("Index", "Vendas");
         }
 
         public IActionResult Teste()
@@ -31,8 +33,6 @@ namespace TCC_SistemaEmpresa.Controllers
             return View();
         }
 
-        // Anônimo: a página de erro precisa responder mesmo sem usuário logado,
-        // senão uma falha em quem não está autenticado vira redirect para o login.
         [AllowAnonymous]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
