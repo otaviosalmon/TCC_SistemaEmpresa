@@ -7,6 +7,11 @@
     background-color: var(--cor-sidebar, #1e1e1e);
     border-radius: 14px;
     padding: 26px 17px 17px;
+    height: calc(100vh - 32px);
+    position: sticky;
+    top: 16px;
+    align-self: flex-start;
+    overflow-y: auto;
 }
 
 .sidebar-marca {
