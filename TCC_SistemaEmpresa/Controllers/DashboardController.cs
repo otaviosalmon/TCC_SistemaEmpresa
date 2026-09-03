@@ -108,7 +108,7 @@ namespace TCC_SistemaEmpresa.Controllers
 
             while (cursor <= ultimo)
             {
-                var chave = (cursor.Year, inicio.Month);
+                var chave = (cursor.Year, cursor.Month);
                 var total = totais.TryGetValue(chave, out var valor) ? valor : 0m;
 
                 serie.Add(new FaturamentoMensalViewModel

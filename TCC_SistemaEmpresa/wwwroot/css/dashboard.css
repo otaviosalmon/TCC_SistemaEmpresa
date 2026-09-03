@@ -49,27 +49,33 @@
 }
 
 .grafico-grid {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
+    display: flex;
     gap: 16px;
+    width: 100%;
+    align-items: stretch; 
 }
 
+
 .grafico-rosca {
-    grid-column: span 4;
+    flex: 1 1 0;
 }
 
 .grafico-barras {
-    grid-column: span 8;
+    flex: 2 1 0;
 }
 
 @media (max-width: 1100px) {
+    .grafico-grid {
+        flex-wrap: wrap;
+    }
     .grafico-rosca,
     .grafico-barras {
-        grid-column: span 12;
+        flex: 1 1 100%;
     }
 }
 
 .grafico-card {
+    min-width: 0;
     padding: 18px 20px;
     background-color: #333333;
     border: 1px solid var(--cor-borda);
@@ -88,7 +94,7 @@
 
 .grafico-area {
     position: relative;
-    height: 280px;
+    height: 340px;
 }
 
 .grafico-vazio {

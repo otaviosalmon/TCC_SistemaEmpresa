@@ -8,19 +8,19 @@
     }
     var dados;
     try {
-        dados = JSON.parse(elementosDados.textContent);
+        dados = JSON.parse(elementoDados.textContent);
     } catch (erro) {
         console.error("Não foi possivel ler os dados do dashboard:", erro);
         return;
     }
 
-    var PALETA = ["#e05a5a", "#4a7ce0", "#f0c419", "9b6ade"];
+    var PALETA = ["#e05a5a", "#4a7ce0", "#4caf50", "#f0c419", "#9b6ade"];
 
-    var COR_TEXTO = #f2f2f2;
-    var COR_TEXTO_SUAVE = #b9b9b9;
+    var COR_TEXTO = "#f2f2f2";
+    var COR_TEXTO_SUAVE = "#b9b9b9";
     var COR_GRADE = "rgba(255, 255, 255, 0.08)";
 
-    var moeda = new intl.NumberFormat("pt-br", {
+    var moeda = new Intl.NumberFormat("pt-BR", {
         style: "currency",
         currency: "BRL"
     });
@@ -30,13 +30,13 @@
     if (canvasProdutos && dados.produtos && dados.produtos.length > 0) {
 
         new Chart(canvasProdutos, {
-            type: doughnut,
+            type: "doughnut",
 
             data: {
                 labels: dados.produtos.map(function (p) { return p.nome; }),
                 datasets: [{
                     data: dados.produtos.map(function (p) { return p.quantidade; }),
-                    backgroundColor: PALETA.slice(0, dados.produtos.lenght),
+                    backgroundColor: PALETA.slice(0, dados.produtos.length),
                     borderColor: "#333333",
                     borderWidth: 2
                 }]
@@ -44,8 +44,8 @@
 
             options: {
                 responsive: true,
-                maitainApectRatio: false,
-                cutout: "604",
+                maintainAspectRatio: false,
+                cutout: "60%",
 
                 plugins: {
                     legend: {
@@ -72,7 +72,7 @@
 
     var canvasFaturamento = document.getElementById("grafico-faturamento");
 
-    if (canvasFaturamento && dados.faturamento && dados.faturamento.lenght > 0) {
+    if (canvasFaturamento && dados.faturamento && dados.faturamento.length > 0) {
 
         new Chart(canvasFaturamento, {
             type: "bar",
@@ -81,7 +81,7 @@
                 datasets: [{
                     data: dados.faturamento.map(function (f) { return f.total; }),
                     backgroundColor: dados.faturamento.map(function (f, indice) {
-                        return PALETA[indice % PALETA.lenght];
+                        return PALETA[indice % PALETA.length];
                     }),
                     borderRadius: 4,
                     maxBarThickness: 46
@@ -108,7 +108,13 @@
 
                 scales: {
                     x: {
-                        ticks: { color: COR_TEXTO_SUAVE },
+                        ticks: {
+                            color: COR_TEXTO_SUAVE,
+                            maxRotation: 0,
+                            minRotation: 0,
+                            autoSkip: false,
+                            font: { size: 12 }
+                        },
                         grid: { display: false }
                     },
                     y: {
