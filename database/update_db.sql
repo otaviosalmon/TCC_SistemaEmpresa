@@ -25,3 +25,14 @@ VALUES (1, 'Cliente Balcão 2', NULL, GETDATE(), 1);
 SELECT i.name, i.filter_definition
 FROM sys.indexes i
 WHERE i.object_id = OBJECT_ID('Tb_Cliente') AND i.name LIKE 'UQ_Cliente%';
+
+--nova alteração para snapshot de preco_custo
+
+ALTER TABLE Tb_Item_Venda
+    ADD preco_custo DECIMAL(10,2) NULL;
+GO
+
+ALTER TABLE Tb_Item_Venda
+    ADD CONSTRAINT CHK_ItemVenda_PrecoCusto
+        CHECK (preco_custo IS NULL OR preco_custo >= 0);
+GO
