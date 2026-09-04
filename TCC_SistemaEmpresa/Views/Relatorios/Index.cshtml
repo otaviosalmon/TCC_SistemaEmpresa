@@ -1,0 +1,139 @@
+@model TCC_SistemaEmpresa.Models.ViewModels.RelatorioViewModel
+@using TCC_SistemaEmpresa.Models.ViewModels
+@{
+    ViewData["Title"] = "Relatórios Detalhados";
+
+    var tipos = new (string Valor, string Rotulo)[]
+    {
+        (TipoRelatorio.Movimentacoes, "Movimentações"),
+        (TipoRelatorio.Vendas, "Vendas"),
+        (TipoRelatorio.Despesas, "Despesas")
+    };
+
+    var dataInicial = Model.DataInicial.ToString("yyyy-MM-dd");
+    var dataFinal = Model.DataFinal.ToString("yyyy-MM-dd");
+}
+
+<div class="pagina-titulo-centro">
+    <h1 class="pagina-titulo">Relatórios Detalhados</h1>
+</div>
+
+@if (Model.Erro is string erroPeriodo)
+{
+    <div class="alerta alerta-erro">@erroPeriodo</div>
+}
+else if (TempData["Erro"] is string mensagemErro)
+{
+    <div class="alerta alerta-erro">@mensagemErro</div>
+}
+
+<div class="relatorio-abas">
+    @foreach (var tipo in tipos)
+    {
+        <a class="relatorio-aba @(Model.Tipo == tipo.Valor ? "ativa" : null)"
+           asp-action="Index"
+           asp-route-tipo="@tipo.Valor"
+           asp-route-dataInicial="@dataInicial"
+           asp-route-dataFinal="@dataFinal"
+           asp-route-produtoId="@(tipo.Valor == TipoRelatorio.Movimentacoes && Model.ProdutoId > 0 ? Model.ProdutoId.ToString() : null)">@tipo.Rotulo</a>
+    }
+</div>
+
+<form method="get" asp-action="Index" class="relatorio-filtro">
+    <input type="hidden" name="tipo" value="@Model.Tipo" />
+
+    <div class="campo campo-dashboard-data">
+        <label for="dataInicial">De:</label>
+        <input type="date" id="dataInicial" name="dataInicial" value="@dataInicial" required />
+    </div>
+
+    <div class="campo campo-dashboard-data">
+        <label for="dataFinal">Até:</label>
+        <input type="date" id="dataFinal" name="dataFinal" value="@dataFinal" required />
+    </div>
+
+    @if (Model.PermiteFiltroProduto)
+    {
+        <div class="campo campo-relatorio-produto">
+            <label for="produtoId">Produto:</label>
+            <select id="produtoId" name="produtoId" aria-label="Filtrar por produto">
+                <option value="0">Todos os produtos</option>
+                @foreach (var opcao in Model.Produtos)
+                {
+                    <option value="@opcao.Value" selected="@opcao.Selected">@opcao.Text</option>
+                }
+            </select>
+        </div>
+    }
+
+    <button type="submit" class="btn btn-claro">Aplicar</button>
+
+    <a class="btn btn-escuro" asp-action="Index" asp-route-tipo="@Model.Tipo">Limpar</a>
+
+    <a class="btn btn-claro btn-exportar @(Model.TemLinhas ? null : "desabilitado")"
+       asp-action="Exportar"
+       asp-route-tipo="@Model.Tipo"
+       asp-route-dataInicial="@dataInicial"
+       asp-route-dataFinal="@dataFinal"
+       asp-route-produtoId="@(Model.ProdutoId > 0 ? Model.ProdutoId.ToString() : null)"
+       aria-disabled="@(Model.TemLinhas ? "false" : "true")">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3v12" /><path d="M7.5 10.5L12 15l4.5-4.5" /><path d="M4 19h16" />
+        </svg>
+        Exportar Excel
+    </a>
+</form>
+
+<div class="relatorio-resumo">
+    <span class="relatorio-resumo-titulo">@Model.Titulo</span>
+    <span class="relatorio-resumo-periodo">@Model.Linhas.Count registro(s)</span>
+</div>
+
+@if (Model.Totais.Count > 0)
+{
+    <div class="kpi-grid">
+        @foreach (var total in Model.Totais)
+        {
+            <div class="kpi-card">
+                <span class="kpi-rotulo">@total.Rotulo</span>
+                <span class="kpi-valor">@total.ValorFormatado</span>
+            </div>
+        }
+    </div>
+}
+
+<div class="tabela-wrapper">
+    <table class="tabela tabela-relatorio">
+        <thead>
+            <tr>
+                @foreach (var coluna in Model.Colunas)
+                {
+                    <th scope="col">@coluna.Titulo</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.TemLinhas)
+            {
+                <tr class="tabela-vazia">
+                    <td colspan="@Model.Colunas.Count">@Model.MensagemTabelaVazia</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var linha in Model.Linhas)
+                {
+                    <tr>
+                        @for (var indice = 0; indice < Model.Colunas.Count; indice++)
+                        {
+                            var coluna = Model.Colunas[indice];
+                            <td class="@(coluna.Numerica ? "col-numerica" : null)">
+                                @RelatorioViewModel.Formatar(linha.ElementAtOrDefault(indice), coluna.Formato)
+                            </td>
+                        }
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

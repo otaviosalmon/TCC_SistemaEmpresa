@@ -28,7 +28,7 @@ namespace TCC_SistemaEmpresa.Controllers
             return int.TryParse(claim, out var usuarioId) ? usuarioId : null;
         }
 
-        protected void RegistrarLog(string acao, int registroId, string detalhes)
+        protected void RegistrarLog(string acao, int? registroId, string detalhes)
         {
             _context.LogsSistema.Add(new LogSistema
             {

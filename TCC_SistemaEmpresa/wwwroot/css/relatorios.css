@@ -1,0 +1,83 @@
+.relatorio-abas {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid var(--cor-borda);
+}
+
+.relatorio-aba {
+    padding: 10px 18px;
+    border: 1px solid transparent;
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    color: var(--cor-texto-suave);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+.relatorio-aba:hover {
+    background-color: #333333;
+    color: var(--cor-texto);
+}
+
+.relatorio-aba.ativa {
+    background-color: var(--cor-painel);
+    border-color: var(--cor-borda);
+    color: #ffffff;
+}
+
+.relatorio-filtro {
+    display: flex;
+    align-items: flex-end;
+    gap: 14px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+}
+
+.btn-exportar {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-left: auto;
+}
+
+.btn-exportar.desabilitado {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.relatorio-resumo {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+}
+
+.relatorio-resumo-titulo {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.relatorio-resumo-periodo {
+    font-size: 0.85rem;
+    color: var(--cor-texto-suave);
+}
+
+.tabela-relatorio {
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+.tabela-relatorio th {
+    font-size: 0.85rem;
+}
+
+.campo-relatorio-produto {
+    grid-column: unset;
+    min-width: 220px;
+}
