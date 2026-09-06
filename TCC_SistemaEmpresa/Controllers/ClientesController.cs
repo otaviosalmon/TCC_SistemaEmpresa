@@ -22,7 +22,7 @@ namespace TCC_SistemaEmpresa.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string? busca, string? situacao)
+        public async Task<IActionResult> Index(string? busca, string? situacao, int pagina = 1)
         {
             var empresaId = EmpresaIdAtual();
             situacao = NormalizarSituacao(situacao);
@@ -52,8 +52,11 @@ namespace TCC_SistemaEmpresa.Controllers
                                        || c.Email!.Contains(termo));
             }
 
+            var paginacao = PaginacaoViewModel.Criar(pagina, await consulta.CountAsync());
+
             var clientes = await consulta
                 .OrderBy(c => c.Nome)
+                .Pagina(paginacao)
                 .Select(c => new ClienteLinhaViewModel
                 {
                     Id = c.Id,
@@ -70,6 +73,7 @@ namespace TCC_SistemaEmpresa.Controllers
             {
                 Busca = busca,
                 Situacao = situacao,
+                Paginacao = paginacao,
                 Clientes = clientes
             });
         }

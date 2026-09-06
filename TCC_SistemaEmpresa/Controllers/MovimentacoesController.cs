@@ -22,7 +22,7 @@ namespace TCC_SistemaEmpresa.Controllers
         protected override string EntidadeLog => nameof(MovimentacaoEstoque);
 
         [HttpGet]
-        public async Task<IActionResult> Index(string? busca, string? natureza, int produtoId = 0)
+        public async Task<IActionResult> Index(string? busca, string? natureza, int produtoId = 0, int pagina = 1)
         {
             var empresaId = EmpresaIdAtual();
             natureza = NormalizarNatureza(natureza);
@@ -52,9 +52,26 @@ namespace TCC_SistemaEmpresa.Controllers
                     || (m.Observacao != null && m.Observacao.Contains(termo)));
             }
 
+            var paginacao = PaginacaoViewModel.Criar(pagina, await consulta.CountAsync());
+
+            var totalEntradas = 0;
+            var totalSaidas = 0;
+
+            if (produtoId > 0 && paginacao.TemRegistros)
+            {
+                var totaisPorNatureza = await consulta
+                    .GroupBy(m => m.TipoMovimentacao.Natureza)
+                    .Select(grupo => new { Natureza = grupo.Key, Quantidade = grupo.Sum(m => m.Quantidade) })
+                    .ToDictionaryAsync(x => x.Natureza, x => x.Quantidade);
+
+                totalEntradas = totaisPorNatureza.TryGetValue(NaturezaMovimentacao.Entrada, out var entradas) ? entradas : 0;
+                totalSaidas = totaisPorNatureza.TryGetValue(NaturezaMovimentacao.Saida, out var saidas) ? saidas : 0;
+            }
+
             var movimentacoes = await consulta
                 .OrderByDescending(m => m.DataMovimentacao)
                 .ThenByDescending(m => m.Id)
+                .Pagina(paginacao)
                 .Select(m => new MovimentacaoEstoqueLinhaViewModel
                 {
                     Id = m.Id,
@@ -75,6 +92,9 @@ namespace TCC_SistemaEmpresa.Controllers
                 Natureza = natureza,
                 ProdutoId = produtoId,
                 Produtos = await CarregarFiltroProdutosAsync(produtoId),
+                Paginacao = paginacao,
+                TotalEntradas = totalEntradas,
+                TotalSaidas = totalSaidas,
                 Movimentacoes = movimentacoes
             });
         }

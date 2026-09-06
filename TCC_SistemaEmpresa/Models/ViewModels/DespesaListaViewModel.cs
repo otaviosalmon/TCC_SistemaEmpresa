@@ -16,7 +16,9 @@ namespace TCC_SistemaEmpresa.Models.ViewModels
         public IReadOnlyList<DespesaLinhaViewModel> Despesas { get; set; }
             = Array.Empty<DespesaLinhaViewModel>();
 
-        public decimal Total => Despesas.Sum(despesa => despesa.Valor);
+        public PaginacaoViewModel Paginacao { get; set; } = PaginacaoViewModel.Criar(1, 0);
+
+        public decimal Total { get; set; }
     }
 
     public class DespesaLinhaViewModel

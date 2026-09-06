@@ -8,6 +8,8 @@ namespace TCC_SistemaEmpresa.Models.ViewModels
 
         public IReadOnlyList<ProdutoLinhaViewModel> Produtos { get; set; }
             = Array.Empty<ProdutoLinhaViewModel>();
+
+        public PaginacaoViewModel Paginacao { get; set; } = PaginacaoViewModel.Criar(1, 0);
     }
 
     public class ProdutoLinhaViewModel

@@ -9,6 +9,8 @@ namespace TCC_SistemaEmpresa.Models.ViewModels
 
         public IReadOnlyList<FuncionarioLinhaViewModel> Funcionarios { get; set; }
             = Array.Empty<FuncionarioLinhaViewModel>();
+
+        public PaginacaoViewModel Paginacao { get; set; } = PaginacaoViewModel.Criar(1, 0);
     }
 
     public static class SituacaoFiltro

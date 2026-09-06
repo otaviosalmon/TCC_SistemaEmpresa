@@ -8,6 +8,8 @@ namespace TCC_SistemaEmpresa.Models.ViewModels
 
         public IReadOnlyList<FormaPagamentoLinhaViewModel> Formas { get; set; }
             = Array.Empty<FormaPagamentoLinhaViewModel>();
+
+        public PaginacaoViewModel Paginacao { get; set; } = PaginacaoViewModel.Criar(1, 0);
     }
 
     public class FormaPagamentoLinhaViewModel

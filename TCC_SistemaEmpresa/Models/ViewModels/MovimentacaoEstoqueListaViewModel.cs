@@ -21,13 +21,11 @@ namespace TCC_SistemaEmpresa.Models.ViewModels
         public IReadOnlyList<MovimentacaoEstoqueLinhaViewModel> Movimentacoes { get; set; }
             = Array.Empty<MovimentacaoEstoqueLinhaViewModel>();
 
-        public int TotalEntradas => Movimentacoes
-            .Where(movimentacao => movimentacao.Natureza == NaturezaMovimentacao.Entrada)
-            .Sum(movimentacao => movimentacao.Quantidade);
+        public PaginacaoViewModel Paginacao { get; set; } = PaginacaoViewModel.Criar(1, 0);
 
-        public int TotalSaidas => Movimentacoes
-            .Where(movimentacao => movimentacao.Natureza == NaturezaMovimentacao.Saida)
-            .Sum(movimentacao => movimentacao.Quantidade);
+        public int TotalEntradas { get; set; }
+
+        public int TotalSaidas { get; set; }
     }
 
     public class MovimentacaoEstoqueLinhaViewModel

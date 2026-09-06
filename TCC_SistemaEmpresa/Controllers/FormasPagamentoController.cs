@@ -20,7 +20,7 @@ namespace TCC_SistemaEmpresa.Controllers
         protected override string EntidadeLog => nameof(FormaPagamento);
 
         [HttpGet]
-        public async Task<IActionResult> Index(string? busca, string? situacao)
+        public async Task<IActionResult> Index(string? busca, string? situacao, int pagina = 1)
         {
             var empresaId = EmpresaIdAtual();
             situacao = NormalizarSituacao(situacao);
@@ -42,8 +42,11 @@ namespace TCC_SistemaEmpresa.Controllers
                 consulta = consulta.Where(f => f.Nome.Contains(termo));
             }
 
+            var paginacao = PaginacaoViewModel.Criar(pagina, await consulta.CountAsync());
+
             var formas = await consulta
                 .OrderBy(f => f.Nome)
+                .Pagina(paginacao)
                 .Select(f => new FormaPagamentoLinhaViewModel
                 {
                     Id = f.Id,
@@ -58,6 +61,7 @@ namespace TCC_SistemaEmpresa.Controllers
             {
                 Busca = busca,
                 Situacao = situacao,
+                Paginacao = paginacao,
                 Formas = formas
             });
         }

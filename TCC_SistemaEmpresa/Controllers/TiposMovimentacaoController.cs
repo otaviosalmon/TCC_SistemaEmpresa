@@ -21,7 +21,7 @@ namespace TCC_SistemaEmpresa.Controllers
         protected override string EntidadeLog => nameof(TipoMovimentacao);
 
         [HttpGet]
-        public async Task<IActionResult> Index(string? busca, string? situacao)
+        public async Task<IActionResult> Index(string? busca, string? situacao, int pagina = 1)
         {
             var empresaId = EmpresaIdAtual();
             situacao = NormalizarSituacao(situacao);
@@ -43,8 +43,11 @@ namespace TCC_SistemaEmpresa.Controllers
                 consulta = consulta.Where(t => t.Nome.Contains(termo));
             }
 
+            var paginacao = PaginacaoViewModel.Criar(pagina, await consulta.CountAsync());
+
             var tipos = await consulta
                 .OrderBy(t => t.Nome)
+                .Pagina(paginacao)
                 .Select(t => new TipoMovimentacaoLinhaViewModel
                 {
                     Id = t.Id,
@@ -60,6 +63,7 @@ namespace TCC_SistemaEmpresa.Controllers
             {
                 Busca = busca,
                 Situacao = situacao,
+                Paginacao = paginacao,
                 Tipos = tipos
             });
         }

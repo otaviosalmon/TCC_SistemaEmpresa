@@ -1,15 +1,20 @@
+@using TCC_SistemaEmpresa.Services
 @model TCC_SistemaEmpresa.Models.ViewModels.LoginViewModel
 @{
     Layout = null;
     ViewData["Title"] = "Login";
+    var tema = Aparencia.Tema.Atual(Context.Request);
+    var fonte = Aparencia.Fonte.Atual(Context.Request);
 }
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" data-tema="@tema" data-fonte="@fonte">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - TCC_SistemaEmpresa</title>
+    <link rel="stylesheet" href="~/css/tema.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
+    <script src="~/js/tema.js" asp-append-version="true"></script>
 </head>
 <body>
     <div class="login-page" id="loginPage" data-view="login">
