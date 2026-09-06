@@ -203,7 +203,7 @@ namespace TCC_SistemaEmpresa.Controllers
 
             var produtoIds = itensPreenchidos.Select(i => i.ProdutoId).Distinct().ToList();
             var produtos = await _context.Produtos
-                .AsNoTracking()
+                .AsTracking()
                 .Where(p => p.EmpresaId == empresaId && produtoIds.Contains(p.Id))
                 .ToDictionaryAsync(p => p.Id);
 
@@ -328,7 +328,7 @@ namespace TCC_SistemaEmpresa.Controllers
             _logger.LogInformation(
                 "Venda {VendaId} criada na empresa {EmpresaId} com {QtdItens} iten(s).", venda.Id, empresaId, itensPreenchidos.Count);
 
-            TempData["Sucesso"] = "Venda #{venda.Id} registrada com sucesso.";
+            TempData["Sucesso"] = $"Venda #{venda.Id} registrada com sucesso.";
 
             return RedirectToAction(nameof(Index));
 
@@ -379,7 +379,7 @@ namespace TCC_SistemaEmpresa.Controllers
 
             var produtoIds =  movimentacoesOriginais.Select(m => m.ProdutoId).Distinct().ToList();
             var produtos = await _context.Produtos
-                .AsNoTracking()
+                .AsTracking()
                 .Where(p => p.EmpresaId == empresaId && produtoIds.Contains(p.Id))
                 .ToDictionaryAsync(p => p.Id);
 
@@ -482,7 +482,7 @@ namespace TCC_SistemaEmpresa.Controllers
                     WHEN coluna.last_value IS NULL THEN CONVERT (int, coluna.seed_value)
                     ELSE CONVERT(int, coluna.last_value) + CONVERT(int, coluna.increment_value)
                    END AS Value
-                FROM sys.identity.columns AS coluna
+                FROM sys.identity_columns AS coluna
                 WHERE coluna.object_id = OBJECT_ID('Tb_Venda')";
 
             try
