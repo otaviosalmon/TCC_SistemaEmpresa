@@ -1,16 +1,23 @@
+@using TCC_SistemaEmpresa.Services
 @{
     var autenticado = User.Identity?.IsAuthenticated == true;
+    var tema = Aparencia.Tema.Atual(Context.Request);
+    var fonte = Aparencia.Fonte.Atual(Context.Request);
+    var densidade = Aparencia.Densidade.Atual(Context.Request);
 }
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" data-tema="@tema" data-fonte="@fonte" data-densidade="@densidade">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - L.O. Solutions</title>
+    <link rel="stylesheet" href="~/css/tema.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/app.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/sidebar.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/relatorios.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/configuracoes.css" asp-append-version="true" />
+    <script src="~/js/tema.js" asp-append-version="true"></script>
 </head>
 <body>
     <div class="app-shell">

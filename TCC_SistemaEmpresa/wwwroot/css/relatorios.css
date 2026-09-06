@@ -18,14 +18,14 @@
 }
 
 .relatorio-aba:hover {
-    background-color: #333333;
+    background-color: var(--cor-superficie);
     color: var(--cor-texto);
 }
 
 .relatorio-aba.ativa {
     background-color: var(--cor-painel);
     border-color: var(--cor-borda);
-    color: #ffffff;
+    color: var(--cor-texto-forte);
 }
 
 .relatorio-filtro {
@@ -60,7 +60,7 @@
 .relatorio-resumo-titulo {
     font-size: 1.1rem;
     font-weight: 700;
-    color: #ffffff;
+    color: var(--cor-texto-forte);
 }
 
 .relatorio-resumo-periodo {

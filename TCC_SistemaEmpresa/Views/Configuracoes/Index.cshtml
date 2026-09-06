@@ -1,0 +1,199 @@
+@using TCC_SistemaEmpresa.Services
+@model TCC_SistemaEmpresa.Models.ViewModels.ConfiguracoesViewModel
+@{
+    ViewData["Title"] = "Configurações";
+
+    void Miniatura(string tema)
+    {
+        <span class="tema-mini" data-tema="@tema">
+            <span class="tema-mini-sidebar">
+                <span class="tema-mini-marca"></span>
+                <span class="tema-mini-item ativo"></span>
+                <span class="tema-mini-item"></span>
+                <span class="tema-mini-item"></span>
+                <span class="tema-mini-item"></span>
+            </span>
+            <span class="tema-mini-painel">
+                <span class="tema-mini-titulo"></span>
+                <span class="tema-mini-barra">
+                    <span class="tema-mini-busca"></span>
+                    <span class="tema-mini-acao"></span>
+                </span>
+                <span class="tema-mini-tabela">
+                    <span class="tema-mini-linha cabecalho"></span>
+                    <span class="tema-mini-linha"></span>
+                    <span class="tema-mini-linha"></span>
+                    <span class="tema-mini-linha"></span>
+                </span>
+            </span>
+        </span>
+    }
+
+    void Segmento(string grupo, string valor, string rotulo, bool marcado, string? classe = null)
+    {
+        <label class="segmento @classe">
+            <input type="radio" name="@grupo" value="@valor" checked="@marcado" />
+            <span class="segmento-rotulo">@rotulo</span>
+        </label>
+    }
+
+    void Linha(string rotulo, string? valor)
+    {
+        <div>
+            <dt>@rotulo</dt>
+            <dd>@(string.IsNullOrWhiteSpace(valor) ? "—" : valor)</dd>
+        </div>
+    }
+}
+
+<div class="pagina-titulo-centro">
+    <h1 class="pagina-titulo">Configurações</h1>
+</div>
+
+<section class="config-secao">
+    <h2 class="config-secao-titulo">Aparência</h2>
+    <p class="config-secao-apoio">
+        Escolha como o sistema aparece. A escolha vale só para este navegador.
+    </p>
+
+    <form method="post" asp-action="SalvarAparencia" data-aparencia-form>
+        @Html.AntiForgeryToken()
+
+        <div class="aparencia-controles">
+            <fieldset class="grupo-opcao grupo-tema">
+                <legend class="grupo-opcao-titulo">Tema</legend>
+                <div class="tema-opcoes">
+                    <label class="tema-opcao">
+                        <input type="radio" name="tema" value="@Aparencia.TemaEscuro"
+                               checked="@(Model.Tema == Aparencia.TemaEscuro)" />
+                        <span class="tema-previa" aria-hidden="true">
+                            @{ Miniatura(Aparencia.TemaEscuro); }
+                        </span>
+                        <span class="tema-opcao-nome">Escuro</span>
+                    </label>
+
+                    <label class="tema-opcao">
+                        <input type="radio" name="tema" value="@Aparencia.TemaClaro"
+                               checked="@(Model.Tema == Aparencia.TemaClaro)" />
+                        <span class="tema-previa" aria-hidden="true">
+                            @{ Miniatura(Aparencia.TemaClaro); }
+                        </span>
+                        <span class="tema-opcao-nome">Claro</span>
+                    </label>
+
+                    <label class="tema-opcao">
+                        <input type="radio" name="tema" value="@Aparencia.TemaDispositivo"
+                               checked="@(Model.Tema == Aparencia.TemaDispositivo)" />
+                        <span class="tema-previa tema-previa-dupla" aria-hidden="true">
+                            @{ Miniatura(Aparencia.TemaEscuro); }
+                            @{ Miniatura(Aparencia.TemaClaro); }
+                        </span>
+                        <span class="tema-opcao-nome">Seguir o dispositivo</span>
+                    </label>
+                </div>
+            </fieldset>
+
+            <div class="aparencia-ajustes">
+                <div class="grupo-coluna">
+                    <fieldset class="grupo-opcao">
+                        <legend class="grupo-opcao-titulo">Tamanho do texto</legend>
+                        <div class="segmentos">
+                            @{ Segmento("fonte", Aparencia.FonteNormal, "Normal", Model.Fonte == Aparencia.FonteNormal, "segmento-fonte-normal"); }
+                            @{ Segmento("fonte", Aparencia.FonteGrande, "Grande", Model.Fonte == Aparencia.FonteGrande, "segmento-fonte-grande"); }
+                            @{ Segmento("fonte", Aparencia.FonteMaior, "Maior", Model.Fonte == Aparencia.FonteMaior, "segmento-fonte-maior"); }
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="grupo-opcao">
+                        <legend class="grupo-opcao-titulo">Densidade da grid</legend>
+                        <div class="segmentos">
+                            @{ Segmento("densidade", Aparencia.DensidadeConfortavel, "Confortável", Model.Densidade == Aparencia.DensidadeConfortavel); }
+                            @{ Segmento("densidade", Aparencia.DensidadeCompacta, "Compacta", Model.Densidade == Aparencia.DensidadeCompacta); }
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div class="tabela-wrapper exemplo-grid">
+                    <table class="tabela">
+                        <caption class="exemplo-grid-legenda">Exemplo de listagem</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Id</th>
+                                <th scope="col">Produto</th>
+                                <th scope="col">Preço</th>
+                                <th scope="col">Estoque</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Arroz 5kg <span class="celula-detalhe">Mercearia</span></td>
+                                <td class="col-numerica">R$ 28,90</td>
+                                <td>42</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Feijão 1kg <span class="celula-detalhe">Mercearia</span></td>
+                                <td class="col-numerica">R$ 9,50</td>
+                                <td>8</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Açúcar 1kg <span class="celula-detalhe">Mercearia</span></td>
+                                <td class="col-numerica">R$ 4,20</td>
+                                <td>25</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <p class="tema-aviso" data-tema-aviso hidden>
+        A aparência não foi salva. Recarregue a página e escolha de novo.
+    </p>
+</section>
+
+<section class="config-secao">
+    <div class="config-paineis">
+        <div class="config-painel">
+            <h2 class="config-secao-titulo">Conta</h2>
+            <p class="config-secao-apoio">
+                Estes dados vêm do seu cadastro. Para alterá-los, procure o administrador da empresa.
+            </p>
+            <dl class="config-dados">
+                @{ Linha("Empresa", Model.Empresa); }
+                @{ Linha("Usuário", Model.Usuario); }
+                @{ Linha("E-mail", Model.Email); }
+                @{ Linha("Perfil", Model.PerfilDescricao); }
+            </dl>
+        </div>
+
+        @if (Model.DadosEmpresa is not null)
+        {
+            var empresa = Model.DadosEmpresa;
+
+            <div class="config-painel">
+                <h2 class="config-secao-titulo">Dados da empresa</h2>
+                <p class="config-secao-apoio">
+                    Cadastro da empresa em que você está operando. Visível apenas para administradores.
+                </p>
+                <dl class="config-dados">
+                    @{ Linha("Razão social", empresa.Nome); }
+                    @{ Linha("CNPJ", empresa.CnpjFormatado); }
+                    @{ Linha("Telefone", empresa.Telefone); }
+                    @{ Linha("E-mail", empresa.Email); }
+                    @{ Linha("Endereço", empresa.Endereco); }
+                    @{ Linha("Município", empresa.Municipio); }
+                    @{ Linha("CEP", empresa.CepFormatado); }
+                    @{ Linha("Situação", empresa.Situacao); }
+                </dl>
+            </div>
+        }
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/configuracoes.js" asp-append-version="true"></script>
+}

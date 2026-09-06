@@ -14,11 +14,17 @@
         return;
     }
 
-    var PALETA = ["#e05a5a", "#4a7ce0", "#4caf50", "#f0c419", "#9b6ade"];
+    var estilo = getComputedStyle(document.documentElement);
 
-    var COR_TEXTO = "#f2f2f2";
-    var COR_TEXTO_SUAVE = "#b9b9b9";
-    var COR_GRADE = "rgba(255, 255, 255, 0.08)";
+    function token(nome) {
+        return estilo.getPropertyValue(nome).trim();
+    }
+
+    var PALETA = ["--grafico-1", "--grafico-2", "--grafico-3", "--grafico-4", "--grafico-5"].map(token);
+
+    var COR_TEXTO = token("--cor-texto");
+    var COR_TEXTO_SUAVE = token("--cor-texto-suave");
+    var COR_GRADE = token("--cor-grade-grafico");
 
     var moeda = new Intl.NumberFormat("pt-BR", {
         style: "currency",
@@ -37,7 +43,7 @@
                 datasets: [{
                     data: dados.produtos.map(function (p) { return p.quantidade; }),
                     backgroundColor: PALETA.slice(0, dados.produtos.length),
-                    borderColor: "#333333",
+                    borderColor: token("--cor-superficie"),
                     borderWidth: 2
                 }]
             },
