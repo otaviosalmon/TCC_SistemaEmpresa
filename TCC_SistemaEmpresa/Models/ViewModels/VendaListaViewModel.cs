@@ -8,6 +8,8 @@
         public string Filtro { get; set; } = FiltroVenda.Todas;
         public IReadOnlyList<VendaLinhaViewModel> Vendas { get; set; }
             = Array.Empty<VendaLinhaViewModel>();
+
+        public PaginacaoViewModel Paginacao { get; set; } = PaginacaoViewModel.Criar(1, 0);
     }
     public static class FiltroVenda
     {

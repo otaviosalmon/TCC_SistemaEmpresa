@@ -24,6 +24,8 @@ namespace TCC_SistemaEmpresa.Models.ViewModels
 
         public IReadOnlyList<TipoMovimentacaoLinhaViewModel> Tipos { get; set; }
             = Array.Empty<TipoMovimentacaoLinhaViewModel>();
+
+        public PaginacaoViewModel Paginacao { get; set; } = PaginacaoViewModel.Criar(1, 0);
     }
 
     public class TipoMovimentacaoLinhaViewModel

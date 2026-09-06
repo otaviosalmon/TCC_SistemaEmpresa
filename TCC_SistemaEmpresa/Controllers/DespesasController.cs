@@ -22,7 +22,7 @@ namespace TCC_SistemaEmpresa.Controllers
         protected override string EntidadeLog => nameof(Despesa);
 
         [HttpGet]
-        public async Task<IActionResult> Index(string? busca, string? recorrencia)
+        public async Task<IActionResult> Index(string? busca, string? recorrencia, int pagina = 1)
         {
             var empresaId = EmpresaIdAtual();
             recorrencia = NormalizarRecorrencia(recorrencia);
@@ -46,9 +46,13 @@ namespace TCC_SistemaEmpresa.Controllers
                     || (d.Descricao != null && d.Descricao.Contains(termo)));
             }
 
+            var paginacao = PaginacaoViewModel.Criar(pagina, await consulta.CountAsync());
+            var total = await consulta.SumAsync(d => (decimal?)d.Valor) ?? 0m;
+
             var despesas = await consulta
                 .OrderByDescending(d => d.DataDespesa)
                 .ThenByDescending(d => d.Id)
+                .Pagina(paginacao)
                 .Select(d => new DespesaLinhaViewModel
                 {
                     Id = d.Id,
@@ -64,6 +68,8 @@ namespace TCC_SistemaEmpresa.Controllers
             {
                 Busca = busca,
                 Recorrencia = recorrencia,
+                Paginacao = paginacao,
+                Total = total,
                 Despesas = despesas
             });
         }

@@ -20,7 +20,7 @@ namespace TCC_SistemaEmpresa.Controllers
         protected override string EntidadeLog => nameof(CategoriaProduto);
 
         [HttpGet]
-        public async Task<IActionResult> Index(string? busca)
+        public async Task<IActionResult> Index(string? busca, int pagina = 1)
         {
             var empresaId = EmpresaIdAtual();
 
@@ -34,8 +34,11 @@ namespace TCC_SistemaEmpresa.Controllers
                 consulta = consulta.Where(c => c.Nome.Contains(termo));
             }
 
+            var paginacao = PaginacaoViewModel.Criar(pagina, await consulta.CountAsync());
+
             var categorias = await consulta
                 .OrderBy(c => c.Nome)
+                .Pagina(paginacao)
                 .Select(c => new CategoriaProdutoLinhaViewModel
                 {
                     Id = c.Id,
@@ -48,6 +51,7 @@ namespace TCC_SistemaEmpresa.Controllers
             return View(new CategoriaProdutoListaViewModel
             {
                 Busca = busca,
+                Paginacao = paginacao,
                 Categorias = categorias
             });
         }

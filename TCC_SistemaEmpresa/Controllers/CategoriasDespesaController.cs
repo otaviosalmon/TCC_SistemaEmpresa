@@ -21,7 +21,7 @@ namespace TCC_SistemaEmpresa.Controllers
         protected override string EntidadeLog => nameof(CategoriaDespesa);
 
         [HttpGet]
-        public async Task<IActionResult> Index(string? busca, string? situacao)
+        public async Task<IActionResult> Index(string? busca, string? situacao, int pagina = 1)
         {
             var empresaId = EmpresaIdAtual();
             situacao = NormalizarSituacao(situacao);
@@ -43,8 +43,11 @@ namespace TCC_SistemaEmpresa.Controllers
                 consulta = consulta.Where(c => c.Nome.Contains(termo));
             }
 
+            var paginacao = PaginacaoViewModel.Criar(pagina, await consulta.CountAsync());
+
             var categorias = await consulta
                 .OrderBy(c => c.Nome)
+                .Pagina(paginacao)
                 .Select(c => new CategoriaDespesaLinhaViewModel
                 {
                     Id = c.Id,
@@ -59,6 +62,7 @@ namespace TCC_SistemaEmpresa.Controllers
             {
                 Busca = busca,
                 Situacao = situacao,
+                Paginacao = paginacao,
                 Categorias = categorias
             });
         }

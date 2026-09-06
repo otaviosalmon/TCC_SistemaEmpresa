@@ -1,0 +1,90 @@
+@model TCC_SistemaEmpresa.Models.ViewModels.PaginacaoViewModel
+@{
+    var filtros = Context.Request.Query
+        .Where(parametro => !string.Equals(parametro.Key, "pagina", StringComparison.OrdinalIgnoreCase))
+        .ToDictionary(parametro => parametro.Key, parametro => parametro.Value.ToString());
+
+    Dictionary<string, string> RotaDaPagina(int numero)
+    {
+        var rota = new Dictionary<string, string>(filtros);
+        rota["pagina"] = numero.ToString();
+        return rota;
+    }
+}
+
+@if (Model.TemRegistros)
+{
+    <nav class="paginacao" aria-label="Navegação entre páginas">
+        <span class="paginacao-intervalo">
+            @Model.PrimeiroRegistro–@Model.UltimoRegistro de @Model.TotalRegistros registro(s)
+        </span>
+
+        <div class="paginacao-controles">
+            @if (Model.TemPaginaAnterior)
+            {
+                <a class="paginacao-botao" asp-action="Index" asp-all-route-data="RotaDaPagina(1)"
+                   title="Primeira página" aria-label="Ir para a primeira página">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 18l-6-6 6-6" /><path d="M7 6v12" />
+                    </svg>
+                </a>
+
+                <a class="paginacao-botao" asp-action="Index" asp-all-route-data="RotaDaPagina(Model.PaginaAtual - 1)"
+                   title="Página anterior" aria-label="Ir para a página anterior">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 18l-6-6 6-6" />
+                    </svg>
+                </a>
+            }
+            else
+            {
+                <span class="paginacao-botao desabilitado" aria-hidden="true">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 18l-6-6 6-6" /><path d="M7 6v12" />
+                    </svg>
+                </span>
+
+                <span class="paginacao-botao desabilitado" aria-hidden="true">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 18l-6-6 6-6" />
+                    </svg>
+                </span>
+            }
+
+            <span class="paginacao-pagina" aria-live="polite">
+                Página @Model.PaginaAtual de @Model.TotalPaginas
+            </span>
+
+            @if (Model.TemProximaPagina)
+            {
+                <a class="paginacao-botao" asp-action="Index" asp-all-route-data="RotaDaPagina(Model.PaginaAtual + 1)"
+                   title="Próxima página" aria-label="Ir para a próxima página">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 18l6-6-6-6" />
+                    </svg>
+                </a>
+
+                <a class="paginacao-botao" asp-action="Index" asp-all-route-data="RotaDaPagina(Model.TotalPaginas)"
+                   title="Última página" aria-label="Ir para a última página">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M7 6l6 6-6 6" /><path d="M17 6v12" />
+                    </svg>
+                </a>
+            }
+            else
+            {
+                <span class="paginacao-botao desabilitado" aria-hidden="true">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 18l6-6-6-6" />
+                    </svg>
+                </span>
+
+                <span class="paginacao-botao desabilitado" aria-hidden="true">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M7 6l6 6-6 6" /><path d="M17 6v12" />
+                    </svg>
+                </span>
+            }
+        </div>
+    </nav>
+}

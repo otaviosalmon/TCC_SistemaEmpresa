@@ -75,6 +75,10 @@ namespace TCC_SistemaEmpresa.Models.ViewModels
         public IReadOnlyList<object?[]> Linhas { get; set; }
             = Array.Empty<object?[]>();
 
+        public PaginacaoViewModel Paginacao { get; set; } = PaginacaoViewModel.Criar(1, 0);
+
+        public IReadOnlyList<object?[]> LinhasDaPagina => Linhas.Pagina(Paginacao);
+
         public IReadOnlyList<RelatorioTotalViewModel> Totais { get; set; }
             = Array.Empty<RelatorioTotalViewModel>();
 

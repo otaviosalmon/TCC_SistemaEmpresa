@@ -28,7 +28,7 @@ namespace TCC_SistemaEmpresa.Controllers
 
         [HttpGet]
         public async Task<IActionResult> Index(
-            string? busca, DateTime? dataInicial, DateTime? dataFinal, string? filtro)
+            string? busca, DateTime? dataInicial, DateTime? dataFinal, string? filtro, int pagina = 1)
         {
             var empresaId = EmpresaIdAtual();
             filtro = NormalizarFiltro(filtro);
@@ -62,9 +62,12 @@ namespace TCC_SistemaEmpresa.Controllers
                     (v.Cliente != null && v.Cliente.Nome.Contains(termo)));
             }
 
+            var paginacao = PaginacaoViewModel.Criar(pagina, await consulta.CountAsync());
+
             var vendas = await consulta
                 .OrderByDescending(v => v.DataVenda)
                 .ThenByDescending(v => v.Id)
+                .Pagina(paginacao)
                 .Select(v => new VendaLinhaViewModel
                 {
                     Id = v.Id,
@@ -100,6 +103,7 @@ namespace TCC_SistemaEmpresa.Controllers
                 DataInicial = dataInicial,
                 DataFinal = dataFinal,
                 Filtro = filtro,
+                Paginacao = paginacao,
                 Vendas = vendas
             });
         }

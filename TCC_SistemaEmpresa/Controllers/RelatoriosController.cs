@@ -67,9 +67,12 @@ namespace TCC_SistemaEmpresa.Controllers
 
         [HttpGet]
         public async Task<IActionResult> Index(
-            string? tipo, DateTime? dataInicial, DateTime? dataFinal, int produtoId = 0)
+            string? tipo, DateTime? dataInicial, DateTime? dataFinal, int produtoId = 0, int pagina = 1)
         {
-            return View(await MontarAsync(tipo, dataInicial, dataFinal, produtoId));
+            var relatorio = await MontarAsync(tipo, dataInicial, dataFinal, produtoId);
+            relatorio.Paginacao = PaginacaoViewModel.Criar(pagina, relatorio.Linhas.Count);
+
+            return View(relatorio);
         }
 
         [HttpGet]

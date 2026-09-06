@@ -121,7 +121,7 @@ else if (TempData["Erro"] is string mensagemErro)
             }
             else
             {
-                @foreach (var linha in Model.Linhas)
+                @foreach (var linha in Model.LinhasDaPagina)
                 {
                     <tr>
                         @for (var indice = 0; indice < Model.Colunas.Count; indice++)
@@ -137,3 +137,5 @@ else if (TempData["Erro"] is string mensagemErro)
         </tbody>
     </table>
 </div>
+
+<partial name="_Paginacao" model="Model.Paginacao" />
