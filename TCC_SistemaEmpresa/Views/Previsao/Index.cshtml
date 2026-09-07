@@ -1,0 +1,158 @@
+﻿@model TCC_SistemaEmpresa.Models.ViewModels.PrevisaoViewModel
+@using System.Text.Json
+
+@{
+    ViewData["Title"] = "Previsão";
+
+    var dadosGrafico = new
+    {
+        faturamentoHistorico = Model.FaturamentoHistorico.Select(p => new
+        {
+            rotulo = p.Rotulo,
+            rotuloCompleto = p.RotuloCompleto,
+            total = p.Total
+        }),
+
+        despesasHistorico = Model.DespesasHistorico.Select(p => new
+        {
+            rotulo = p.Rotulo,
+            rotuloCompleto = p.RotuloCompleto,
+            total = p.Total
+        }),
+
+        faturamentoPrevisto = Model.FaturamentoPrevisto?.Pontos.Select(p => new
+        {
+            rotulo = p.Rotulo,
+            rotuloCompleto = p.RotuloCompleto,
+            total = p.Total
+        }),
+
+        despesasPrevistas = Model.DespesasPrevistas?.Pontos.Select(p => new
+        {
+            rotulo = p.Rotulo,
+            rotuloCompleto = p.RotuloCompleto,
+            total = p.Total
+        }),
+
+        temPrevisao = Model.TemPrevisao
+    };
+}
+
+<div class="pagina-titulo-centro">
+    <h1 class="pagina-titulo">Análise Preditiva</h1>
+</div>
+
+<form method="get" asp-action="Index" class="dashboard-filtro">
+    <div class="campo campo-dashboard-data">
+        <label for="dataInicial">Período Inicial:</label>
+        <input type="date" id="dataInicial" name="dataInicial"
+            value="@Model.PeriodoInicial.ToString("yyyy-MM-dd")"/>
+    </div>
+
+    <div class="campo campo-dashboard-data">
+        <label for="dataFinal">Periodo Final:</label>
+        <input type="date" id="dataFinal" name="dataFinal"
+            value="@Model.PeriodoFinal.ToString("yyyy-MM-dd")"
+    </div>
+
+    <div class="campo campo-dashboard-data">
+        <label for="mesesPrevisao">Prever:</label>
+        <select id="mesesPrevisao" name="mesesPrevisao">
+            <option value="3" seelcted="@Model.MesesPrevisao == 3)">3 Meses</option>
+            <option value="6" selected="@Model.MesesPrevisao == 6)">6 Meses</option>
+            <option value="12" selected="@Model.MesesPrevisao == 12)">12 Meses</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-claro">Aplicar</button>
+    <a class="btn btn-escuro" asp-action="Index">Limpar</a>
+</form>
+
+@if (!Model.TemHistoricoSuficiente)
+{
+    <div class="previsao-aviso previsao-aviso-erro">
+        <strong>Histórico insuficiente..</strong>
+        A regressão precisa de no minimo 3 meses fechadaos selecionados.
+    </div>
+}
+else if(Model.ServicoIndisponivel)
+{
+    <div class="previsao-aviso previsao-aviso-erro">
+        <strong>Serviço Indisponivel.</strong>
+        O módula analitico não respondeu. A previsão nao pode ser calculada
+    </div>
+}
+
+@if (Model.TemPrevisao)
+{
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <span class="kpi-rotulo">Faturamento Previsto</span>
+            <span class="kpi-valor">@Model.FaturamentoPrevistoTotal.ToString("C")</span>
+            <span class="kpi-apoio">@Model.HorizonteDescricao</span>
+        </div>
+
+        <div class="kpi-card">
+            <span class="kpi-rotulo">Resultado Previsto</span>
+            <span class="kpi-valor @(Model.ResultadoPrevisto < 0 ? "kpi-negativo" : null)">
+                @Model.ResultadoPrevisto.ToString("C")
+            </span>
+            <span class="kpi-apoio">Faturamento menos despesas projetadas</span>
+        </div>
+
+        <div class="kpi-card">
+            <span class="kpi-rotulo">Confiança de Modelo</span>
+            <span class="kpi-valor">@Model.FaturamentoPrevisto!.ConfiancaTexto</span>
+            <span class="kpi-apoio">R² da regressão de faturamento</span>
+        </div>
+    </div>
+}
+
+<div class="grafico-grid grafico-grid-unico">
+    <section class="grafico-card">
+        <h2 class="grafico-titulo">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-widht="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 3v18h18" />
+                <path d="M7 1413.5-4 3 3L20 6"/>
+            </svg>
+            Faturamento e Despesas - realizado e previsto
+        </h2>
+
+        @if (Model.MesesDeHistorico > 0)
+        {
+            <div class="grafico-area grafico-area-alta">
+                <canvas id="grafico-previsao" role="img"
+                    aria-label="Grafico de linhas com faturamento e despesas realizados e previstos"></canvas>
+            </div>
+
+            @if (Model.TemPrevisao)
+            {
+                <div class="previsao-legenda">
+                    <span>
+                        <strong>Faturamento:</strong>
+                        tendência de @Model.FaturamentoPrevisto!.TendenciaTexto
+                        (confiança @Model.FaturamentoPrevisto.ConfiancaTexto)
+                    </span>
+                    <span>
+                        <strong>Despesas:</strong>
+                        tendência de @Model.DespesasPrevistas!.TendenciaTexto
+                        (confiança @Model.DespesasPrevistas.ConfiancaTexto)
+                    </span>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="grafico-vazio">Nenhum dado no periodo selecionado.</p>
+        }
+    </section>
+</div>
+
+<script type="application/json" id="previsao-dados"> 
+       @Html.Raw(JsonSerializer.Serialize(dadosGrafico))@*n eh html do user ent é seguro usar htmlraw ja que vem do serializer*@
+</script>
+
+@section Scripts{
+    <script src="~/lib/chatjs/chart.umd.min.js"></script>
+    <script src="~/js/previsao.js" asp-append-version="true"></script>
+}
