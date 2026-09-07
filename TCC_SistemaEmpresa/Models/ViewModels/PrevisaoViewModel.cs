@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 namespace TCC_SistemaEmpresa.Models.ViewModels
 {
-    public class PrevisaoViewModelcs
+    public class PrevisaoViewModel
     {
         public DateTime PeriodoInicial { get; set; }
         public DateTime PeriodoFinal { get; set; }
