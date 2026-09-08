@@ -65,8 +65,8 @@ namespace TCC_SistemaEmpresa.Controllers
                 .ToListAsync();
 
             var despesasPorMes = await _context.Despesas
-                .AsNoTracking().
-                Where(d => d.EmpresaId == empresaId
+                .AsNoTracking()
+                .Where(d => d.EmpresaId == empresaId
                 && d.DataDespesa >= inicio
                 && d.DataDespesa <= fim)
                 .GroupBy(d => new { d.DataDespesa.Year, d.DataDespesa.Month })

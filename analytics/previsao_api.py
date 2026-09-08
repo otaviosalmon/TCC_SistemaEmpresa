@@ -1,4 +1,4 @@
-from fastapi import FastApi
+from fastapi import FastAPI
 from pydantic import BaseModel, Field
 from typing import List
 import pandas as pd
@@ -7,7 +7,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score #metrica de erro
 
 class PontoHistorico(BaseModel):
-    """"Um mês fechado do histórico. Espelha PontoSerieDto.cs no C#"""
+    """Um mês fechado do histórico. Espelha PontoSerieDto.cs no C#"""
 
     ano: int 
     mes: int = Field(ge = 1, le = 12)
@@ -55,7 +55,7 @@ def prever_serie(serie: SerieHistorica, meses_previsao: int) -> SeriePrevista:
             pontos = [],
         )
     df = pd.DataFrame([ponto.model_dump() for ponto in serie.pontos])   
-    df = df.sort_values[["ano", "mes"]].reset_index(drop=True)  #e pra vir ordenado, mas se n vier isso impede de quebrar
+    df = df.sort_values(["ano", "mes"]).reset_index(drop=True)  #e pra vir ordenado, mas se n vier isso impede de quebrar
     df["indice_mes"] = range(len(df))
 
     x = df[["indice_mes"]].to_numpy().reshape(-1,1)
@@ -72,13 +72,13 @@ def prever_serie(serie: SerieHistorica, meses_previsao: int) -> SeriePrevista:
     ultimo_ano = int(df["ano"].iloc[-1])
     ultimo_mes = int(df["mes"].iloc[-1])
 
-    indices_futuros = np.arrange(
+    indices_futuros = np.arange(
         ultimo_indice + 1,
         ultimo_indice + 1 + meses_previsao
     ).reshape(-1,1)
 
     valores_previstos = modelo.predict(indices_futuros)
-    pontos_previstos = List[PontoPrevisto] = []
+    pontos_previstos : List[PontoPrevisto] = []
 
     for passo, valor in enumerate(valores_previstos, start=1):
         ano_futuro, mes_futuro = avancar_mes(ultimo_ano, ultimo_mes, passo)
@@ -98,7 +98,7 @@ def prever_serie(serie: SerieHistorica, meses_previsao: int) -> SeriePrevista:
         pontos = pontos_previstos,
     )
 
-app = FastApi(
+app = FastAPI(
     title = "L.O Solutions - Camada Analítica",
     description = "Previsão de faturamento e despesas por regressão linear.",
     version = "1.0.0",

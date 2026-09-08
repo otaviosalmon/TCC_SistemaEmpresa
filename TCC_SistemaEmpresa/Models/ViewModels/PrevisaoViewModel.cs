@@ -41,7 +41,7 @@ namespace TCC_SistemaEmpresa.Models.ViewModels
                 var primeiro = FaturamentoPrevisto.Pontos[0];
                 var ultimo = FaturamentoPrevisto.Pontos[^1];
 
-                return $"{primeiro.Mes:00}/{primeiro.Ano} a {ultimo.Mes}/{ultimo.Ano}";
+                return $"{primeiro.Mes:00}/{primeiro.Ano} a {ultimo.Mes:00}/{ultimo.Ano}";
             }
         }
     }
@@ -70,7 +70,7 @@ namespace TCC_SistemaEmpresa.Models.ViewModels
         public string ConfiancaTexto => $"{R2 * 100:0.0}%";
         public string TendenciaTexto => CoeficienteAngular switch
         {
-            > 0 => $"alte de {CoeficienteAngular:C} por mês",
+            > 0 => $"alta de {CoeficienteAngular:C} por mês",
             < 0 => $"queda de {Math.Abs(CoeficienteAngular):C} por mês",
             _ => "estável"
         };

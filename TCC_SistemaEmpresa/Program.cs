@@ -6,11 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Globalization;
 using TCC_SistemaEmpresa.Data;
+using TCC_SistemaEmpresa.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// RNF37: autenticação obrigatória. O filtro global exige usuário logado em TODA
-// action; o que for público precisa de [AllowAnonymous] explícito (ex.: a tela de login).
 builder.Services.AddControllersWithViews(options =>
 {
     var politica = new AuthorizationPolicyBuilder()
@@ -39,6 +38,14 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration
         .GetConnectionString("DefaultConnection")));
+
+builder.Services.AddHttpClient<PrevisaoService>(cliente =>
+{
+    cliente.BaseAddress = new Uri(
+        builder.Configuration["Analytics:UrlBase"] ?? "http://localhost:8000");
+
+    cliente.Timeout = TimeSpan.FromSeconds(10);
+});
 
 var app = builder.Build();
 

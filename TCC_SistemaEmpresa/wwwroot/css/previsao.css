@@ -1,0 +1,44 @@
+﻿.grafico-grid-unico {
+    grid-template-columns: 1fr;
+}
+
+.grafico-area-alta {
+    height: 420px;
+}
+
+.previsao-aviso {
+    margin: 0 0 20px;
+    padding: 14px 18px;
+    border-radius: 8px;
+    border-left: 4px solid transparent;
+    font-size: 0.94rem;
+    line-height: 1.5;
+    color: #f2f2f2;
+}
+
+.previsao-aviso-atencao {
+    background: rgba(240, 196, 25, 0.12);
+    border-left-color: #f0c419;
+}
+
+.previsao-aviso-erro {
+    background: rgba(224, 90, 90, 0.12);
+    border-left-color: #e05a5a;
+}
+
+.previsao-legenda {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 28px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 0.88rem;
+    color: #b9b9b9;
+    color: #b9b9b9;
+}
+
+.previsao-legenda strong {
+    color: #f2f2f2;
+    font-weight: 600;
+}

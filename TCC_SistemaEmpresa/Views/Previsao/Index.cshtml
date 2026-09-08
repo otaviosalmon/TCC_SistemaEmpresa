@@ -52,15 +52,15 @@
     <div class="campo campo-dashboard-data">
         <label for="dataFinal">Periodo Final:</label>
         <input type="date" id="dataFinal" name="dataFinal"
-            value="@Model.PeriodoFinal.ToString("yyyy-MM-dd")"
+            value="@Model.PeriodoFinal.ToString("yyyy-MM-dd")"/>
     </div>
 
     <div class="campo campo-dashboard-data">
         <label for="mesesPrevisao">Prever:</label>
         <select id="mesesPrevisao" name="mesesPrevisao">
-            <option value="3" seelcted="@Model.MesesPrevisao == 3)">3 Meses</option>
-            <option value="6" selected="@Model.MesesPrevisao == 6)">6 Meses</option>
-            <option value="12" selected="@Model.MesesPrevisao == 12)">12 Meses</option>
+            <option value="3" seelcted="@(Model.MesesPrevisao == 3)">3 Meses</option>
+            <option value="6" selected="@(Model.MesesPrevisao == 6)">6 Meses</option>
+            <option value="12" selected=@(Model.MesesPrevisao == 12)">12 Meses</option>
         </select>
     </div>
 
@@ -70,7 +70,7 @@
 
 @if (!Model.TemHistoricoSuficiente)
 {
-    <div class="previsao-aviso previsao-aviso-erro">
+    <div class="previsao-aviso previsao-aviso-atencao">
         <strong>Histórico insuficiente..</strong>
         A regressão precisa de no minimo 3 meses fechadaos selecionados.
     </div>
@@ -111,9 +111,9 @@ else if(Model.ServicoIndisponivel)
 <div class="grafico-grid grafico-grid-unico">
     <section class="grafico-card">
         <h2 class="grafico-titulo">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-widht="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 3v18h18" />
-                <path d="M7 1413.5-4 3 3L20 6"/>
+                <path d="M7 14l3.5-4 3 3L20 6"/>
             </svg>
             Faturamento e Despesas - realizado e previsto
         </h2>
@@ -153,6 +153,6 @@ else if(Model.ServicoIndisponivel)
 </script>
 
 @section Scripts{
-    <script src="~/lib/chatjs/chart.umd.min.js"></script>
+    <script src="~/lib/chartjs/chart.umd.min.js"></script>
     <script src="~/js/previsao.js" asp-append-version="true"></script>
 }
