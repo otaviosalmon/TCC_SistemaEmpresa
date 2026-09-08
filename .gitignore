@@ -33,7 +33,7 @@ x86/
 *.nuget.props
 *.nuget.targets
 
-## Outros arquivos temporários comuns
+## arquivos temporários comuns
 *.tmp
 *.bak
 *.swp
@@ -43,5 +43,8 @@ x86/
 /CLAUDE.md
 /TCC_SistemaEmpresa/appsettings.json
 
-## Configuracao local do Claude Code (por maquina)
 /.claude/launch.json
+
+## ambiente virtual python
+analytics/.venv/
+analytics/__pycache__/

@@ -1,9 +1,18 @@
 ﻿.grafico-grid-unico {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
+
+    .grafico-grid-unico > .grafico-card {
+        flex: 1 1 100%;
+        width: 100%;
+        min-width: 0;
+    }
 
 .grafico-area-alta {
     height: 420px;
+    min-height: 420px;
 }
 
 .previsao-aviso {

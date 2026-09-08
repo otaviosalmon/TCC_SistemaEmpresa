@@ -38,15 +38,14 @@
     var previstoDespesas = dados.despesasPrevistas || [];
 
     var rotulos = historico.map(function (p) { return p.rotulo; });
+    var rotulosCompletos = historico.map(function (p) { return p.rotuloCompleto; });
 
     if (dados.temPrevisao) {
         previstoFaturamento.forEach(function (p) {
-            rotulo.push(p.rotulo);
+            rotulos.push(p.rotulo);
             rotulosCompletos.push(p.rotuloCompleto);
-        }
+        });
     }
-
-    var rotulosCompletos = historico.map(function (p) { return p.rotuloCompleto; });
 
     var qtdHistorico = historico.length;
 
@@ -84,7 +83,7 @@
             data: serieRealizada(historico),
             borderColor: COR_FATURAMENTO,
             backgroundColor: COR_FATURAMENTO,
-            borderwidth: 2,
+            borderWidth: 2,
             tension: 0.25,
             pointRadius: 3,
             spanGaps: false
@@ -148,7 +147,7 @@
             plugins: {
                 legend: {
                     position: "bottom",
-                    lables: {
+                    labels: {
                         color: COR_TEXTO,
                         boxWidth: 14,
                         padding: 14,
