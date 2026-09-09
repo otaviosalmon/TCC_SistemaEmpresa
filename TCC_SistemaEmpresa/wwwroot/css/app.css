@@ -766,3 +766,122 @@ a {
         justify-self: end;
     }
 }
+
+.campo-usuario-username {
+    grid-column: span 5;
+}
+
+.campo-usuario-id {
+    grid-column: span 2;
+}
+
+.campo-usuario-email {
+    grid-column: span 5;
+}
+
+.campo-usuario-role {
+    grid-column: span 5;
+}
+
+.campo-usuario-ativo {
+    grid-column: span 2;
+}
+
+.campo-usuario-cadastro {
+    grid-column: span 5;
+}
+
+.campo-usuario-senha {
+    grid-column: span 6;
+}
+
+.campo-usuario-confirmar {
+    grid-column: span 6;
+}
+
+.campo-usuario-vinculos {
+    grid-column: span 12;
+}
+
+.campo-registro-id {
+    grid-column: span 2;
+}
+
+.campo-registro-data {
+    grid-column: span 4;
+}
+
+.campo-registro-usuario {
+    grid-column: span 3;
+}
+
+.campo-registro-acao {
+    grid-column: span 3;
+}
+
+.campo-registro-entidade {
+    grid-column: span 6;
+}
+
+.campo-registro-registro {
+    grid-column: span 6;
+}
+
+.campo-registro-detalhes {
+    grid-column: span 12;
+}
+
+.filtro-data {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: var(--cor-texto-suave);
+}
+
+    .filtro-data input[type="date"] {
+        padding: 8px 12px;
+        border: 1px solid var(--cor-borda);
+        border-radius: 7px;
+        background-color: var(--cor-campo);
+        color: var(--cor-texto);
+        font-family: inherit;
+        font-size: 0.85rem;
+    }
+
+.marcador-texto {
+    display: inline-block;
+    padding: 2px 8px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 20px;
+    background-color: var(--cor-campo);
+    color: var(--cor-texto-suave);
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+}
+
+.col-detalhes {
+    max-width: 320px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.alerta-informativo {
+    background: rgba(90, 150, 224, 0.12);
+    border-left: 4px solid #5a96e0;
+}
+
+.registro-detalhes {
+    margin: 0;
+    padding: 14px 16px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 8px;
+    background-color: var(--cor-campo);
+    color: var(--cor-texto);
+    font-family: inherit;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    word-break: break-word;
+}

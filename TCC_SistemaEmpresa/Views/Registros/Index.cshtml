@@ -1,0 +1,114 @@
+﻿@model TCC_SistemaEmpresa.Models.ViewModels.RegistroListaViewModel
+@{
+    ViewData["Title"] = "Registros";
+}
+
+<div class="pagina-titulo-centro">
+    <h1 class="pagina-titulo">Registros</h1>
+</div>
+
+<div class="alerta alerta-informativo">
+    Trilha de auditoria da empresa. Esta tela é somente leitura — registros de log não podem ser alterados nem removidos.
+</div>
+
+<div class="listagem-topo">
+    <form method="get" asp-action="Index" class="listagem-barra">
+        <div class="busca">
+            <input type="text" name="busca" value="@Model.Busca" placeholder="Pesquisar..."
+                   aria-label="Pesquisar por entidade, ação, usuário ou detalhes" />
+            <button type="submit" aria-label="Pesquisar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="M21 21l-4.35-4.35" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="filtro">
+            <select name="entidade" onchange="this.form.submit()" aria-label="Filtrar por entidade">
+                <option value="">Entidades...</option>
+                @foreach (var opcao in Model.Entidades)
+                {
+                    <option value="@opcao.Value" selected="@opcao.Selected">@opcao.Text</option>
+                }
+            </select>
+        </div>
+
+        <div class="filtro">
+            <select name="acao" onchange="this.form.submit()" aria-label="Filtrar por ação">
+                <option value="">Ações...</option>
+                @foreach (var opcao in Model.Acoes)
+                {
+                    <option value="@opcao.Value" selected="@opcao.Selected">@opcao.Text</option>
+                }
+            </select>
+        </div>
+
+        <div class="filtro filtro-data">
+            <label for="dataInicial">De:</label>
+            <input type="date" id="dataInicial" name="dataInicial"
+                   value="@(Model.DataInicial?.ToString("yyyy-MM-dd"))" />
+        </div>
+
+        <div class="filtro filtro-data">
+            <label for="dataFinal">Até:</label>
+            <input type="date" id="dataFinal" name="dataFinal"
+                   value="@(Model.DataFinal?.ToString("yyyy-MM-dd"))" />
+        </div>
+
+        <button type="submit" class="btn btn-claro">Aplicar</button>
+    </form>
+</div>
+
+<div class="tabela-wrapper">
+    <table class="tabela">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Data / Hora</th>
+                <th scope="col">Usuário</th>
+                <th scope="col">Ação</th>
+                <th scope="col">Entidade</th>
+                <th scope="col">Registro</th>
+                <th scope="col">Detalhes</th>
+                <th scope="col" aria-label="Ações"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Registros.Count == 0)
+            {
+                <tr class="tabela-vazia">
+                    <td colspan="8">Nenhum registro encontrado no período selecionado.</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var registro in Model.Registros)
+                {
+                    <tr>
+                        <td>@registro.Id</td>
+                        <td>@registro.DataHoraFormatada</td>
+                        <td>@registro.UsuarioRotulo</td>
+                        <td><span class="marcador-texto">@registro.Acao</span></td>
+                        <td>@registro.EntidadeAfetada</td>
+                        <td>@registro.RegistroRotulo</td>
+                        <td class="col-detalhes" title="@registro.Detalhes">@registro.DetalhesResumo</td>
+                        <td class="col-acoes">
+                            <div class="acoes-linha">
+                                <a class="acao-icone" asp-action="Details" asp-route-id="@registro.Id"
+                                   title="Visualizar" aria-label="Visualizar registro @registro.Id">
+                                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z" />
+                                        <circle cx="12" cy="12" r="3" />
+                                    </svg>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<partial name="_Paginacao" model="Model.Paginacao" />

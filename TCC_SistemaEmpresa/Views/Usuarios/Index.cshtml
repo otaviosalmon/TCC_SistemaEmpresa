@@ -1,0 +1,194 @@
+﻿@using TCC_SistemaEmpresa.Models.ViewModels
+@model TCC_SistemaEmpresa.Models.ViewModels.UsuarioListaViewModel
+@{
+    ViewData["Title"] = "Usuários";
+}
+
+<div class="pagina-titulo-centro">
+    <h1 class="pagina-titulo">Usuários</h1>
+</div>
+
+@if (TempData["Sucesso"] is string mensagemSucesso)
+{
+    <div class="alerta alerta-sucesso">@mensagemSucesso</div>
+}
+
+@if (TempData["Erro"] is string mensagemErro)
+{
+    <div class="alerta alerta-erro">@mensagemErro</div>
+}
+
+<div class="listagem-topo">
+    <form method="get" asp-action="Index" class="listagem-barra">
+        <div class="busca">
+            <input type="text" name="busca" value="@Model.Busca" placeholder="Pesquisar..."
+                   aria-label="Pesquisar por login ou e-mail" />
+            <button type="submit" aria-label="Pesquisar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="M21 21l-4.35-4.35" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="filtro">
+            <select name="role" onchange="this.form.submit()" aria-label="Filtrar por perfil">
+                <option value="todos" selected="@(Model.Role == RolesUsuario.Todos)">Perfis...</option>
+                @foreach (var role in RolesUsuario.Aceitos)
+                {
+                    <option value="@role" selected="@(Model.Role == role)">@RolesUsuario.Rotulo(role)</option>
+                }
+            </select>
+        </div>
+
+        <div class="filtro">
+            <select name="situacao" onchange="this.form.submit()" aria-label="Filtrar por situação">
+                <option value="todos" selected="@(Model.Situacao == "todos")">Filtros...</option>
+                <option value="ativos" selected="@(Model.Situacao == "ativos")">Somente ativos</option>
+                <option value="inativos" selected="@(Model.Situacao == "inativos")">Somente inativos</option>
+            </select>
+        </div>
+    </form>
+
+    <a class="btn btn-claro" asp-action="Create">+ Novo</a>
+</div>
+
+<div class="tabela-wrapper">
+    <table class="tabela">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Usuário</th>
+                <th scope="col">E-mail</th>
+                <th scope="col">Perfil</th>
+                <th scope="col">Cadastro</th>
+                <th scope="col">Ativo</th>
+                <th scope="col" aria-label="Ações"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Usuarios.Count == 0)
+            {
+                <tr class="tabela-vazia">
+                    <td colspan="7">Nenhum usuário encontrado.</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var usuario in Model.Usuarios)
+                {
+                    <tr>
+                        <td>@usuario.Id</td>
+                        <td>
+                            @usuario.Username
+                            @if (usuario.EhUsuarioAtual)
+                            {
+                                <span class="marcador-texto" title="Este é o usuário conectado">você</span>
+                            }
+                        </td>
+                        <td>@(string.IsNullOrWhiteSpace(usuario.Email) ? "—" : usuario.Email)</td>
+                        <td>@usuario.RoleRotulo</td>
+                        <td>@usuario.DataCadastro.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            @if (usuario.Ativo)
+                            {
+                                <span class="marcador-ativo sim" title="Ativo" role="img" aria-label="Ativo">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M20 6L9 17l-5-5" />
+                                    </svg>
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="marcador-ativo" title="Inativo" role="img" aria-label="Inativo"></span>
+                            }
+                        </td>
+                        <td class="col-acoes">
+                            <div class="acoes-linha">
+                                <a class="acao-icone" asp-action="Details" asp-route-id="@usuario.Id"
+                                   title="Visualizar" aria-label="Visualizar @usuario.Username">
+                                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z" />
+                                        <circle cx="12" cy="12" r="3" />
+                                    </svg>
+                                </a>
+
+                                <a class="acao-icone" asp-action="Edit" asp-route-id="@usuario.Id"
+                                   title="Editar" aria-label="Editar @usuario.Username">
+                                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 20h9" />
+                                        <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+                                    </svg>
+                                </a>
+
+                                @if (usuario.EhUsuarioAtual)
+                                {
+                                    <button type="button" class="acao-icone" disabled
+                                            aria-label="Excluir @usuario.Username"
+                                            title="Você não pode excluir o próprio usuário.">
+                                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M18 6L6 18M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                }
+                                else if (usuario.Ativo)
+                                {
+                                    <button type="button" class="acao-icone" disabled
+                                            aria-label="Excluir @usuario.Username"
+                                            title="Usuário ativo não pode ser excluído. Inative pela tela de edição.">
+                                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M18 6L6 18M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                }
+                                else if (usuario.QuantidadeVinculos > 0)
+                                {
+                                    <button type="button" class="acao-icone perigo"
+                                            title="Não pode ser excluído" aria-label="Excluir @usuario.Username"
+                                            data-modal-titulo="Exclusão não permitida"
+                                            data-modal-texto="@usuario.Username possui @usuario.QuantidadeVinculos registro(s) vinculado(s) — logs de auditoria, movimentações, despesas ou funcionário. Excluir o cadastro quebraria a rastreabilidade. O usuário permanece inativo.">
+                                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M18 6L6 18M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <form method="post" asp-action="Excluir" asp-route-id="@usuario.Id"
+                                          id="acao-@usuario.Id" class="acao-form">
+                                        @Html.AntiForgeryToken()
+                                    </form>
+                                    <button type="button" class="acao-icone perigo"
+                                            title="Excluir" aria-label="Excluir @usuario.Username"
+                                            data-modal-titulo="Excluir usuário"
+                                            data-modal-texto="Excluir definitivamente o usuário @usuario.Username? O registro sai do banco e esta ação não pode ser desfeita."
+                                            data-modal-confirmar="Excluir"
+                                            data-modal-form="acao-@usuario.Id">
+                                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M18 6L6 18M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<partial name="_Paginacao" model="Model.Paginacao" />
+
+<dialog class="modal" data-modal aria-labelledby="modalTitulo">
+    <h2 class="modal-titulo" id="modalTitulo" data-modal-titulo-alvo></h2>
+    <p class="modal-texto" data-modal-texto-alvo></p>
+    <div class="modal-acoes">
+        <button type="button" class="btn btn-escuro" data-modal-fechar>Fechar</button>
+        <button type="button" class="btn btn-perigo" data-modal-confirmar-alvo hidden></button>
+    </div>
+</dialog>
+
+@section Scripts {
+    <script src="~/js/modal.js" asp-append-version="true"></script>
+}

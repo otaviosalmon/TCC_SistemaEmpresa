@@ -1,0 +1,54 @@
+﻿@model TCC_SistemaEmpresa.Models.ViewModels.RegistroLinhaViewModel
+@{
+    ViewData["Title"] = "Registro";
+}
+
+<h1 class="form-titulo">Registro de Auditoria</h1>
+
+<div class="form-grid">
+    <div class="campo campo-registro-id">
+        <span class="campo-rotulo">Id:</span>
+        <span class="campo-valor">@Model.Id</span>
+    </div>
+
+    <div class="campo campo-registro-data">
+        <span class="campo-rotulo">Data / Hora:</span>
+        <span class="campo-valor">@Model.DataHoraFormatada</span>
+    </div>
+
+    <div class="campo campo-registro-usuario">
+        <span class="campo-rotulo">Usuário:</span>
+        <span class="campo-valor">@Model.UsuarioRotulo</span>
+        @if (!Model.UsuarioId.HasValue)
+        {
+            <span class="campo-ajuda">Ação executada pelo sistema, sem usuário autenticado.</span>
+        }
+    </div>
+
+    <div class="campo campo-registro-acao">
+        <span class="campo-rotulo">Ação:</span>
+        <span class="campo-valor">@Model.Acao</span>
+    </div>
+
+    <div class="campo campo-registro-entidade">
+        <span class="campo-rotulo">Entidade Afetada:</span>
+        <span class="campo-valor">@Model.EntidadeAfetada</span>
+    </div>
+
+    <div class="campo campo-registro-registro">
+        <span class="campo-rotulo">Registro Afetado:</span>
+        <span class="campo-valor">@Model.RegistroRotulo</span>
+        <span class="campo-ajuda">
+            O log é polimórfico: o identificador acima pertence à tabela indicada em Entidade Afetada.
+        </span>
+    </div>
+
+    <div class="campo campo-registro-detalhes">
+        <span class="campo-rotulo">Detalhes:</span>
+        <pre class="registro-detalhes">@(string.IsNullOrWhiteSpace(Model.Detalhes) ? "Sem detalhes registrados." : Model.Detalhes)</pre>
+    </div>
+</div>
+
+<div class="form-acoes">
+    <a class="btn btn-escuro" asp-action="Index">Voltar</a>
+</div>

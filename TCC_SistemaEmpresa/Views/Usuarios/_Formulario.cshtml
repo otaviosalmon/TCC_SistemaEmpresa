@@ -1,0 +1,153 @@
+﻿@using TCC_SistemaEmpresa.Models.ViewModels
+@model TCC_SistemaEmpresa.Models.ViewModels.UsuarioFormViewModel
+@{
+    var titulo = Model.SomenteLeitura
+        ? "Usuário"
+        : Model.EhEdicao ? "Editar Usuário" : "Criar Usuário";
+
+    var acao = Model.EhEdicao ? "Edit" : "Create";
+    var desabilitado = Model.SomenteLeitura ? "disabled" : null;
+}
+
+<h1 class="form-titulo">@titulo</h1>
+
+<form method="post" asp-action="@acao" asp-route-id="@(Model.EhEdicao ? Model.Id.ToString() : null)">
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="ModelOnly" class="alerta alerta-erro"></div>
+
+    <div class="form-grid">
+        <div class="campo campo-usuario-username">
+            <label asp-for="Username">Usuário:</label>
+            <input asp-for="Username" placeholder="login.usuario" maxlength="50"
+                   autocomplete="off" disabled="@desabilitado" />
+            <span asp-validation-for="Username" class="campo-erro"></span>
+            @if (Model.EhEdicao && !Model.SomenteLeitura)
+            {
+                <span class="campo-ajuda">
+                    O login faz parte do salt da senha. Se você alterar este campo, precisa definir uma nova senha.
+                </span>
+            }
+        </div>
+
+        <div class="campo campo-usuario-id">
+            <span class="campo-rotulo">Id:</span>
+            @if (Model.EhEdicao)
+            {
+                <span class="campo-valor">@Model.Id</span>
+            }
+            else if (Model.ProximoId.HasValue)
+            {
+                <span class="campo-valor campo-valor-previsto"
+                      title="Número previsto. O id definitivo é atribuído pelo banco ao salvar.">
+                    @Model.ProximoId
+                </span>
+            }
+            else
+            {
+                <span class="campo-valor campo-valor-previsto">Gerado automaticamente</span>
+            }
+        </div>
+
+        <div class="campo campo-usuario-email">
+            <label asp-for="Email">E-mail:</label>
+            <input asp-for="Email" type="email" placeholder="usuario@empresa.com.br"
+                   maxlength="150" autocomplete="off" disabled="@desabilitado" />
+            <span asp-validation-for="Email" class="campo-erro"></span>
+        </div>
+
+        <div class="campo campo-usuario-role">
+            <label asp-for="Role">Perfil de Acesso:</label>
+            <select asp-for="Role" asp-items="Model.Roles"
+                    disabled="@(Model.SomenteLeitura || Model.EhUsuarioAtual ? "disabled" : null)">
+                <option value="">Selecione o perfil...</option>
+            </select>
+            <span asp-validation-for="Role" class="campo-erro"></span>
+            @if (Model.EhUsuarioAtual && !Model.SomenteLeitura)
+            {
+                <span class="campo-ajuda-alerta">
+                    Você não pode alterar o próprio perfil de acesso.
+                </span>
+                <input type="hidden" asp-for="Role" />
+            }
+            else
+            {
+                <span class="campo-ajuda">@RolesUsuario.Descricao(Model.Role)</span>
+            }
+        </div>
+
+        <div class="campo campo-usuario-ativo">
+            <label asp-for="Ativo">Ativo:</label>
+            <select asp-for="Ativo"
+                    disabled="@(Model.SomenteLeitura || Model.EhUsuarioAtual ? "disabled" : null)">
+                <option value="True">Ativo</option>
+                <option value="False">Inativo</option>
+            </select>
+            <span asp-validation-for="Ativo" class="campo-erro"></span>
+            @if (Model.EhUsuarioAtual && !Model.SomenteLeitura)
+            {
+                <input type="hidden" asp-for="Ativo" />
+            }
+        </div>
+
+        <div class="campo campo-usuario-cadastro">
+            <span class="campo-rotulo">Data de Cadastro:</span>
+            @if (Model.EhEdicao)
+            {
+                <span class="campo-valor">@Model.DataCadastro.ToString("dd/MM/yyyy HH:mm")</span>
+            }
+            else
+            {
+                <span class="campo-valor campo-valor-previsto">Registrada ao salvar</span>
+            }
+        </div>
+
+        @if (!Model.SomenteLeitura)
+        {
+            <div class="campo campo-usuario-senha">
+                <label asp-for="Senha">@(Model.SenhaObrigatoria ? "Senha:" : "Nova Senha:")</label>
+                <input asp-for="Senha" type="password" autocomplete="new-password"
+                       placeholder="@(Model.SenhaObrigatoria ? "Mínimo 6 caracteres" : "Deixe em branco para manter a atual")" />
+                <span asp-validation-for="Senha" class="campo-erro"></span>
+            </div>
+
+            <div class="campo campo-usuario-confirmar">
+                <label asp-for="ConfirmarSenha">Confirmar Senha:</label>
+                <input asp-for="ConfirmarSenha" type="password" autocomplete="new-password"
+                       placeholder="Repita a senha" />
+                <span asp-validation-for="ConfirmarSenha" class="campo-erro"></span>
+            </div>
+        }
+
+        @if (Model.EhEdicao)
+        {
+            <div class="campo campo-usuario-vinculos">
+                <span class="campo-rotulo">Vínculos:</span>
+                <span class="campo-valor">
+                    @(string.IsNullOrWhiteSpace(Model.FuncionarioVinculado)
+                                    ? "Nenhum funcionário vinculado"
+                                    : $"Funcionário: {Model.FuncionarioVinculado}")
+                @if (Model.SomenteLeitura)
+                    {
+                        <text> · @Model.QuantidadeVinculos registro(s) de auditoria e operação</text>
+                    }
+                </span>
+                <span class="campo-ajuda">
+                    Usuário com histórico só pode ser excluído depois de inativado e sem nenhum registro apontando para ele.
+                </span>
+            </div>
+        }
+    </div>
+
+    <div class="form-acoes">
+        @if (Model.SomenteLeitura)
+        {
+            <a class="btn btn-escuro" asp-action="Index">Voltar</a>
+        }
+        else
+        {
+            <button type="submit" class="btn btn-claro">Salvar</button>
+            <a class="btn btn-escuro" asp-action="Index">Cancelar</a>
+        }
+    </div>
+</form>
