@@ -2,25 +2,53 @@
     box-sizing: border-box;
 }
 
-html, body {
+html {
     height: 100%;
+}
+
+html, body {
     margin: 0;
 }
 
 body {
+    min-height: 100%;
     font-family: "Segoe UI", Roboto, Arial, sans-serif;
     background-color: var(--login-fundo);
     display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .login-page {
-    width: 100%;
+    --logo-largura: 186px;
+    --logo-vao: 28px;
+    --logo-espaco: calc(var(--logo-largura) * 242 / 398 + var(--logo-vao));
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 24px;
+    padding: var(--logo-espaco) 24px;
+}
+
+.login-conteudo {
+    position: relative;
+    width: 100%;
+    max-width: 380px;
+}
+
+.login-marca {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: var(--logo-vao);
+    color: var(--cor-marca);
+}
+
+.login-marca .logo-marca {
+    display: block;
+    width: var(--logo-largura);
+    height: auto;
 }
 
 .login-card {

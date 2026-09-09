@@ -173,3 +173,14 @@
         width: 100%;
     }
 }
+
+.sidebar-logo {
+    padding: 24px 14px 4px;
+    color: var(--cor-marca);
+}
+
+.sidebar-logo .logo-marca {
+    display: block;
+    width: 60px;
+    height: auto;
+}
