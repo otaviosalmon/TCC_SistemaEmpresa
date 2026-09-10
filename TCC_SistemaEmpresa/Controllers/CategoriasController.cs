@@ -20,13 +20,21 @@ namespace TCC_SistemaEmpresa.Controllers
         protected override string EntidadeLog => nameof(CategoriaProduto);
 
         [HttpGet]
-        public async Task<IActionResult> Index(string? busca, int pagina = 1)
+        public async Task<IActionResult> Index(string? busca, string? situacao, int pagina = 1)
         {
             var empresaId = EmpresaIdAtual();
+            situacao = NormalizarSituacao(situacao);
 
             var consulta = _context.CategoriaProdutos
                 .AsNoTracking()
                 .Where(c => c.EmpresaId == empresaId);
+
+            consulta = situacao switch
+            {
+                SituacaoFiltro.Ativos => consulta.Where(c => c.Ativo),
+                SituacaoFiltro.Inativos => consulta.Where(c => !c.Ativo),
+                _ => consulta
+            };
 
             if (!string.IsNullOrWhiteSpace(busca))
             {
@@ -42,7 +50,8 @@ namespace TCC_SistemaEmpresa.Controllers
                 .Select(c => new CategoriaProdutoLinhaViewModel
                 {
                     Id = c.Id,
-                    Nome = c.Nome
+                    Nome = c.Nome,
+                    Ativo = c.Ativo
                 })
                 .ToListAsync();
 
@@ -51,6 +60,7 @@ namespace TCC_SistemaEmpresa.Controllers
             return View(new CategoriaProdutoListaViewModel
             {
                 Busca = busca,
+                Situacao = situacao,
                 Paginacao = paginacao,
                 Categorias = categorias
             });
@@ -75,6 +85,7 @@ namespace TCC_SistemaEmpresa.Controllers
         {
             var model = new CategoriaProdutoFormViewModel
             {
+                Ativo = true,
                 ProximoId = await ProximoIdAsync()
             };
 
@@ -97,7 +108,8 @@ namespace TCC_SistemaEmpresa.Controllers
             {
                 EmpresaId = empresaId,
                 Nome = model.Nome.Trim(),
-                Descricao = string.IsNullOrWhiteSpace(model.Descricao) ? null : model.Descricao.Trim()
+                Descricao = string.IsNullOrWhiteSpace(model.Descricao) ? null : model.Descricao.Trim(),
+                Ativo = model.Ativo
             };
 
             _context.CategoriaProdutos.Add(categoria);
@@ -144,17 +156,27 @@ namespace TCC_SistemaEmpresa.Controllers
                 return View(model);
             }
 
+            var estavaAtivo = categoria.Ativo;
+
             categoria.Nome = model.Nome.Trim();
             categoria.Descricao = string.IsNullOrWhiteSpace(model.Descricao) ? null : model.Descricao.Trim();
+            categoria.Ativo = model.Ativo;
 
-            RegistrarLog("ALTERACAO", categoria.Id, $"Tipo de produto '{categoria.Nome}' alterado.");
+            var (acao, detalhe) = (estavaAtivo, model.Ativo) switch
+            {
+                (true, false) => ("INATIVACAO", "inativado"),
+                (false, true) => ("REATIVACAO", "reativado"),
+                _ => ("ALTERACAO", "alterado")
+            };
+
+            RegistrarLog(acao, categoria.Id, $"Tipo de produto '{categoria.Nome}' {detalhe}.");
             await _context.SaveChangesAsync();
 
             _logger.LogInformation(
-                "Tipo de produto {CategoriaId} da empresa {EmpresaId} alterado.",
-                categoria.Id, empresaId);
+                "Tipo de produto {CategoriaId} da empresa {EmpresaId}: {Acao}.",
+                categoria.Id, empresaId, acao);
 
-            TempData["Sucesso"] = $"Tipo de produto {categoria.Nome} alterado com sucesso.";
+            TempData["Sucesso"] = $"Tipo de produto {categoria.Nome} {detalhe} com sucesso.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -167,6 +189,13 @@ namespace TCC_SistemaEmpresa.Controllers
                 return NotFound();
 
             var nome = categoria.Nome;
+
+            if (categoria.Ativo)
+            {
+                TempData["Erro"] = $"O tipo {nome} precisa ser inativado antes de ser excluído.";
+                return RedirectToAction(nameof(Index));
+            }
+
             var quantidadeProdutos = await ContarProdutosAsync(id);
 
             if (quantidadeProdutos > 0)
@@ -256,7 +285,15 @@ namespace TCC_SistemaEmpresa.Controllers
         {
             Id = categoria.Id,
             Nome = categoria.Nome,
-            Descricao = categoria.Descricao
+            Descricao = categoria.Descricao,
+            Ativo = categoria.Ativo
+        };
+
+        private static string NormalizarSituacao(string? situacao) => situacao switch
+        {
+            SituacaoFiltro.Ativos => SituacaoFiltro.Ativos,
+            SituacaoFiltro.Inativos => SituacaoFiltro.Inativos,
+            _ => SituacaoFiltro.Todos
         };
     }
 }

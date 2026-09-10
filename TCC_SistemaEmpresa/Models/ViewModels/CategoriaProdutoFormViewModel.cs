@@ -23,6 +23,9 @@ namespace TCC_SistemaEmpresa.Models.ViewModels
         [Display(Name = "Descrição")]
         public string? Descricao { get; set; }
 
+        [Display(Name = "Ativo")]
+        public bool Ativo { get; set; } = true;
+
         public bool SomenteLeitura { get; set; }
 
         public bool EhEdicao => Id > 0;

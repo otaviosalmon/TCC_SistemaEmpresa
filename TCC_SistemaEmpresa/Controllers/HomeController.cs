@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TCC_SistemaEmpresa.Models;
+using TCC_SistemaEmpresa.Models.ViewModels;
 
 namespace TCC_SistemaEmpresa.Controllers
 {
@@ -16,10 +17,16 @@ namespace TCC_SistemaEmpresa.Controllers
 
         public IActionResult Index()
         {
-            if (User.IsInRole("ADMIN") || User.IsInRole("GERENTE"))
+            if (User.IsInRole(RolesUsuario.Admin) || User.IsInRole(RolesUsuario.Gerente))
                 return RedirectToAction("Index", "Dashboard");
 
-            return RedirectToAction("Index", "Vendas");
+            if (User.IsInRole(RolesUsuario.Estoquista))
+                return RedirectToAction("Index", "Movimentacoes");
+
+            if (User.IsInRole(RolesUsuario.Vendedor) || User.IsInRole(RolesUsuario.Caixa))
+                return RedirectToAction("Index", "Vendas");
+
+            return RedirectToAction("AcessoNegado", "Account");
         }
 
         public IActionResult Teste()

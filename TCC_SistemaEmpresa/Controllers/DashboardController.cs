@@ -47,7 +47,7 @@ namespace TCC_SistemaEmpresa.Controllers
             var custoProdutos = await _context.ItensVenda //é necessario o join com tb_venda para filtrar por empresa
                 .AsNoTracking()
                 .Where(i => i.Venda.EmpresaId == empresaId && i.Venda.SituacaoVenda == SituacaoVenda.Concluida && i.Venda.DataVenda >= inicio && i.Venda.DataVenda < fimExclusivo)
-                .SumAsync(i => (decimal?)(i.PrecoCusto ?? i.Produto.PrecoCusto * i.Quantidade)) ?? 0m;
+                .SumAsync(i => (decimal?)((i.PrecoCusto ?? i.Produto.PrecoCusto) * i.Quantidade)) ?? 0m;
 
             var totalDespesas = await _context.Despesas
                 .AsNoTracking()

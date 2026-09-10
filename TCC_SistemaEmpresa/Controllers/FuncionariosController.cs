@@ -279,16 +279,20 @@ namespace TCC_SistemaEmpresa.Controllers
         private async Task ValidarRegrasAsync(
             FuncionarioFormViewModel model, string cpf, int empresaId, int? funcionarioId)
         {
-            if (model.CargoId > 0)
+            if (model.CargoId > 0)                                            
             {
-                var cargoValido = await _context.Cargo
-                    .AsNoTracking()
-                    .AnyAsync(c => c.Id == model.CargoId && c.EmpresaId == empresaId);
+                var cargoAtivo = await _context.Cargo
+                    .AsNoTracking()                                            
+                    .Where(c => c.Id == model.CargoId && c.EmpresaId == empresaId) 
+                    .Select(c => (bool?)c.Ativo)                               
+                    .FirstOrDefaultAsync();                                    
 
-                if (!cargoValido)
+                if (cargoAtivo is null)                                        
                     ModelState.AddModelError(nameof(model.CargoId), "Cargo inválido.");
+                else if (cargoAtivo == false && model.Ativo)                   
+                    ModelState.AddModelError(nameof(model.CargoId),
+                        "Cargo inativo não pode ser atribuído a funcionário ativo. Reative o cargo ou escolha outro.");
             }
-
 
             if (cpf.Length == 11)
             {
@@ -328,20 +332,21 @@ namespace TCC_SistemaEmpresa.Controllers
 
         private async Task<IEnumerable<SelectListItem>> CarregarCargosAsync(int? selecionado = null)
         {
-            var empresaId = EmpresaIdAtual();
+            var empresaId = EmpresaIdAtual();                                 
 
             var cargos = await _context.Cargo
-                .AsNoTracking()
-                .Where(c => c.EmpresaId == empresaId && c.Ativo)
-                .OrderBy(c => c.Nome)
-                .Select(c => new { c.Id, c.Nome })
-                .ToListAsync();
+                .AsNoTracking()                                                
+                .Where(c => c.EmpresaId == empresaId                           
+                         && (c.Ativo || c.Id == selecionado))                  
+                .OrderBy(c => c.Nome)                                          
+                .Select(c => new { c.Id, c.Nome, c.Ativo })                    
+                .ToListAsync();                                                
 
             return cargos.Select(c => new SelectListItem
             {
-                Value = c.Id.ToString(),
-                Text = c.Nome,
-                Selected = selecionado.HasValue && c.Id == selecionado.Value
+                Value = c.Id.ToString(),                                       
+                Text = c.Ativo ? c.Nome : $"{c.Nome} (inativo)",               
+                Selected = selecionado.HasValue && c.Id == selecionado.Value   
             });
         }
 

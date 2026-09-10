@@ -114,6 +114,10 @@ a {
 .campo-formapag-id       { grid-column: 11 / span 2; }
 .campo-formapag-vinculos { grid-column: span 5; }
 
+.campo-cargo-nome       { grid-column: span 8; }
+.campo-cargo-id         { grid-column: 11 / span 2; }
+.campo-cargo-vinculos   { grid-column: span 5; }     
+
 .campo-despesa-categoria { grid-column: span 5; }
 .campo-despesa-id        { grid-column: span 2; }
 .campo-despesa-data      { grid-column: span 5; }

@@ -4,6 +4,8 @@ namespace TCC_SistemaEmpresa.Models.ViewModels
     {
         public string? Busca { get; set; }
 
+        public string Situacao { get; set; } = SituacaoFiltro.Todos;
+
         public IReadOnlyList<CategoriaProdutoLinhaViewModel> Categorias { get; set; }
             = Array.Empty<CategoriaProdutoLinhaViewModel>();
 
@@ -18,6 +20,8 @@ namespace TCC_SistemaEmpresa.Models.ViewModels
 
         public int QuantidadeProdutos { get; set; }
 
-        public bool PodeExcluir => QuantidadeProdutos == 0;
+        public bool Ativo { get; set; }
+
+        public bool PodeExcluir => !Ativo && QuantidadeProdutos == 0;
     }
 }

@@ -22,6 +22,12 @@
             <input asp-for="Username" placeholder="login.usuario" maxlength="50"
                    autocomplete="off" disabled="@desabilitado" />
             <span asp-validation-for="Username" class="campo-erro"></span>
+            @if (!Model.SomenteLeitura)
+            {
+                <span class="campo-ajuda">
+                    O login é único em todo o sistema, não apenas nesta empresa. Sugestão: nome.sigla-da-empresa
+                </span>
+            }
             @if (Model.EhEdicao && !Model.SomenteLeitura)
             {
                 <span class="campo-ajuda">

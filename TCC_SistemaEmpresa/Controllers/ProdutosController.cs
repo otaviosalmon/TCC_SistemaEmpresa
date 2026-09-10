@@ -210,7 +210,7 @@ namespace TCC_SistemaEmpresa.Controllers
 
             var empresaId = EmpresaIdAtual();
 
-            await ValidarRegrasAsync(model, empresaId);
+            await ValidarRegrasAsync(model, empresaId, produto.CategoriaProdutoId);
 
             if (!ModelState.IsValid)
             {
@@ -313,17 +313,24 @@ namespace TCC_SistemaEmpresa.Controllers
             return consulta.FirstOrDefaultAsync(p => p.Id == id && p.EmpresaId == empresaId);
         }
 
-        private async Task ValidarRegrasAsync(ProdutoFormViewModel model, int empresaId)
+        private async Task ValidarRegrasAsync(ProdutoFormViewModel model, int empresaId, int? categoriaAtualId = null)
         {
             if (model.CategoriaProdutoId > 0)
             {
-                var categoriaValida = await _context.CategoriaProdutos
+                var categoria = await _context.CategoriaProdutos
                     .AsNoTracking()
-                    .AnyAsync(c => c.Id == model.CategoriaProdutoId && c.EmpresaId == empresaId);
+                    .Where(c => c.Id == model.CategoriaProdutoId && c.EmpresaId == empresaId)
+                    .Select(c => new { c.Ativo })
+                    .FirstOrDefaultAsync();
 
-                if (!categoriaValida)
+                if (categoria is null)
                     ModelState.AddModelError(nameof(model.CategoriaProdutoId), "Tipo de produto inválido.");
+
+                else if (!categoria.Ativo && model.CategoriaProdutoId != categoriaAtualId)
+                    ModelState.AddModelError(nameof(model.CategoriaProdutoId),
+                        "Tipo de produto inativo não pode ser atribuído a um produto.");
             }
+        
 
             if (model.PrecoCusto.HasValue
                 && model.PrecoVenda.HasValue
@@ -402,15 +409,16 @@ namespace TCC_SistemaEmpresa.Controllers
 
             var categorias = await _context.CategoriaProdutos
                 .AsNoTracking()
-                .Where(c => c.EmpresaId == empresaId)
+                .Where(c => c.EmpresaId == empresaId
+                    && (c.Ativo || (selecionado.HasValue && c.Id == selecionado.Value)))
                 .OrderBy(c => c.Nome)
-                .Select(c => new { c.Id, c.Nome })
+                .Select(c => new { c.Id, c.Nome, c.Ativo })
                 .ToListAsync();
 
             return categorias.Select(c => new SelectListItem
             {
                 Value = c.Id.ToString(),
-                Text = c.Nome,
+                Text = c.Ativo ? c.Nome : $"{c.Nome} (inativo)",
                 Selected = selecionado.HasValue && c.Id == selecionado.Value
             });
         }

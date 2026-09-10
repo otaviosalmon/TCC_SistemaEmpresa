@@ -12,7 +12,7 @@
 
     var controllersPorGrupo = new Dictionary<string, string[]>
     {
-        ["gerenciamento"] = new[] { "Produtos", "Categorias", "CategoriasDespesa", "TiposMovimentacao", "FormasPagamento", "Clientes", "Funcionarios", "Usuarios", "Registros" },
+        ["gerenciamento"] = new[] { "Produtos", "Categorias", "CategoriasDespesa", "TiposMovimentacao", "FormasPagamento", "Clientes", "Cargos", "Funcionarios", "Usuarios", "Registros" },
         ["financeiro"] = new[] { "Vendas", "Movimentacoes", "Despesas" },
         ["relatorios"] = new[] { "Relatorios", "Previsao" }
     };
@@ -119,6 +119,15 @@
                         <path d="M17 8h5M19.5 5.5v5" />
                     </svg>
                     Clientes
+                </a>
+                <a class="sidebar-item @(controllerAtual == "Cargos" ? "ativo" : null)"
+                   asp-controller="Cargos" asp-action="Index">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="7" width="20" height="14" rx="2" />
+                        <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
+                        <path d="M2 13h20" />
+                    </svg>
+                    Cargos
                 </a>
                 <a class="sidebar-item @(controllerAtual == "Funcionarios" ? "ativo" : null)"
                    asp-controller="Funcionarios" asp-action="Index">

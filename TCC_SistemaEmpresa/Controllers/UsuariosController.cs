@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using TCC_SistemaEmpresa.Data;
 using TCC_SistemaEmpresa.Models;
 using TCC_SistemaEmpresa.Models.ViewModels;
 using TCC_SistemaEmpresa.Security;
-
 namespace TCC_SistemaEmpresa.Controllers
 {
     [Authorize(Roles = RolesUsuario.Admin)]
@@ -153,11 +154,25 @@ namespace TCC_SistemaEmpresa.Controllers
                 DataCadastro = DateTime.Now,
                 PasswordHash = PasswordHasher.GerarHash(username, model.Senha!)
             };
-
             await using var transacao = await _context.Database.BeginTransactionAsync();
 
-            _context.Usuario.Add(usuario);
-            await _context.SaveChangesAsync();
+            _context.Usuario.Add(usuario);                                     
+
+            try
+            {
+                await _context.SaveChangesAsync();                            
+            }
+            catch (DbUpdateException ex) when (ViolouLoginUnico(ex))           
+            {
+                await transacao.RollbackAsync();                               
+                _context.ChangeTracker.Clear();                                
+                ModelState.AddModelError(nameof(model.Username), MensagemLoginEmUso); 
+                model.ProximoId = await ProximoIdAsync();                      
+                model.Roles = CarregarRoles(model.Role);                       
+                return View(model);                                            
+            }
+
+
 
             RegistrarLog("CRIACAO", usuario.Id,
                 $"Usuário '{usuario.Username}' criado com perfil {usuario.Role}.");
@@ -289,7 +304,22 @@ namespace TCC_SistemaEmpresa.Controllers
                 : " (" + string.Join("; ", complemento) + ")";
 
             RegistrarLog(acao, usuario.Id, $"Usuário '{username}' {detalhe}{textoComplemento}.");
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                await _context.SaveChangesAsync();                             
+            }
+            catch (DbUpdateException ex) when (ViolouLoginUnico(ex))           
+            {
+                _context.ChangeTracker.Clear();                                
+                ModelState.AddModelError(nameof(model.Username), MensagemLoginEmUso); 
+                model.Id = id;                                                 
+                model.DataCadastro = usuario.DataCadastro;                     
+                model.EhUsuarioAtual = ehUsuarioAtual;                         
+                model.Roles = CarregarRoles(model.Role);                      
+                model.FuncionarioVinculado = await BuscarFuncionarioVinculadoAsync(id, empresaId); 
+                return View(model);                                            
+            }
 
             _logger.LogInformation(
                 "Usuário {UsuarioId} da empresa {EmpresaId}: {Acao}.",
@@ -358,6 +388,13 @@ namespace TCC_SistemaEmpresa.Controllers
             return consulta.FirstOrDefaultAsync(u => u.Id == id && u.EmpresaId == empresaId);
         }
 
+        private const string MensagemLoginEmUso = "Este login já está em uso. Escolha outro.";
+
+        private static bool ViolouLoginUnico(DbUpdateException ex) =>
+            ex.InnerException is SqlException sql                              
+            && (sql.Number == 2627 || sql.Number == 2601)                     
+            && sql.Message.Contains("UQ_Usuario_Username");
+
         private async Task ValidarRegrasAsync(
             UsuarioFormViewModel model, string username, string email, int empresaId, int? usuarioId)
         {
@@ -371,29 +408,13 @@ namespace TCC_SistemaEmpresa.Controllers
             {
                 var loginEmUso = await _context.Usuario
                     .AsNoTracking()
-                    .AnyAsync(u => u.EmpresaId == empresaId
-                                && u.Username == username
+                    .AnyAsync(u => u.Username == username
                                 && (usuarioId == null || u.Id != usuarioId));
 
                 if (loginEmUso)
                 {
                     ModelState.AddModelError(nameof(model.Username),
-                        "Já existe um usuário com este login nesta empresa.");
-                }
-            }
-
-            if (!string.IsNullOrWhiteSpace(email))
-            {
-                var emailEmUso = await _context.Usuario
-                    .AsNoTracking()
-                    .AnyAsync(u => u.EmpresaId == empresaId
-                                && u.Email == email
-                                && (usuarioId == null || u.Id != usuarioId));
-
-                if (emailEmUso)
-                {
-                    ModelState.AddModelError(nameof(model.Email),
-                        "Já existe um usuário com este e-mail nesta empresa.");
+                        MensagemLoginEmUso);
                 }
             }
         }

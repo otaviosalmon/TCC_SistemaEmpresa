@@ -93,6 +93,7 @@ CREATE TABLE Tb_Categoria_Produto (
     empresa_id  INT             NOT NULL,
     nome        VARCHAR(150)    NOT NULL,
     descricao   VARCHAR(255)        NULL,
+     ativo       BIT             NOT NULL CONSTRAINT DF_CategoriaProduto_Ativo DEFAULT 1,
 
     CONSTRAINT PK_CategoriaProduto              PRIMARY KEY CLUSTERED (id),
     CONSTRAINT FK_CategoriaProduto_Empresa      FOREIGN KEY (empresa_id)
@@ -190,7 +191,7 @@ CREATE TABLE Tb_Usuario (
     CONSTRAINT PK_Usuario                       PRIMARY KEY CLUSTERED (id),
     CONSTRAINT FK_Usuario_Empresa               FOREIGN KEY (empresa_id)
         REFERENCES Tb_Empresa (id),
-    CONSTRAINT UQ_Usuario_Username              UNIQUE (empresa_id, username),
+    CONSTRAINT UQ_Usuario_Username              UNIQUE (username),
     CONSTRAINT UQ_Usuario_Email                 UNIQUE (empresa_id, email),
     -- Roles válidos no sistema.
     CONSTRAINT CHK_Usuario_Role                 CHECK (role IN ('ADMIN', 'GERENTE', 'VENDEDOR', 'CAIXA', 'ESTOQUISTA'))

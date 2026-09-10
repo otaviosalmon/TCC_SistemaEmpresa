@@ -1,10 +1,10 @@
-@model TCC_SistemaEmpresa.Models.ViewModels.CategoriaProdutoListaViewModel
+﻿@model TCC_SistemaEmpresa.Models.ViewModels.CargoListaViewModel
 @{
-    ViewData["Title"] = "Tipos de Produto";
+    ViewData["Title"] = "Cargos";
 }
 
 <div class="pagina-titulo-centro">
-    <h1 class="pagina-titulo">Tipo Produto</h1>
+    <h1 class="pagina-titulo">Cargos</h1>
 </div>
 
 @if (TempData["Sucesso"] is string mensagemSucesso)
@@ -21,13 +21,15 @@
     <form method="get" asp-action="Index" class="listagem-barra">
         <div class="busca">
             <input type="text" name="busca" value="@Model.Busca" placeholder="Pesquisar..."
-                   aria-label="Pesquisar por nome do tipo de produto" />
+                   aria-label="Pesquisar por nome do cargo" />
             <button type="submit" aria-label="Pesquisar">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="11" cy="11" r="7" /><path d="M21 21l-4.35-4.35" />
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="M21 21l-4.35-4.35" />
                 </svg>
             </button>
         </div>
+
         <div class="filtro">
             <select name="situacao" onchange="this.form.submit()" aria-label="Filtrar por situação">
                 <option value="todos" selected="@(Model.Situacao == "todos")">Filtros...</option>
@@ -46,26 +48,32 @@
             <tr>
                 <th scope="col">Id</th>
                 <th scope="col">Nome</th>
+                <th scope="col">Salário Base</th>
+                <th scope="col">Comissão</th>
+                <th scope="col">Funcionários</th>
                 <th scope="col">Ativo</th>
                 <th scope="col" aria-label="Ações"></th>
             </tr>
         </thead>
         <tbody>
-            @if (Model.Categorias.Count == 0)
+            @if (Model.Cargos.Count == 0)
             {
                 <tr class="tabela-vazia">
-                    <td colspan="4">Nenhum tipo de produto encontrado.</td>
+                    <td colspan="7">Nenhum cargo encontrado.</td>
                 </tr>
             }
             else
             {
-                @foreach (var categoria in Model.Categorias)
+                @foreach (var cargo in Model.Cargos)
                 {
                     <tr>
-                        <td>@categoria.Id</td>
-                        <td>@categoria.Nome</td>
+                        <td>@cargo.Id</td>
+                        <td>@cargo.Nome</td>
+                        <td>@(cargo.SalarioBase?.ToString("C") ?? "—")</td>
+                        <td>@(cargo.PerComissaoBase is decimal comissao ? $"{comissao:0.##}%" : "—")</td>
+                        <td>@cargo.QuantidadeFuncionarios</td>
                         <td>
-                            @if (categoria.Ativo)
+                            @if (cargo.Ativo)
                             {
                                 <span class="marcador-ativo sim" title="Ativo" role="img" aria-label="Ativo">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -80,36 +88,38 @@
                         </td>
                         <td class="col-acoes">
                             <div class="acoes-linha">
-                                <a class="acao-icone" asp-action="Details" asp-route-id="@categoria.Id"
-                                   title="Visualizar" aria-label="Visualizar @categoria.Nome">
+                                <a class="acao-icone" asp-action="Details" asp-route-id="@cargo.Id"
+                                   title="Visualizar" aria-label="Visualizar @cargo.Nome">
                                     <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z" /><circle cx="12" cy="12" r="3" />
+                                        <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z" />
+                                        <circle cx="12" cy="12" r="3" />
                                     </svg>
                                 </a>
 
-                                <a class="acao-icone" asp-action="Edit" asp-route-id="@categoria.Id"
-                                   title="Editar" aria-label="Editar @categoria.Nome">
+                                <a class="acao-icone" asp-action="Edit" asp-route-id="@cargo.Id"
+                                   title="Editar" aria-label="Editar @cargo.Nome">
                                     <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M12 20h9" /><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+                                        <path d="M12 20h9" />
+                                        <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
                                     </svg>
                                 </a>
 
-                                @if (categoria.Ativo)
+                                @if (cargo.Ativo)
                                 {
                                     <button type="button" class="acao-icone" disabled
-                                            aria-label="Excluir @categoria.Nome"
-                                            title="Tipo ativo não pode ser excluído. Inative pela tela de edição.">
+                                            aria-label="Excluir @cargo.Nome"
+                                            title="Cargo ativo não pode ser excluído. Inative pela tela de edição.">
                                         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <path d="M18 6L6 18M6 6l12 12" />
                                         </svg>
                                     </button>
                                 }
-                                else if (!categoria.PodeExcluir)
+                                else if (!cargo.PodeExcluir)
                                 {
                                     <button type="button" class="acao-icone perigo"
-                                            title="Não pode ser excluído" aria-label="Excluir @categoria.Nome"
+                                            title="Não pode ser excluído" aria-label="Excluir @cargo.Nome"
                                             data-modal-titulo="Exclusão não permitida"
-                                            data-modal-texto="@categoria.Nome classifica @categoria.QuantidadeProdutos produto(s) e não pode ser excluído. Excluir o cadastro deixaria esses produtos sem tipo. O tipo permanece inativo.">
+                                            data-modal-texto="@cargo.Nome está vinculado a @cargo.QuantidadeFuncionarios funcionário(s) e não pode ser excluído. Excluir o cadastro deixaria esses funcionários sem cargo. O cargo permanece inativo.">
                                         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <path d="M18 6L6 18M6 6l12 12" />
                                         </svg>
@@ -117,16 +127,16 @@
                                 }
                                 else
                                 {
-                                    <form method="post" asp-action="Excluir" asp-route-id="@categoria.Id"
-                                          id="acao-@categoria.Id" class="acao-form">
+                                    <form method="post" asp-action="Excluir" asp-route-id="@cargo.Id"
+                                          id="acao-@cargo.Id" class="acao-form">
                                         @Html.AntiForgeryToken()
                                     </form>
                                     <button type="button" class="acao-icone perigo"
-                                            title="Excluir" aria-label="Excluir @categoria.Nome"
-                                            data-modal-titulo="Excluir tipo de produto"
-                                            data-modal-texto="Excluir definitivamente o cadastro de @categoria.Nome? O registro sai do banco e esta ação não pode ser desfeita."
+                                            title="Excluir" aria-label="Excluir @cargo.Nome"
+                                            data-modal-titulo="Excluir cargo"
+                                            data-modal-texto="Excluir definitivamente o cargo @cargo.Nome? O registro sai do banco e esta ação não pode ser desfeita."
                                             data-modal-confirmar="Excluir"
-                                            data-modal-form="acao-@categoria.Id">
+                                            data-modal-form="acao-@cargo.Id">
                                         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <path d="M18 6L6 18M6 6l12 12" />
                                         </svg>

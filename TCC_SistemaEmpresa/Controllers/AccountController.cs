@@ -44,9 +44,9 @@ namespace TCC_SistemaEmpresa.Controllers
             var username = model.Usuario.Trim();
 
             var usuario = await _context.Usuario
-                .AsNoTracking()
-                .Include(u => u.Empresa)
-                .FirstOrDefaultAsync(u => u.Username == username && u.Ativo);
+                           .AsNoTracking()
+                           .Include(u => u.Empresa)
+                           .SingleOrDefaultAsync(u => u.Username == username && u.Ativo);
 
 
             var senhaConfere = usuario is not null

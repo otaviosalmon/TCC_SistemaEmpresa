@@ -57,24 +57,27 @@ END
 -- ================================================================
 -- 2. Usuário de teste
 -- ================================================================
--- UQ_Usuario_Username é (empresa_id, username): o mesmo login pode
--- existir em empresas diferentes, por isso o filtro usa as duas colunas.
-IF EXISTS (SELECT 1 FROM Tb_Usuario WHERE empresa_id = @EmpresaId AND username = @Username)
+-- UQ_Usuario_Username é GLOBAL (username): a busca é só por username.
+IF EXISTS (SELECT 1 FROM Tb_Usuario                                    -- o login já existe...
+            WHERE username   = @Username
+              AND empresa_id <> @EmpresaId)                            -- ...em OUTRA empresa?
 BEGIN
-    -- Já existe: regrava o hash. Útil ao reexecutar o script depois de
-    -- mudar as iterações ou o algoritmo no PasswordHasher.
+    THROW 50002, 'O login informado já pertence a outra empresa. Altere @Username e regere o hash.', 1; -- não sobrescreve usuário alheio
+END
+ELSE IF EXISTS (SELECT 1 FROM Tb_Usuario WHERE username = @Username)   -- existe na própria empresa de teste
+BEGIN
+    -- Regrava o hash. Útil ao reexecutar depois de mudar o PasswordHasher.
     UPDATE Tb_Usuario
-       SET password_hash = @PasswordHash,
-           role          = @Role,
-           ativo         = 1
-     WHERE empresa_id = @EmpresaId
-       AND username   = @Username;
+       SET password_hash = @PasswordHash,                              -- hash novo
+           role          = @Role,                                      -- perfil do teste
+           ativo         = 1                                           -- garante acesso
+     WHERE username = @Username;                                       -- username basta: é único
 
     PRINT 'Usuário ''Teste'' já existia — hash, perfil e status atualizados.';
 END
 ELSE
 BEGIN
-    INSERT INTO Tb_Usuario (empresa_id, username, email, password_hash, role, ativo)
+    INSERT INTO Tb_Usuario (empresa_id, username, email, password_hash, role, ativo) -- login livre: cria
     VALUES (@EmpresaId, @Username, @Email, @PasswordHash, @Role, 1);
 
     PRINT 'Usuário ''Teste'' criado com sucesso.';
