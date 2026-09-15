@@ -47,6 +47,8 @@ builder.Services.AddHttpClient<PrevisaoService>(cliente =>
     cliente.Timeout = TimeSpan.FromSeconds(10);
 });
 
+builder.Services.AddHostedService<ExpiracaoLogBackgroundService>();
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())

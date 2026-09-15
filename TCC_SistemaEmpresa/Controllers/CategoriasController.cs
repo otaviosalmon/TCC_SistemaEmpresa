@@ -160,7 +160,7 @@ namespace TCC_SistemaEmpresa.Controllers
 
             categoria.Nome = model.Nome.Trim();
             categoria.Descricao = string.IsNullOrWhiteSpace(model.Descricao) ? null : model.Descricao.Trim();
-            categoria.Ativo = model.Ativo;
+            categoria.Ativo = model.Ativo; 
 
             var (acao, detalhe) = (estavaAtivo, model.Ativo) switch
             {
