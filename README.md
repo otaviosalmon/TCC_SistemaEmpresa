@@ -102,7 +102,7 @@ A operação multiempresa é feita por **segregação lógica**: uma única base
 | Modelagem do banco | BRModelo (lógico) + DDL manual | — |
 | Versionamento | Git / GitHub | — |
 
-### Abordagem de banco: Database First manual
+### Abordagem de banco:
 
 O schema é escrito à mão em `database/tcc_database.sql` e aplicado diretamente no SQL
 Server. O `AppDbContext` mapeia as entidades C# para tabelas **já existentes**.
@@ -111,32 +111,6 @@ Server. O `AppDbContext` mapeia as entidades C# para tabelas **já existentes**.
 > histórico que não corresponde ao banco real e tentaria recriar tabelas existentes.
 > Toda mudança de schema é um `ALTER TABLE` versionado em `database/update_db.sql`, mais
 > o ajuste correspondente no Model e no `AppDbContext`.
-
----
-
-## Módulos implementados
-
-| Módulo | Controller | Situação |
-|---|---|---|
-| Autenticação e sessão | `AccountController` | Concluído |
-| Usuários | `UsuariosController` | Concluído |
-| Cargos | `CargosController` | Concluído |
-| Funcionários | `FuncionariosController` | Concluído |
-| Clientes | `ClientesController` | Concluído |
-| Categorias de produto | `CategoriasController` | Concluído |
-| Produtos | `ProdutosController` | Concluído |
-| Formas de pagamento | `FormasPagamentoController` | Concluído |
-| Categorias de despesa | `CategoriasDespesaController` | Concluído |
-| Despesas | `DespesasController` | Concluído |
-| Tipos de movimentação | `TiposMovimentacaoController` | Concluído |
-| Movimentação de estoque | `MovimentacoesController` | Concluído |
-| Vendas (registro + cancelamento) | `VendasController` | Concluído |
-| Dashboard de indicadores | `DashboardController` | Concluído |
-| Relatórios com exportação `.xlsx` | `RelatoriosController` | Concluído |
-| Previsão (faturamento e despesas) | `PrevisaoController` | Concluído |
-| Consulta ao log de auditoria | `RegistrosController` | Concluído |
-| Configurações e aparência | `ConfiguracoesController` | Concluído |
-| Assistente em linguagem natural | — | Planejado |
 
 ---
 
