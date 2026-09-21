@@ -53,7 +53,10 @@ Trabalho de Conclusão de Curso — Bacharelado em Ciência da Computação, Uni
   - [`Aparencia` — preferências de interface](#aparencia--preferências-de-interface)
   - [`ExpiracaoLogBackgroundService` — retenção de log](#expiracaologbackgroundservice--retenção-de-log)
 - [Camada analítica](#camada-analítica)
-- [Regras de negócio](#regras-de-negócio)
+- [Requisitos e regras de negócio](#requisitos-e-regras-de-negócio)
+  - [Requisitos funcionais](#requisitos-funcionais)
+  - [Requisitos não funcionais](#requisitos-não-funcionais)
+  - [Regras de negócio](#regras-de-negócio)
 - [Perfis de acesso](#perfis-de-acesso)
 - [Como executar](#como-executar)
 - [Roadmap](#roadmap)
@@ -1941,24 +1944,107 @@ Documentação interativa gerada automaticamente pelo FastAPI em `http://localho
 
 ---
 
-## Regras de negócio
+## Requisitos e regras de negócio
+
+A elicitação produziu 36 requisitos funcionais, 9 requisitos não funcionais e 15 regras
+de negócio. O artigo apresenta uma seleção; a relação integral está aqui, com o ponto de
+implementação de cada item.
+
+Status: **OK** implementado · **Parcial** implementado com ressalva · **Pendente** previsto
+como evolução.
+
+### Requisitos funcionais
+
+#### Cadastros e configurações
+
+| # | Requisito | Onde | Status |
+|---|---|---|---|
+| 1 | CRUD de usuários com perfil e status | `UsuariosController` | OK |
+| 2 | Autenticação com validação de perfil | `AccountController` + `AuthorizeFilter` global | OK |
+| 3 | CRUD de empresas | `ConfiguracoesController` | Parcial — `Tb_Empresa` tem `nome`, não razão social e nome fantasia separados |
+| 4 | CRUD de funcionários | `FuncionariosController` | Parcial — sem campo de e-mail |
+| 5 | CRUD de clientes | `ClientesController` | Parcial — só CPF; CNPJ de cliente não suportado |
+| 6 | CRUD de categorias de produto | `CategoriasController` | OK |
+| 7 | CRUD de produtos | `ProdutosController` | Parcial — sem unidade de medida |
+| 8 | CRUD de formas de pagamento | `FormasPagamentoController` | OK |
+| 9 | CRUD de categorias de despesa | `CategoriasDespesaController` | Parcial — sem classificação |
+| 10 | Configurações gerais | `ConfiguracoesController` + `Aparencia` | OK |
+
+#### Estoque, vendas e financeiro
+
+| # | Requisito | Onde | Status |
+|---|---|---|---|
+| 11 | Registro de movimentações de estoque | `MovimentacoesController` | OK |
+| 12 | Tipos de movimentação | `Tb_Tipo_Movimentacao` | OK — o ajuste manual é modelado como dois tipos (`Ajuste de entrada` / `Ajuste de saída`), pois `natureza` é fixa por tipo |
+| 13 | Atualização automática do saldo | `MovimentacoesController`, dentro de transação | OK |
+| 14 | Registro de vendas | `VendasController.Create` | OK |
+| 15 | Itens de venda com produto, quantidade, valor unitário e subtotal | `Tb_Item_Venda`, `subtotal` como coluna calculada | OK — desconto aplicado sobre o total da venda, não por item |
+| 16 | Cálculo automático do total com desconto | `VendasController` + `CHK_Venda_ValorFinal` | OK |
+| 17 | Baixa automática de estoque na confirmação | `VendasController.Create`, mesma transação | OK |
+| 18 | Cancelamento com reversão de estoque | `VendasController.Cancelar` (perfil `ADMIN`) | OK |
+| 19 | Lançamento de despesas | `DespesasController` | Parcial — registra natureza (fixa/eventual), não forma de pagamento |
+| 20 | Consulta de vendas com filtros | `VendasController.Index` | OK |
+| 21 | Consulta de movimentações com filtros | `MovimentacoesController.Index` | OK |
+| 22 | Consulta de despesas com filtros | `DespesasController.Index` | OK |
+| 23 | Alerta de estoque mínimo | `ProdutoListaViewModel.EstoqueBaixo` e `Vw_Produtos_Abaixo_Estoque_Minimo` (critério `<=`) | OK |
+| 24 | Lucro bruto estimado | `DashboardController`, com snapshot de custo em `Tb_Item_Venda` | OK |
+
+#### Relatórios, indicadores e analítico
+
+| # | Requisito | Onde | Status |
+|---|---|---|---|
+| 25 | Relatório de produtos | `RelatoriosController` | OK |
+| 26 | Relatório de clientes com histórico de compras | `RelatoriosController` | OK |
+| 27 | Relatório de funcionários | `RelatoriosController` | OK |
+| 28 | Relatório de vendas por período | `RelatoriosController` + `PlanilhaRelatorio` | OK |
+| 29 | Relatório de despesas por período | `RelatoriosController` + `PlanilhaRelatorio` | OK |
+| 30 | Relatório de movimentações | `RelatoriosController` + `PlanilhaRelatorio` | OK |
+| 31 | Indicadores gerenciais | `DashboardController` | OK |
+| 32 | Dashboards gerenciais | `DashboardController` + Chart.js na própria aplicação | OK — sem Power BI |
+| 33 | Integração com rotinas Python | `PrevisaoService` → API FastAPI | OK |
+| 34 | Análises preditivas | `analytics/previsao_api.py`, regressão linear | Parcial — faturamento e despesas; reposição de estoque pendente |
+| 35 | Assistente em linguagem natural | — | Pendente |
+| 36 | Log de auditoria | `ControllerValidacao.RegistrarLog()` + `RegistrosController` | OK |
+
+### Requisitos não funcionais
+
+| # | Requisito | Onde |
+|---|---|---|
+| 37 | Autenticação obrigatória | `AuthorizeFilter` global — *deny by default* |
+| 38 | Controle de acesso por perfil | `[Authorize(Roles = ...)]` por controller |
+| 39 | Isolamento de dados por empresa | `EmpresaIdAtual()` em toda consulta + `empresa_id NOT NULL` em 13 das 15 tabelas |
+| 40 | Integridade dos dados | FKs, constraints `CHECK`, índices únicos, colunas calculadas |
+| 41 | Desempenho compatível com uso cotidiano | 13 índices no padrão `(empresa_id, filtro)` com `INCLUDE`; `AsNoTracking()` em leituras; paginação |
+| 42 | Interface clara e organizada | Layout único, formulário compartilhado, preferências de tema, fonte e densidade |
+| 43 | ASP.NET MVC + SQL Server | .NET 8, EF Core 8, SQL Server 2019+ |
+| 44 | Extensibilidade sem reestruturação | Camada analítica desacoplada por HTTP; controller base comum |
+| 45 | Execução em navegadores atualizados | Bootstrap 5, dependências vendorizadas em `wwwroot/lib` |
+
+### Regras de negócio
 
 Implementadas como validação **no servidor**, independentemente da validação no cliente.
 
-| Regra | Onde é garantida |
-|---|---|
-| Toda venda deve ter ao menos um item | Validação no `VendasController` antes do commit |
-| Quantidade vendida não pode exceder o estoque | Validação por item no POST + `CHK_Produto_QtdAtual` no banco |
-| Toda movimentação deve ter produto e tipo | FKs `NOT NULL` + validação na aplicação |
-| Toda despesa deve ter categoria | FK `categoria_despesa_id NOT NULL` |
-| Toda venda deve ter empresa e responsável | FKs `empresa_id` e `funcionario_id` `NOT NULL` |
-| Produto inativo não pode ser vendido | Dropdown filtrado + revalidação de `produto.Ativo` no POST |
-| Operações críticas geram log | `RegistrarLog()` no mesmo `SaveChanges()` da operação |
-| Um produto não pode repetir em duas linhas da mesma venda | Validação por `GroupBy` no POST — o usuário ajusta a quantidade na linha existente |
-| Desconto não pode exceder o valor da venda | Validação no POST + `CHK_Venda_ValorFinal` no banco |
+| # | Regra | Onde é garantida |
+|---|---|---|
+| 46 | Toda venda deve ter ao menos um item | Validação no `VendasController` antes do commit |
+| 47 | Quantidade vendida não pode exceder o estoque | Validação por item no POST + `CHK_Produto_QtdAtual` no banco |
+| 48 | Toda movimentação deve ter produto e tipo | FKs `NOT NULL` + validação na aplicação |
+| 49 | Toda despesa deve ter categoria | FK `categoria_despesa_id NOT NULL` |
+| 50 | Toda venda deve ter empresa e funcionário responsável | FKs `empresa_id` e `funcionario_id` `NOT NULL`; o usuário que registrou fica no log |
+| 51 | Produto inativo não pode ser vendido | Dropdown filtrado + revalidação de `produto.Ativo` no POST |
+| 52 | Operações críticas geram log | `RegistrarLog()` no mesmo `SaveChanges()` da operação |
+| 53 | Movimentações não podem ser excluídas; correção por lançamento contrário | `MovimentacoesController` não expõe exclusão |
+| 54 | Um produto não pode repetir em duas linhas da mesma venda | Validação por `GroupBy` no POST |
+| 55 | Desconto não pode ser negativo nem exceder o total | Validação no POST + `CHK_Venda_Desconto` e `CHK_Venda_ValorFinal` |
+| 56 | Preço de venda não pode ser inferior ao preço de custo | `CHK_Produto_Preco` |
+| 57 | Cadastros são inativados, não excluídos | Exclusão física só para registro inativo e sem vínculos — ver [Exclusão lógica e exclusão física](#exclusão-lógica-e-exclusão-física) |
+| 58 | Venda cancelada não compõe apuração financeira | Filtro `situacao_venda = 'CONCLUIDA'` no dashboard, relatórios e previsão |
+| 59 | Preços são congelados no momento da venda | `preco_unitario` e `preco_custo` em `Tb_Item_Venda` |
+| 60 | Log de auditoria retido por 12 meses | `ExpiracaoLogBackgroundService` |
 
-**Regra geral de exclusão.** O sistema opera por **exclusão lógica** (`ativo = 0`). Exclusão
-física é exceção, permitida apenas para registros já inativos e sem vínculos.
+> A regra 57 vale para **registros de cadastro**. Tabelas de evento — venda, item de venda,
+> movimentação, despesa e log — não possuem coluna `ativo`: a venda é cancelada, a
+> movimentação é imutável e o log tem expurgo automático.
 
 ---
 

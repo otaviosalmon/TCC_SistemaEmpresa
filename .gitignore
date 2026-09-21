@@ -12,7 +12,7 @@ x86/
 [Ll]og/
 [Ll]ogs/
 
-## Arquivos e pastas específicos do Visual Studio
+## Arquivos e pastas do Visual Studio
 .vs/
 *.user
 *.userosscache
@@ -25,7 +25,7 @@ x86/
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
 
-## Arquivos do NuGet
+## NuGet
 *.nupkg
 *.snupkg
 **/[Pp]ackages/*
@@ -40,7 +40,6 @@ x86/
 *~
 [Tt]humbs.db
 [Dd]esktop.ini
-/CLAUDE.md
 /TCC_SistemaEmpresa/appsettings.json
 
 /.claude/launch.json
