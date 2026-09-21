@@ -107,8 +107,13 @@ A operação multiempresa é feita por **segregação lógica**: uma única base
 
 ### Abordagem de banco:
 
-O schema é escrito à mão em `database/tcc_database.sql` e aplicado diretamente no SQL
+O schema é escrito à mão em `database/L.O_database.sql` e aplicado diretamente no SQL
 Server. O `AppDbContext` mapeia as entidades C# para tabelas **já existentes**.
+
+> **Este projeto não usa Migrations.** Executar `dotnet ef migrations add` geraria um
+> histórico que não corresponde ao banco real e tentaria recriar tabelas existentes.
+> Toda mudança de schema é feita diretamente no `database/L.O_database.sql`, mais o
+> ajuste correspondente no Model e no `AppDbContext`.
 
 > **Este projeto não usa Migrations.** Executar `dotnet ef migrations add` geraria um
 > histórico que não corresponde ao banco real e tentaria recriar tabelas existentes.
@@ -216,10 +221,8 @@ analytics/
 └── requirements.txt                    # Dependências Python
 
 database/
-├── tcc_database.sql                    # DDL completo — fonte de verdade do schema
-├── update_db.sql                       # Alterações incrementais pós-implementação
-├── verificacao_analise_preditiva.sql   # Consulta de conferência dos KPIs
-└── seed*.sql                           # Massa de dados
+├── L.O_database.sql                    # DDL completo — fonte de verdade do schema
+└── seed_db.sql                         # Massa de dados: 2 empresas, 24 meses de histórico                         # Massa de dados
 
 Models DB/
 └── DER L.O Solutions.png               # Diagrama entidade-relacionamento
@@ -319,7 +322,7 @@ possui apenas um responsável, o que garante rastreabilidade e auditoria.
 > **`username` é único em todo o sistema**, não por empresa. O schema original usava a
 > chave composta `(empresa_id, username)`, mas o login acontece antes de o sistema saber a
 > qual empresa o usuário pertence — com homônimos em empresas diferentes, a autenticação
-> entraria numa empresa arbitrária. Ver [Alterações feitas durante a implementação](#alterações-feitas-durante-a-implementação).
+> entraria numa empresa arbitrária.
 
 #### `Tb_Log_Sistema` — auditoria
 
@@ -711,9 +714,9 @@ apenas uma categoria.
 
 ### Índices
 
-Treze índices não-clusterizados — os onze criados com o schema original, mais os dois
-índices únicos filtrados de `Tb_Cliente` adicionados durante a implementação. O padrão
-dominante é `(empresa_id, <coluna de filtro>)` com `INCLUDE` das colunas de listagem.
+Treze índices não-clusterizados, incluindo os dois índices únicos filtrados de
+`Tb_Cliente`. O padrão dominante é `(empresa_id, <coluna de filtro>)` com `INCLUDE` das
+colunas de listagem.
 
 O efeito prático é que as telas de listagem por empresa são atendidas por *covering index*
 — o SQL Server responde a consulta lendo só o índice, sem voltar à tabela base.
@@ -2095,18 +2098,25 @@ cd TCC_SistemaEmpresa
 
 ### 2. Criar o banco
 
-Execute os scripts na ordem, conectado à instância do SQL Server:
+Execute os dois scripts na ordem, conectado à instância do SQL Server:
 
 ```
-database/tcc_database.sql            -- cria banco, 15 tabelas, views e índices
-database/seed.sql                    -- dados básicos (empresa, cargos, categorias)
+database/L.O_database.sql -- cria o banco, 15 tabelas, views e índices
+database/seed_db.sql -- 2 empresas com 24 meses de vendas, despesas e movimentações
 ```
 
-No Visual Studio: **View → SQL Server Object Explorer**, botão direito no banco → **New
-Query**, cole o script e execute com `Ctrl+Shift+E`.
+No Visual Studio: **View → SQL Server Object Explorer**, botão direito no servidor →
+**New Query**, cole o script e execute com `Ctrl+Shift+E`.
 
-> `database/verificacao_analise_preditiva.sql` é opcional — confere se os KPIs calculados
-> pela aplicação batem com uma consulta SQL independente.
+O seed pode ser executado mais de uma vez: ele remove os dados das duas empresas antes de
+inseri-los novamente. A execução leva de 30 segundos a 1 minuto.
+
+**Usuários de acesso** (senha `Senha@123` para todos):
+
+| Empresa | Usuários |
+|---|---|
+| Mercado Bom Preco LTDA | `admin.bp`, `gerente.bp`, `vendedor.bp`, `caixa.bp`, `estoquista.bp` |
+| Tech Store Franca ME | `admin.ts`, `gerente.ts`, `vendedor.ts`, `caixa.ts`, `estoquista.ts` |
 
 ### 3. Configurar a connection string
 
