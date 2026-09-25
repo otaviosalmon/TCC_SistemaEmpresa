@@ -5,6 +5,9 @@ SET NOCOUNT ON;
 SET XACT_ABORT ON;
 GO
 
+BEGIN TRY
+BEGIN TRANSACTION;
+
 DECLARE @cnpj1 VARCHAR(14) = '11222333000181';
 DECLARE @cnpj2 VARCHAR(14) = '44555666000199';
 
@@ -40,7 +43,8 @@ VALUES ('Tech Store Franca ME', @cnpj2, 'vendas@techstore.com.br',
 SET @emp2 = SCOPE_IDENTITY();
 
 DECLARE @mesBase  DATE = DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1);
-DECLARE @inicio   DATE = DATEADD(MONTH, -24, @mesBase);
+DECLARE @inicio   DATE = '20240101';
+DECLARE @meses    INT  = DATEDIFF(MONTH, @inicio, @mesBase);
 
 INSERT INTO Tb_Forma_Pagamento (empresa_id, nome, descricao, ativo)
 SELECT e.id, f.nome, f.descricao, f.ativo
@@ -72,10 +76,8 @@ FROM (VALUES (@emp1), (@emp2)) AS e(id)
 CROSS JOIN (VALUES
     ('Aluguel',             'Locacao do imovel comercial'),
     ('Folha de Pagamento',  'Salarios e encargos'),
-    ('Utilidades',          'Energia, agua, internet e telefone'),
-    ('Marketing',           'Divulgacao e publicidade'),
-    ('Manutencao',          'Reparos e conservacao'),
-    ('Impostos e Taxas',    'Tributos e taxas municipais')
+    ('Utilidades',          'Energia, agua e internet'),
+    ('Impostos e Taxas',    'Simples Nacional')
 ) AS c(nome, descricao);
 
 INSERT INTO Tb_Categoria_Produto (empresa_id, nome, descricao, ativo)
@@ -145,7 +147,7 @@ INSERT INTO Tb_Funcionario
 VALUES (@emp1, NULL,
         (SELECT id FROM Tb_Cargo WHERE empresa_id = @emp1 AND nome = 'Estoquista'),
         'Marcos Vinicius Reis', '31677788899', '16991110006', 'Rua Sao Paulo, 55',
-        2050.00, NULL, DATEADD(MONTH, 6, @inicio), 1);
+        2050.00, NULL, @inicio, 1);
 
 INSERT INTO Tb_Funcionario
     (empresa_id, usuario_id, cargo_id, nome, cpf, telefone, endereco, salario, per_comissao, data_admissao, ativo)
@@ -321,8 +323,8 @@ WHERE f.empresa_id IN (@emp1, @emp2) AND f.ativo = 1;
 IF OBJECT_ID('tempdb..#DespModelo') IS NOT NULL DROP TABLE #DespModelo;
 CREATE TABLE #DespModelo (
     empresa_id  INT NOT NULL,
-    categoria   VARCHAR(100) NOT NULL,
-    descricao   VARCHAR(255) NOT NULL,
+    categoria   VARCHAR(100) COLLATE DATABASE_DEFAULT NOT NULL,
+    descricao   VARCHAR(255) COLLATE DATABASE_DEFAULT NOT NULL,
     valor_base  DECIMAL(10,2) NOT NULL,
     dia         INT NOT NULL,
     fixa        BIT NOT NULL
@@ -330,21 +332,14 @@ CREATE TABLE #DespModelo (
 
 INSERT INTO #DespModelo (empresa_id, categoria, descricao, valor_base, dia, fixa)
 VALUES
-    (@emp1, 'Aluguel',            'Aluguel da loja',                    4200.00,  5, 1),
-    (@emp1, 'Folha de Pagamento', 'Salarios e encargos da equipe',     16800.00,  5, 1),
-    (@emp1, 'Utilidades',         'Energia eletrica',                    980.00, 10, 1),
-    (@emp1, 'Utilidades',         'Agua e esgoto',                       240.00, 10, 1),
-    (@emp1, 'Utilidades',         'Internet e telefonia',                310.00, 12, 1),
-    (@emp1, 'Impostos e Taxas',   'Simples Nacional',                   2650.00, 20, 1),
-    (@emp1, 'Marketing',          'Panfletagem e midias sociais',        620.00, 15, 0),
-    (@emp1, 'Manutencao',         'Manutencao de refrigeracao',          480.00, 22, 0),
-    (@emp2, 'Aluguel',            'Aluguel da loja',                    3600.00,  5, 1),
-    (@emp2, 'Folha de Pagamento', 'Salarios e encargos da equipe',     19700.00,  5, 1),
-    (@emp2, 'Utilidades',         'Energia eletrica',                    720.00, 10, 1),
-    (@emp2, 'Utilidades',         'Internet dedicada',                   450.00, 12, 1),
-    (@emp2, 'Impostos e Taxas',   'Simples Nacional',                   3100.00, 20, 1),
-    (@emp2, 'Marketing',          'Anuncios online',                     890.00, 15, 0),
-    (@emp2, 'Manutencao',         'Suporte tecnico terceirizado',        540.00, 22, 0);
+    (@emp1, 'Aluguel',            'Aluguel da loja',                     570.00,  5, 1),
+    (@emp1, 'Folha de Pagamento', 'Salarios e encargos da equipe',       860.00,  5, 1),
+    (@emp1, 'Utilidades',         'Energia, agua e internet',            210.00, 10, 1),
+    (@emp1, 'Impostos e Taxas',   'Simples Nacional',                    210.00, 20, 1),
+    (@emp2, 'Aluguel',            'Aluguel da loja',                    3850.00,  5, 1),
+    (@emp2, 'Folha de Pagamento', 'Salarios e encargos da equipe',     21710.00,  5, 1),
+    (@emp2, 'Utilidades',         'Energia eletrica e internet',        1280.00, 10, 1),
+    (@emp2, 'Impostos e Taxas',   'Simples Nacional',                   6200.00, 20, 1);
 
 DECLARE @i INT, @cresc INT, @mesRef DATE, @proxMes DATE;
 DECLARE @fatorPreco DECIMAL(10,4), @fatorDespesa DECIMAL(10,4);
@@ -360,14 +355,14 @@ DECLARE @precoV DECIMAL(10,2), @precoC DECIMAL(10,2);
 DECLARE @qtd INT, @qtdAntes INT, @qtdDepois INT;
 DECLARE @valorTotal DECIMAL(10,2), @desconto DECIMAL(10,2);
 
-SET @i = 24;
+SET @i = @meses;
 
 WHILE @i >= 1
 BEGIN
-    SET @cresc        = 25 - @i;
+    SET @cresc        = @meses + 1 - @i;
     SET @mesRef       = DATEADD(MONTH, -@i, @mesBase);
     SET @proxMes      = DATEADD(MONTH, 1, @mesRef);
-    SET @fatorPreco   = 1.0 + (0.004 * @cresc);
+    SET @fatorPreco   = 1.0 + (0.008 * @cresc);
     SET @fatorDespesa = 1.0 + (0.0025 * @cresc);
 
     SET @ordEmp = 1;
@@ -412,26 +407,13 @@ BEGIN
            AND p.quantidade_atual < CASE WHEN p.estoque_minimo * 10 < 140
                                          THEN 140 ELSE p.estoque_minimo * 10 END;
 
-        SET @sazonal = CASE MONTH(@mesRef)
-                            WHEN 11 THEN 4
-                            WHEN 12 THEN 7
-                            WHEN 1  THEN -2
-                            WHEN 2  THEN -3
-                            WHEN 6  THEN 2
-                            ELSE 0
-                       END;
-
-        IF @ordEmp = 1
-            SET @vendasNoMes = @baseVendas + @cresc + @sazonal;
-        ELSE
-            SET @vendasNoMes = @baseVendas + ((@cresc * 2) / 3) + @sazonal;
-
-        IF @vendasNoMes < 5 SET @vendasNoMes = 5;
 
         SELECT @totalFunc = COUNT(*) FROM #Func WHERE empresa_id = @empV;
         SELECT @totalCli  = COUNT(*) FROM #Cli  WHERE empresa_id = @empV;
         SELECT @totalFP   = COUNT(*) FROM #FP   WHERE empresa_id = @empV;
         SELECT @totalProd = COUNT(*) FROM #Prod WHERE empresa_id = @empV;
+
+        SET @vendasNoMes = 10 * @totalFunc;
 
         SET @v = 1;
 
@@ -469,12 +451,12 @@ BEGIN
                        @precoC = ROUND(custo_base * @fatorPreco, 2)
                   FROM #Prod
                  WHERE empresa_id = @empV
-                   AND ord = (((@v * 7) + (@k * 3) + @i) % @totalProd) + 1;
+                   AND ord = (((@v * 5) + (@k * 3) + @i) % @totalProd) + 1;
 
                 IF NOT EXISTS (SELECT 1 FROM Tb_Item_Venda
                                 WHERE venda_id = @vendaId AND produto_id = @prodId)
                 BEGIN
-                    SET @qtd = 1 + ((@prodId + @v + @k) % 4);
+                    SET @qtd = 1 + ((@prodId + @v / 2 + @k * 5) % 4);
 
                     SELECT @qtdAntes = quantidade_atual FROM Tb_Produto WHERE id = @prodId;
                     SET @qtdDepois = @qtdAntes - @qtd;
@@ -569,7 +551,7 @@ BEGIN
                d.fixa, NULL
           FROM #DespModelo d
           JOIN Tb_Categoria_Despesa cd
-            ON cd.empresa_id = @empV AND cd.nome = d.categoria
+            ON cd.empresa_id = @empV AND cd.nome = d.categoria COLLATE DATABASE_DEFAULT
          WHERE d.empresa_id = @empV;
 
         SET @ordEmp = @ordEmp + 1;
@@ -579,8 +561,8 @@ BEGIN
 END;
 
 UPDATE p
-   SET p.preco_custo = ROUND(b.custo_base * (1.0 + 0.004 * 24), 2),
-       p.preco_venda = ROUND(b.venda_base * (1.0 + 0.004 * 24), 2)
+   SET p.preco_custo = ROUND(b.custo_base * (1.0 + 0.008 * @meses), 2),
+       p.preco_venda = ROUND(b.venda_base * (1.0 + 0.008 * @meses), 2)
   FROM Tb_Produto p
   JOIN #Prod b ON b.produto_id = p.id;
 
@@ -639,6 +621,14 @@ DROP TABLE #Cli;
 DROP TABLE #FP;
 DROP TABLE #DespModelo;
 DROP TABLE #Baixo;
+
+COMMIT TRANSACTION;
+END TRY
+BEGIN CATCH
+    IF @@TRANCOUNT > 0
+        ROLLBACK TRANSACTION;
+    THROW;
+END CATCH;
 GO
 
 SELECT e.nome                                                                   AS empresa,
@@ -666,4 +656,24 @@ SELECT e.nome                                       AS empresa,
    AND v.situacao_venda = 'CONCLUIDA'
  GROUP BY e.nome, YEAR(v.data_venda), MONTH(v.data_venda)
  ORDER BY e.nome, ano, mes;
+
+SELECT e.nome AS empresa,
+       CAST(r.receita AS DECIMAL(14,2))                                   AS receita_bruta,
+       CAST(c.custo AS DECIMAL(14,2))                                     AS custo_produtos,
+       CAST(d.despesas AS DECIMAL(14,2))                                  AS despesas,
+       CAST(r.receita - c.custo - d.despesas AS DECIMAL(14,2))            AS resultado,
+       CAST((r.receita - c.custo - d.despesas) * 100 / r.receita AS DECIMAL(6,2)) AS margem_pct
+  FROM Tb_Empresa e
+ CROSS APPLY (SELECT SUM(v.valor_final) AS receita
+                FROM Tb_Venda v
+               WHERE v.empresa_id = e.id AND v.situacao_venda = 'CONCLUIDA') r
+ CROSS APPLY (SELECT SUM(i.preco_custo * i.quantidade) AS custo
+                FROM Tb_Item_Venda i
+                JOIN Tb_Venda v ON v.id = i.venda_id
+               WHERE v.empresa_id = e.id AND v.situacao_venda = 'CONCLUIDA') c
+ CROSS APPLY (SELECT SUM(x.valor) AS despesas
+                FROM Tb_Despesa x
+               WHERE x.empresa_id = e.id) d
+ WHERE e.cnpj IN ('11222333000181', '44555666000199')
+ ORDER BY e.nome;
 GO

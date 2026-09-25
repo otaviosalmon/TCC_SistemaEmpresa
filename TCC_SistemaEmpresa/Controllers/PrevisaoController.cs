@@ -39,7 +39,8 @@ namespace TCC_SistemaEmpresa.Controllers
             int? mesesPrevisao)
         {
             var empresaId = EmpresaIdAtual();
-            var fim = dataFinal?.Date ?? DateTime.Today;
+            var inicioMesAtual = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+            var fim = dataFinal?.Date ?? inicioMesAtual.AddDays(-1);
             var inicio = dataInicial?.Date
                 ?? new DateTime(fim.Year, fim.Month, 1).AddMonths(-(MesesHistoricoPadrao - 1));
 
